@@ -12,7 +12,18 @@ Team Members
 - Moe Numasawa
 - Nicholas Anderson
 
-Licensing
-========================
+Dependencies
+============
 
-Everything is licensed under the GPL-3.0 license.
+To install packages others have added:
+`python -m pip install -r requirements.txt`
+
+To add packages you have installed:
+`python -m pip freeze > requirements.txt`
+
+NOTE: Adding packages outside of a virtual environment will add all packages installed on your computer.
+
+Licensing
+=========
+
+Everything is licensed under the GPL-3.0 license by all team members, 2022.
