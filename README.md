@@ -21,7 +21,7 @@ To install packages others have added:
 To add packages you have installed:
 `python -m pip freeze > requirements.txt`
 
-NOTE: Adding packages outside of a virtual environment will add all packages installed on your computer.
+**NOTE:** Adding packages while not in a virtual environment will add **all** packages installed on your computer.
 
 Licensing
 =========
