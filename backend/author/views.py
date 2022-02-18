@@ -1,17 +1,32 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from author.models import Author
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from author.serializers import AuthorsSerializer
-import os
 
 class AuthorList(APIView):
-
+    
     # Add an Author
     def post(self, request):
-        request_data = request.data.copy() # Might need mutable data if using images (had problem with this in the past)
+        
+        # Mutable copy
+        request_data = request.data.copy()
+        
+        # Gather host
+        # May require tweaking, full_path might not be the way
+        try:
+            host = HttpRequest.request.get_full_path()
+        except:
+            host = 'http://127.0.0.1:8000/'
+
+        request_data["host"] = host
+
+        # TODO: Need to find a way to put ID in host url for the URL field
+        # Possibly overwrite the on create method
+
         serializer = AuthorsSerializer(data = request_data)
         if serializer.is_valid():
+            print(serializer.validated_data)
             serializer.save()
             return Response(serializer.data, status = 201)
         else:
@@ -44,6 +59,7 @@ class AuthorDetails(APIView):
         except Author.DoesNotExist:
             return HttpResponse("Author not found.", status = 401)
 
+    # Update an author
     def put(self, request, user_id):
 
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
@@ -80,6 +96,7 @@ class AuthorDetails(APIView):
         else:
             return Response(serializer.errors, status=400)
 
+    # Delete an author
     def delete(self, request, user_id):
 
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
