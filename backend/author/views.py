@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse
 from author.models import Author
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,18 +11,6 @@ class AuthorList(APIView):
         
         # Mutable copy
         request_data = request.data.copy()
-        
-        # Gather host
-        # May require tweaking, full_path might not be the way
-        try:
-            host = HttpRequest.request.get_full_path()
-        except:
-            host = 'http://127.0.0.1:8000/'
-
-        request_data["host"] = host
-
-        # TODO: Need to find a way to put ID in host url for the URL field
-        # Possibly overwrite the on create method
 
         serializer = AuthorsSerializer(data = request_data)
         if serializer.is_valid():
