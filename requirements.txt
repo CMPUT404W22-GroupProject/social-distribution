@@ -5,6 +5,7 @@ django-filter==21.1
 djangorestframework==3.13.1
 filelock==3.4.2
 Markdown==3.3.6
+Pillow==9.0.1
 platformdirs==2.5.0
 pytz==2021.3
 six==1.16.0
