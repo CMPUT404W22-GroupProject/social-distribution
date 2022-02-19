@@ -16,9 +16,8 @@ Including another URLconf
 from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
-from author import views as author_views
 
 urlpatterns = [
-    path('author/', include('author.urls')),
+    path('authors/', include('author.urls')),
     path('admin/', admin.site.urls),
 ]
