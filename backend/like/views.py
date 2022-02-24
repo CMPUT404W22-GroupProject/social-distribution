@@ -13,13 +13,17 @@ class LikeList(APIView):
     def get(self, request): 
         all_likes = Like.objects.all()
         serializer = LikeSerializer(all_likes, many = True)
+        for each_object in serializer.data:
+            author = Author.objects.get(pk=each_object['author']).toString()
+            author['id']=each_object['author']
+            each_object['author']=author
+       
         return Response(serializer.data, status = 200)
 
     # Add a like object
     def post(self, request):
         # Mutable copy
         request_data = request.data.copy()
-
         serializer = LikeSerializer(data = request_data)
         author = Author.objects.get(pk=serializer.initial_data['author']).displayName
         if serializer.is_valid():

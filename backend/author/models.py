@@ -12,3 +12,14 @@ class Author(models.Model):
         github = models.URLField()
         # profileImage = models.ImageField(blank=True, null=True, upload_to=upload_path) # Implement upload location later `upload_to=upload_path`
 
+
+        #The following are used in Like app
+        def __str__(self):
+            return self.type+","+self.host+","+self.displayName+","+self.url+","+self.github
+
+        def toString(self):
+            return {"type: ":self.type,
+                    "host: ":self.host,
+                    "displayName: " :self.displayName,
+                    "url: ": self.url,
+                    "github: ":self.github}
