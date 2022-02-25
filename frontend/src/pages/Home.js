@@ -1,10 +1,11 @@
 import React from 'react' 
+import Feed from '../components/feed/Feed'
 
 
 function Home(){
     return (
         <div>
-            Home
+            <Feed/>
         </div>
     )
 }
