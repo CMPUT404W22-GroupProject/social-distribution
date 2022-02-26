@@ -1,39 +1,111 @@
 from django.shortcuts import render
-from django.http import HttpResponse, Http404
-from post.models import Post, Author
+from django.http import HttpResponse, Http404, request
+from post.models import Post
+from author.models import Author
 from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from .pagination import PostPageNumberPagination
 import os
 
 from post.serializers import PostSerializer
 
-class PostList(APIView):
+# class CommentPagination(PageNumberPagination):
+#     page_size = 5
+#     page_query_param = 'page'
+
+#     def get_paginated_response(self, data):
+#         response = Response(data)
+#         response['count'] = self.page.paginator.count
+#         response['comments']
+#         return super().get_paginated_response(data)
+
+class PostList(ListCreateAPIView):
+
+    queryset =  Post.objects.all()
+    serializer_class = PostSerializer
+    pagination_class = PostPageNumberPagination
+    # paginate_by = 2
+    # permission_classes = [IsAdminUser]
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['id'] = self.request.build_absolute_uri
+    #     return context
 
     # get recent posts of author
-    def get(self, request, author_id):
+    def list(self, request, author_id):
         #TODO handle recent, pagenation
-        try:
-            Author.objects.get(pk=author_id)
-        except Author.DoesNotExist:
-            return HttpResponse("Author not found.", status=404)
+        # try:
+        #     Author.objects.get(pk=author_id)
+        # except Author.DoesNotExist:
+        #     return HttpResponse("Author not found.", status=404)
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer =  PostSerializer(page, many=True, context={'listRequest':request})
+            return self.get_paginated_response(serializer.data)
 
-        recent_posts = Post.objects.all().order_by('published')
-        serializer = PostSerializer(recent_posts, many = True)
+        serializer =  PostSerializer(queryset, many=True, context={'listRequest':request})
+
         return Response(serializer.data, status=200)
+        # serializer = PostSerializer(queryset, many=True)
+        # return Response(serializer.data, status=200)
 
     # create a new post
-    def post(self, request, author_id):
+    def create(self, request, author_id):
         try:
             Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
             return HttpResponse("Author", status=404)
 
         serializer = PostSerializer(data = request.data)
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = 201)
         else:
             return Response(serializer.errors, status = 400) # bad request
+
+
+# class PostList(APIView):
+
+#     # queryset =  Post.objects.all()
+#     # serializer_class = PostSerializer
+#     # permission_classes = [IsAdminUser]
+#     paginate_by = 3
+
+#     def get_queryset(self, *args, **kwargs):
+#         queryset_list = Post.objects.all()
+#         query = request.GET.get("")
+#         return super().get_queryset()
+
+#     # get recent posts of author
+#     def get(self, request, author_id):
+#         #TODO handle recent, pagenation
+#         # try:
+#         #     Author.objects.get(pk=author_id)
+#         # except Author.DoesNotExist:
+#         #     return HttpResponse("Author not found.", status=404)
+
+#         recent_posts = Post.objects.all().order_by('published')
+#         serializer = PostSerializer(recent_posts, many = True)
+#         return Response(serializer.data, status=200)
+
+#     # create a new post
+#     def post(self, request, author_id):
+#         try:
+#             Author.objects.get(pk=author_id)
+#         except Author.DoesNotExist:
+#             return HttpResponse("Author", status=404)
+
+#         serializer = PostSerializer(data = request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status = 201)
+#         else:
+#             return Response(serializer.errors, status = 400) # bad request
 
 class PostDetails(APIView):
     def get_author(self, pk):
@@ -46,7 +118,7 @@ class PostDetails(APIView):
     def get(self, request, post_id, author_id):
         try:
             post = Post.objects.get(pk=post_id)
-            serializer = PostSerializer(post)
+            serializer = PostSerializer(post, context={'detailsRequest':request})
             return Response(serializer.data, status=200)
         except Post.DoesNotExist:
             return HttpResponse("Post ahhh not found", status = 401)
