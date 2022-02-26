@@ -14,7 +14,6 @@ class LikeList(APIView):
         all_likes = Like.objects.all()
         serializer = LikeSerializer(all_likes, many = True)
         for each_object in serializer.data:
-            print(serializer.data)
             author = Author.objects.get(pk=each_object['author']).toString()
             author['id']=each_object['author']
             each_object['author']=author
