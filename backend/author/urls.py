@@ -8,5 +8,5 @@ urlpatterns = [
     path('', authorView.AuthorList.as_view()),
     path('<int:author_id>/', authorView.AuthorDetails.as_view()),
     path('<int:author_id>/liked', likeView.LikedDetails.as_view()),
-
+    path('<int:author_id>/posts/', include('post.urls'))
 ]
