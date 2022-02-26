@@ -8,7 +8,7 @@ import json
 class AuthorsSerializer(ModelSerializer):
     class Meta:
         model = Author
-        fields = ('type', 'url', 'host', 'displayName', 'github')
+        fields = "__all__"
 
     def create(self, validated_data):
         # Create author so we can get unique ID for URL + Host
