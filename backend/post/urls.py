@@ -5,5 +5,6 @@ from . import views
 
 urlpatterns = [
     path('', views.PostList.as_view()),
-    path('<int:post_id>/', views.PostDetails.as_view())
+    path('<uuid:post_id>/', views.PostDetails.as_view()),
+    path('<uuid:post_id>/comments/', include('comment.urls'))
 ]
