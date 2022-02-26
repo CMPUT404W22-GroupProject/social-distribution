@@ -1,67 +1,55 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { useRef, useState, iseEffect } from 'react';
 import './login.css';
+import { useDispatch } from 'react-redux';
+import { login } from '../../features/userSlice';
 
-function Login() {
 
-    const userRef = useRef();
-    const errRef = useRef();
+const Login = () => {
 
-    const [user, setUser] = useState('');
-    const [password, setPassword] = useState('');
-    const [errMsg, setErrMsg] = useState('')
-    const [success, setSuccess] = useState(false);
+    const[id, setId] = useState("");
+    const[email, setEmail] = useState("");
+    const[password, setPassword] = useState("");
 
-    useEffect(() => {
-        userRef.current.focus();
-    }, [])
 
-    const handleSubmit = async (e) => {
+    const dispatch = useDispatch();
+
+    const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(user, password)
-        setUser('');
-        setPassword('')
-        setSuccess(true)
+
+        dispatch(login({
+            id: id,
+            email: email,
+            password: password,
+            loggedIn: true
+        }))
+
     }
 
     return (
-        <div className="login">
-            <div id='form'>
-                <h3 className="loginLogo">SocialDistritbution</h3>
-                <form onSubmit={handleSubmit}>
-                
-                        <label className='labels' htmlFor='email'>Email</label>
-                        <input className='inputs' type='text' 
-                                id='email'
-                                ref={userRef}
-                                onChange={(e) => setUser(e.target.value)}
-                                value={user}
-                                required/>
-                 
+        <div className='login'>
+            <form className='login_form' onSubmit={(e) => handleSubmit(e)} >
+                <h1>Login</h1>
 
-                   
-                        <label className='labels' htmlFor='password'>Password</label>
-                        <input className='inputs' type='password' 
-                                id='password'
-                                onChange={(e) => setPassword(e.target.value)}
-                                value={password}
-                                required/>
-                   
+                <input type='id' placeholder='123' 
+                    value={id} 
+                    onChange={(e) => setId(e.target.value)}/>
 
-                    
-                        <button className="loginButton">Log In</button> 
-                   
+                <input type='email' placeholder='example@gmail.com' 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}/>
 
-                    
-                        <button className="loginRegisterButton">Create a New Account</button>
-                    
-                
-                </form>
+                <input type='password' placeholder='password' 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}/>
 
-            </div>            
-                
-        </div>             
-  )
+                <button className='submit_btn'>Log In</button>
+            </form>
+
+            
+
+        </div>
+    )
 }
 
-export default Login
+export default Login;
