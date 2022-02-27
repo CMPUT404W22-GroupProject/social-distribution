@@ -2,10 +2,11 @@
 from comment.models import Comment
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from author.serializers import AuthorsSerializer
+# from post.serializers import PostSerializer
+from post import serializers
 
 class CommentSerializer(ModelSerializer):
     author = AuthorsSerializer(many=False, read_only=True)
-    # post = PostSerializer(many=False, read_only=True)
     id = SerializerMethodField()
 
     class Meta:

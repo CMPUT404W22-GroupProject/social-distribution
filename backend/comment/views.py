@@ -1,29 +1,32 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from rest_framework.generics import ListCreateAPIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from post.models import Post
 from comment.models import Comment
 from comment.serializers import CommentSerializer
 from .pagination import CommentPageNumberPagination
 
-# Create your views here.
 
 class CommentList(ListCreateAPIView):
 
-    queryset =  Comment.objects.all()
     serializer_class = CommentSerializer
     pagination_class = CommentPageNumberPagination
-    # paginate_by = 2
-    # permission_classes = [IsAdminUser]
+    post_id = None
+
+    def get_queryset(self):
+        return Comment.objects.filter(post=self.post_id).order_by('published')
 
     # get recent posts of author
     def list(self, request, author_id, post_id):
-        #TODO handle recent, pagenation
-        # try:
-        #     Author.objects.get(pk=author_id)
-        # except Author.DoesNotExist:
-        #     return HttpResponse("Author not found.", status=404)
+
+        try: 
+            Post.objects.filter(author_id=author_id).get(pk=post_id)
+        except Post.DoesNotExist:
+            return HttpResponse("Post not found.", status=401)
+
+        self.post_id = post_id
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -32,24 +35,12 @@ class CommentList(ListCreateAPIView):
 
         serializer =  CommentSerializer(queryset, many=True, context={'request':request})
         return Response(serializer.data, status=200)
-        # serializer = PostSerializer(queryset, many=True)
-        # return Response(serializer.data, status=200)
-
-    # def get(self, request, author_id, post_id):
-    #     try:
-    #         Post.objects.get(pk=post_id)
-    #     except Post.DoesNotExist:
-    #         return Http404
-        
-    #     comments = Comment.objects.all()
-    #     serializer = CommentSerializer(comments, many=True)
-    #     return Response(serializer.data, status=200)
 
     def create(self, request, author_id, post_id):
         try:
-            Post.objects.get(pk=post_id)
+            Post.objects.filter(author_id=author_id).get(pk=post_id)
         except Post.DoesNotExist:
-            return Http404
+            return HttpResponse("Post not found.", status=401)
         
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
@@ -57,3 +48,15 @@ class CommentList(ListCreateAPIView):
             return Response(serializer.data, status=201)
         else:
             return Response(serializer.errors, status=400)
+
+
+class CommentDetails(APIView):
+
+    # get comment
+    def get(self, request, author_id, post_id, comment_id):
+        try:
+            comment = Comment.objects.filter(post=post_id).get(pk=comment_id)
+            serializer = CommentSerializer(comment, context={'request':request})
+            return Response(serializer.data, status=200)
+        except Comment.DoesNotExist:
+            return HttpResponse("Comment not found", status = 401)
