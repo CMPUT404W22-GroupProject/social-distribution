@@ -144,10 +144,10 @@ class LikedDetails(APIView):
     
     # Get the likes of a specific author
     def get(self, request, author_id, post_id, like_id, comment_id=""):
-        http_host = request.META.get('HTTP_HOST')
-        if http_host[0]!="h":
-            http_host = "http://"+http_host
-        path_info = request.META.get('PATH_INFO')
+        # http_host = request.META.get('HTTP_HOST')
+        # if http_host[0]!="h":
+        #     http_host = "http://"+http_host
+        # path_info = request.META.get('PATH_INFO')
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
         if comment_id == "":
         
@@ -160,9 +160,9 @@ class LikedDetails(APIView):
                 for each_object in serializer.data:
                     if each_object =="context":
                         result["@context"] = serializer.data["context"]
-                    elif each_object=="id":
-                        result[each_object] = http_host+path_info
-                    elif each_object != "author" and each_object!="object1":
+                    # elif each_object=="id":
+                    #     result[each_object] = http_host+path_info
+                    elif each_object != "author" and each_object!="object1" and each_object!="id":
                         result[each_object] = serializer.data[each_object]
                     elif each_object == "author":
                         result[each_object]= author
@@ -181,9 +181,9 @@ class LikedDetails(APIView):
                         result["@context"] = serializer.data[each_object]
                     elif each_object == "object1":
                         result["object"]=serializer.data[each_object]
-                    elif each_object=="id":
-                        result[each_object] = http_host+path_info
-                    elif each_object != "author" and each_object!="object":
+                    # elif each_object=="id":
+                    #     result[each_object] = http_host+path_info
+                    elif each_object != "author" and each_object!="object" and each_object!="id":
                         result[each_object] = serializer.data[each_object]
                     elif each_object == "author":
                         result[each_object]= author
