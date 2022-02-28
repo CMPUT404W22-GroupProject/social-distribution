@@ -68,5 +68,5 @@ class LikedDetails(APIView):
             like = Like.objects.get(pk=like_id)
             like.delete()
             return HttpResponse("Successfully unliked the post.", status=201)
-        except  Author.DoesNotExist:
+        except  Like.DoesNotExist:
             return HttpResponse("Like object not found.", status=401) 
