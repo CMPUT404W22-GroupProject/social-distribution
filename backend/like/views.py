@@ -1,4 +1,5 @@
 from ast import arg
+from importlib.resources import path
 from django.shortcuts import render
 from django.http import HttpResponse
 from author.models import Author
@@ -8,17 +9,22 @@ from like.models import Like
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from like.serializers import LikeSerializer
+from selenium import webdriver
+
 
 # Create your views here.
 class LikeList(APIView):
     
     # Get all Likes, for all authors
     def get(self, request, author_id, post_id, comment_id=""): 
+        http_host = request.META.get('HTTP_HOST')
+        if http_host[0]!="h":
+            http_host = "http://"+http_host
+        path_info = request.META.get('PATH_INFO')
         all_likes = Like.objects.all()
         serializer = LikeSerializer(all_likes, many = True)
         result = []
         if comment_id=="":
-            print("ITS A POST")
             #If it is a POST
             for each_object in serializer.data:
                 if each_object['summary'].split(" ")[-1] == "comment":
@@ -28,6 +34,8 @@ class LikeList(APIView):
                 for each_item in each_object:
                     if each_item =="context":
                         level["@context"] = each_object[each_item]
+                    elif each_item=="id":
+                        level[each_item] = http_host+path_info+"/"+str(each_object[each_item])
                     elif each_item != "author" and each_item!="object1":
                         level[each_item] = each_object[each_item]
                     elif each_item=="author":
@@ -35,7 +43,6 @@ class LikeList(APIView):
                 result.append(level)
         else:
             #If it's a COMMENT
-            print("COMMENT")
             for each_object in serializer.data:
                 if each_object['summary'].split(" ")[-1] == "post":
                     continue
@@ -46,6 +53,8 @@ class LikeList(APIView):
                         level["@context"] = each_object[each_item]
                     elif each_item=="object1":
                         level["object"] = each_object[each_item]
+                    elif each_item=="id":
+                        level[each_item] = http_host+path_info+"/"+str(each_object[each_item])
                     elif each_item != "author" and each_item!="object":
                         level[each_item] = each_object[each_item]
                     elif each_item=="author":
@@ -130,6 +139,10 @@ class LikedDetails(APIView):
     
     # Get the likes of a specific author
     def get(self, request, author_id, post_id, like_id, comment_id=""):
+        http_host = request.META.get('HTTP_HOST')
+        if http_host[0]!="h":
+            http_host = "http://"+http_host
+        path_info = request.META.get('PATH_INFO')
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
         if comment_id == "":
         
@@ -142,6 +155,8 @@ class LikedDetails(APIView):
                 for each_object in serializer.data:
                     if each_object =="context":
                         result["@context"] = serializer.data["context"]
+                    elif each_object=="id":
+                        result[each_object] = http_host+path_info
                     elif each_object != "author" and each_object!="object1":
                         result[each_object] = serializer.data[each_object]
                     elif each_object == "author":
@@ -161,6 +176,8 @@ class LikedDetails(APIView):
                         result["@context"] = serializer.data[each_object]
                     elif each_object == "object1":
                         result["object"]=serializer.data[each_object]
+                    elif each_object=="id":
+                        result[each_object] = http_host+path_info
                     elif each_object != "author" and each_object!="object":
                         result[each_object] = serializer.data[each_object]
                     elif each_object == "author":
