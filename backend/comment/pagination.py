@@ -6,16 +6,13 @@ class CommentPageNumberPagination(PageNumberPagination):
     page_size_query_param = 'size'
 
     def get_paginated_response(self, data):
+        post_uri = data[0]['id'].split('/comments')[0]
+        comment_uri = post_uri + '/comments'
         return Response({
             'type': "comments",
-            'next': self.get_next_link(),
-            'post': data,
-            'previous': self.get_previous_link(),
-            'count': self.page.paginator.count,
-            'total_pages': self.page.paginator.num_pages,
-            'page_number': self.page.number,
-            'per_page': self.page.paginator.per_page,
-            # 'from': self.get_from(),
-            # 'to': self.get_to(),
+            'page': self.page.number,
+            'size': self.page.paginator.per_page,
+            'post': post_uri,
+            'id': comment_uri,
             'comments': data
         })
