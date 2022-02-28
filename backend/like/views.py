@@ -27,8 +27,10 @@ class LikeList(APIView):
         if comment_id=="":
             #If it is a POST
             for each_object in serializer.data:
-                if each_object['summary'].split(" ")[-1].lower() == "comment":
+                if not each_object['object']:
                     continue
+                # if each_object['summary'].split(" ")[-1].lower() == "comment":
+                #     continue
                 level = {}
                 author = Author.objects.get(pk=each_object['author']).toString()
                 for each_item in each_object:
@@ -43,9 +45,12 @@ class LikeList(APIView):
                 result.append(level)
         else:
             #If it's a COMMENT
+
             for each_object in serializer.data:
-                if each_object['summary'].split(" ")[-1].lower() == "post":
+                if not each_object['object1']:
                     continue
+                # if each_object['summary'].split(" ")[-1].lower() == "post":
+                #     continue
                 level = {}
                 author = Author.objects.get(pk=each_object['author']).toString()
                 for each_item in each_object:
