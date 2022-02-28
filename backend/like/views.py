@@ -14,12 +14,20 @@ class LikeList(APIView):
     def get(self, request, author_id, post_id): 
         all_likes = Like.objects.all()
         serializer = LikeSerializer(all_likes, many = True)
+        result = []
         for each_object in serializer.data:
+            level = {}
             author = Author.objects.get(pk=each_object['author']).toString()
-            author['id']=each_object['author']
-            each_object['author']=author
+            for each_item in each_object:
+                if each_item =="context":
+                    level["@context"] = each_object["context"]
+                if each_item != "author":
+                    level[each_item] = each_object[each_item]
+                else:
+                    level[each_item]= author
+            result.append(level)
        
-        return Response(serializer.data, status = 200)
+        return Response(result, status = 200)
 
     # Add a like object
     def post(self, request, author_id, post_id):
@@ -50,6 +58,8 @@ class LikedDetails(APIView):
             result = {}
             author = Author.objects.get(pk=author_id).toString()
             for each_object in serializer.data:
+                if each_object =="context":
+                    result["@context"] = serializer.data["context"]
                 if each_object != "author":
                     result[each_object] = serializer.data[each_object]
                 else:

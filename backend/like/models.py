@@ -9,9 +9,3 @@ class Like(models.Model):
         author = models.ForeignKey(Author, on_delete=models.CASCADE, default=1)
         object = models.ForeignKey(Post, on_delete=models.CASCADE,default="8e1d40fa-ca45-496c-a409-fcc39d5026bf")
         # object for comments
-
-'''
-{
-"author" : 1
-}
-'''
