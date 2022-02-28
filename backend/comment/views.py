@@ -28,6 +28,11 @@ class CommentList(ListCreateAPIView):
 
         self.post_id = post_id
         queryset = self.filter_queryset(self.get_queryset())
+
+        # there is no comment to a post
+        if not queryset:
+            return HttpResponse("Comment not found.", status=404)
+
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer =  CommentSerializer(page, many=True, context={'request':request})
@@ -35,6 +40,7 @@ class CommentList(ListCreateAPIView):
 
         serializer =  CommentSerializer(queryset, many=True, context={'request':request})
         return Response(serializer.data, status=200)
+
 
     def create(self, request, author_id, post_id):
         try:

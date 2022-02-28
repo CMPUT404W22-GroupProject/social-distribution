@@ -36,15 +36,17 @@ class PostSerializer(ModelSerializer):
             return request.build_absolute_uri() + 'comments'
     
     def get_commentsSrc(self, post):
-        request = self.context.get('listRequest')
-        if request:
-            url = request.build_absolute_uri() + str(post.uuid) + '/comments'
-        else:
-            request = self.context.get('detailsRequest')
-            url = request.build_absolute_uri() + 'comments'
-
-        response = requests.get(url).json()
-        return response
+        try:
+            request = self.context.get('listRequest')
+            if request:
+                url = request.build_absolute_uri() + str(post.uuid) + '/comments'
+            else:
+                request = self.context.get('detailsRequest')
+                url = request.build_absolute_uri() + 'comments'
+            response = requests.get(url).json()
+            return response
+        except:
+            return {}
 
     def create(self, validated_data):
         new_post = Post.objects.create(**validated_data)
