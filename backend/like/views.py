@@ -21,7 +21,7 @@ class LikeList(APIView):
             for each_item in each_object:
                 if each_item =="context":
                     level["@context"] = each_object["context"]
-                if each_item != "author":
+                elif each_item != "author":
                     level[each_item] = each_object[each_item]
                 else:
                     level[each_item]= author
@@ -34,7 +34,7 @@ class LikeList(APIView):
         # Mutable copy
         request_data = request.data.copy()
         serializer = LikeSerializer(data = request_data)
-        author1 = Author.objects.get(pk=author_id)
+        author1 = Author.objects.get(pk=serializer.initial_data['author'])
         post1 = Post.objects.get(pk=post_id)
         
         if serializer.is_valid():
@@ -60,7 +60,7 @@ class LikedDetails(APIView):
             for each_object in serializer.data:
                 if each_object =="context":
                     result["@context"] = serializer.data["context"]
-                if each_object != "author":
+                elif each_object != "author":
                     result[each_object] = serializer.data[each_object]
                 else:
                     result[each_object]= author
