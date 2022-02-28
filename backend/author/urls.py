@@ -1,9 +1,12 @@
 from django.conf.urls import include
 from django.urls import path
 
-from . import views
+from . import views as authorView
+from like import views as likeView
 
 urlpatterns = [
-    path('', views.AuthorList.as_view()),
-    path('<int:author_id>/', views.AuthorDetails.as_view()),
+    path('', authorView.AuthorList.as_view()),
+    path('<int:author_id>/', authorView.AuthorDetails.as_view()),
+    path('<int:author_id>/liked', likeView.LikedDetails.as_view()),
+    path('<int:author_id>/posts/', include('post.urls'))
 ]
