@@ -38,30 +38,35 @@ class LikeList(APIView):
             return Response(serializer.errors, status = 400)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class LikedDetails(APIView):
-    # We require a author_id to be passed with the request (in the url) to get a user
+    # We require a author_id to be passed with the request (in the url) to get a like object
     
     # Get the likes of a specific author
-    def get(self, request, author_id):
+    def get(self, request, author_id, post_id, like_id):
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
         try:
-            liked = Like.objects.filter(author=author_id)
-            serializer = LikeSerializer(liked, many=True)
-            return Response(serializer.data, status = 200)
-
+            like = Like.objects.get(pk=like_id)
+            serializer = LikeSerializer(like)
+            result = {}
+            author = Author.objects.get(pk=author_id).toString()
+            for each_object in serializer.data:
+                if each_object != "author":
+                    result[each_object] = serializer.data[each_object]
+                else:
+                    result[each_object]= author
+            return Response(result, status = 200)
         except Like.DoesNotExist:
-            return HttpResponse("Author not found.", status = 401)
+            return HttpResponse("Like not found.", status = 401)
+
+
+    #Unlike a post
+    def delete(self, request, author_id, post_id, like_id):
+
+        # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
+
+        try:
+            like = Like.objects.get(pk=like_id)
+            like.delete()
+            return HttpResponse("Successfully unliked the post.", status=201)
+        except  Author.DoesNotExist:
+            return HttpResponse("Like object not found.", status=401) 
