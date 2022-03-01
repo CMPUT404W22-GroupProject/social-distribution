@@ -14,6 +14,23 @@ from like.serializers import LikeSerializer
 class LikeList(APIView):
     # Get all Likes, for all authors
     def get(self, request, author_id, post_id, comment_id=""): 
+        try:
+            Author.objects.get(pk=author_id)
+        except Author.DoesNotExist:
+            return HttpResponse("Author not found", status=404)
+
+        try:
+            Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return HttpResponse("Post not found", status=404)
+        
+        try:
+            if comment_id!="":
+                Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            return HttpResponse("Comment not found", status=404)
+
+
         #Creating the links to objects
         http_host = request.META.get('HTTP_HOST')
         if http_host[0]!="h":
@@ -75,6 +92,22 @@ class LikeList(APIView):
 
     # Add a like object FOR POSTS
     def post(self, request, author_id, post_id, comment_id=""):
+        try:
+            Author.objects.get(pk=author_id)
+        except Author.DoesNotExist:
+            return HttpResponse("Author not found", status=404)
+
+        try:
+            Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return HttpResponse("Post not found", status=404)
+        
+        try:
+            if comment_id!="":
+                Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            return HttpResponse("Comment not found", status=404)
+
         # Mutable copy
         if comment_id=="":
             request_data = request.data.copy()
@@ -90,6 +123,7 @@ class LikeList(APIView):
             else:
                 return Response(serializer.errors, status = 400)
         else:
+            
             # Mutable copy
             request_data = request.data.copy()
             serializer = LikeSerializer(data = request_data)
@@ -108,6 +142,28 @@ class LikedDetails(APIView):
     # We require a author_id to be passed with the request (in the url) to get a like object
     # Get the likes of a specific author
     def get(self, request, author_id, post_id, like_id, comment_id=""):
+
+        try:
+            Author.objects.get(pk=author_id)
+        except Author.DoesNotExist:
+            return HttpResponse("Author not found", status=404)
+
+        try:
+            Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return HttpResponse("Post not found", status=404)
+        
+        try:
+            if comment_id!="":
+                Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            return HttpResponse("Comment not found", status=404)
+
+        try:
+            Like.objects.get(pk=like_id)
+        except Like.DoesNotExist:
+            return HttpResponse("Like not found", status=404)
+
         http_host = request.META.get('HTTP_HOST')
         if http_host[0]!="h":
             http_host = "http://"+http_host
@@ -166,6 +222,29 @@ class LikedDetails(APIView):
 
     #Unlike a post or comment
     def delete(self, request, author_id, post_id, like_id, comment_id=""):
+
+        try:
+            Author.objects.get(pk=author_id)
+        except Author.DoesNotExist:
+            return HttpResponse("Author not found", status=404)
+
+        try:
+            Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return HttpResponse("Post not found", status=404)
+        
+        try:
+            if comment_id!="":
+                Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            return HttpResponse("Comment not found", status=404)
+
+        try:
+            Like.objects.get(pk=like_id)
+        except Like.DoesNotExist:
+            return HttpResponse("Like not found", status=404)
+
+
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
         if comment_id=="":
             #FOR POSTS
