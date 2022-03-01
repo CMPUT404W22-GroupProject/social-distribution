@@ -4,16 +4,35 @@ import PersonIcon from '@mui/icons-material/Person'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import CommentIcon from '@mui/icons-material/Comment'
 import ShareIcon from '@mui/icons-material/Share'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import Popup from '../components/popup/Popup'
 import CommentSection from './commentSection/CommentSection'
+import axios from "axios"
 
-function Post(){
+function Post({post}){
 
     const [buttonPopup, setButtonPopup] = useState(false);
     const [like, setLike] = useState(6); //initial like value obtained from server
     const [isLiked, setIsLiked] = useState(false);
     const commentCount = 5; //comment counter obtained from server
+    const [author, setAuthor] = useState({});
+
+    console.log("THIS IS POST", post)
+
+    useEffect(() => {
+
+        const fetchAuthor = async () => {
+            const result = await axios.get("authors/1");
+           
+        }
+
+        fetchAuthor();
+        
+    },[])
+
+
+
+
 
     const likeHandler = () => {
 
