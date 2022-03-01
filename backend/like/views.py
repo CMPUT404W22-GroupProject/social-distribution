@@ -18,18 +18,15 @@ class LikeList(APIView):
             Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
             return HttpResponse("Author not found", status=404)
-
         try:
             Post.objects.get(pk=post_id)
         except Post.DoesNotExist:
             return HttpResponse("Post not found", status=404)
-        
         try:
             if comment_id!="":
                 Comment.objects.get(pk=comment_id)
         except Comment.DoesNotExist:
             return HttpResponse("Comment not found", status=404)
-
 
         #Creating the links to objects
         http_host = request.META.get('HTTP_HOST')
@@ -96,12 +93,10 @@ class LikeList(APIView):
             Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
             return HttpResponse("Author not found", status=404)
-
         try:
             Post.objects.get(pk=post_id)
         except Post.DoesNotExist:
             return HttpResponse("Post not found", status=404)
-        
         try:
             if comment_id!="":
                 Comment.objects.get(pk=comment_id)
@@ -114,7 +109,6 @@ class LikeList(APIView):
             serializer = LikeSerializer(data = request_data)
             author1 = Author.objects.get(pk=serializer.initial_data['author'])
             post1 = Post.objects.get(pk=post_id)
-
             if serializer.is_valid():
                 serializer.save(summary = author1.displayName + " likes your post")
                 serializer.save(author = author1)
@@ -123,13 +117,11 @@ class LikeList(APIView):
             else:
                 return Response(serializer.errors, status = 400)
         else:
-            
             # Mutable copy
             request_data = request.data.copy()
             serializer = LikeSerializer(data = request_data)
             author1 = Author.objects.get(pk=serializer.initial_data['author'])
             comment1 = Comment.objects.get(pk=comment_id)
-
             if serializer.is_valid():
                 serializer.save(summary = author1.displayName + " likes your comment")
                 serializer.save(author = author1)
@@ -142,23 +134,19 @@ class LikedDetails(APIView):
     # We require a author_id to be passed with the request (in the url) to get a like object
     # Get the likes of a specific author
     def get(self, request, author_id, post_id, like_id, comment_id=""):
-
         try:
             Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
             return HttpResponse("Author not found", status=404)
-
         try:
             Post.objects.get(pk=post_id)
         except Post.DoesNotExist:
             return HttpResponse("Post not found", status=404)
-        
         try:
             if comment_id!="":
                 Comment.objects.get(pk=comment_id)
         except Comment.DoesNotExist:
             return HttpResponse("Comment not found", status=404)
-
         try:
             Like.objects.get(pk=like_id)
         except Like.DoesNotExist:
@@ -222,28 +210,23 @@ class LikedDetails(APIView):
 
     #Unlike a post or comment
     def delete(self, request, author_id, post_id, like_id, comment_id=""):
-
         try:
             Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
             return HttpResponse("Author not found", status=404)
-
         try:
             Post.objects.get(pk=post_id)
         except Post.DoesNotExist:
             return HttpResponse("Post not found", status=404)
-        
         try:
             if comment_id!="":
                 Comment.objects.get(pk=comment_id)
         except Comment.DoesNotExist:
             return HttpResponse("Comment not found", status=404)
-
         try:
             Like.objects.get(pk=like_id)
         except Like.DoesNotExist:
             return HttpResponse("Like not found", status=404)
-
 
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
         if comment_id=="":
