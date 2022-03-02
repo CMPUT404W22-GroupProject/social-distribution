@@ -1,29 +1,25 @@
 import React, { useEffect, useContext } from 'react'
 import { useRef, useState, iseEffect } from 'react';
 import './login.css';
-import { useDispatch } from 'react-redux';
-import { login } from '../../features/userSlice';
+
+import UserContext from '../../context/userContext';
+import { useNavigate } from 'react-router-dom';
 
 
 const Login = () => {
 
-    const[id, setId] = useState("");
+    const navigate = useNavigate();
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
+    
+    const {id, setId} = useContext(UserContext);
 
-
-    const dispatch = useDispatch();
+    const {loggedIn, setLoggedIn} = useContext(UserContext)
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        dispatch(login({
-            id: id,
-            email: email,
-            password: password,
-            loggedIn: true
-        }))
-
+        setLoggedIn(true)
+        navigate('/home')
     }
 
     return (
@@ -31,7 +27,7 @@ const Login = () => {
             <form className='login_form' onSubmit={(e) => handleSubmit(e)} >
                 <h1>Login</h1>
 
-                <input type='id' placeholder='123' 
+                <input type='id' placeholder='id' 
                     value={id} 
                     onChange={(e) => setId(e.target.value)}/>
 
@@ -45,9 +41,6 @@ const Login = () => {
 
                 <button className='submit_btn'>Log In</button>
             </form>
-
-            
-
         </div>
     )
 }
