@@ -8,18 +8,25 @@ import {useState, useEffect} from 'react'
 import Popup from '../components/popup/Popup'
 import CommentSection from './commentSection/CommentSection'
 import axios from "axios"
+import {format} from "timeago.js"
 
 function Post({post}){
 
     const [buttonPopup, setButtonPopup] = useState(false);
     const [like, setLike] = useState(6); //initial like value obtained from server
     const [isLiked, setIsLiked] = useState(false);
-    const commentCount = 5; //comment counter obtained from server
-    const [author, setAuthor] = useState({});
+    const hasImage = false;
+    const commentCount = post.count; //comment counter obtained from server
+    const author = post.author;
+    const commentsSrc = post.commentsSrc;
+    const currentUserId = 1;
+    const currentUserName = "Gurjog Singh"
 
-    console.log("THIS IS POST", post)
+    //console.log("THIS IS POST", post);
 
-    useEffect(() => {
+   
+
+    /* useEffect(() => {
 
         const fetchAuthor = async () => {
             const result = await axios.get("authors/1");
@@ -29,12 +36,17 @@ function Post({post}){
         fetchAuthor();
         
     },[])
-
-
-
-
-
+ */
     const likeHandler = () => {
+
+        var newLike = {
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": currentUserName + " likes your post",
+            "type": "Like",
+            "author": post.author,
+            "object": post.id
+        }
+        {!isLiked && console.log("LIKE OBJECT: ",newLike)}
 
         setLike(isLiked ? like - 1: like + 1); //if user has already liked it and called, will decrement. if user hasnt liked, will increment. 
         setIsLiked(!isLiked) //changes isliked state of user
@@ -54,17 +66,18 @@ function Post({post}){
                     <div className="postTopLeft">
                     {/* <img className="postProfileImg" /> */}
                     <PersonIcon className="postProfileImg"/>
-                    <span className="postUsername">Bob</span>
-                    <span className="postDate">1 hour ago</span>
+                    <span className="postUsername">{author.displayName}</span>
+                    <span className="postDate">{format(post.published)}</span>
                      </div> 
                 </Card.Header>
                 <Card.Body className="text-center">
                         <Card.Text>
-                            With supporting text below as a natural lead-in to additional content.
+                            {post.description}
                         </Card.Text>
                      
                 </Card.Body>
-                <Card.Img className = "postImage" variant="bottom" src="holder.js/100px180" />
+                {hasImage && <Card.Img className = "postImage" variant="bottom" src="holder.js/100px180" /> }
+    
                 <Card.Footer className="text-muted">
                     <div className="postOptions">
                 {/* <Button variant="primary" onClick={() => setButtonPopup(true)} >Comment Section</Button> */}
@@ -94,8 +107,8 @@ function Post({post}){
             </Card>
 
             <Popup trigger = {buttonPopup} setTrigger = {setButtonPopup}>
-                {/* passing in current user id */}
-                <CommentSection currentUserId = "1"/>
+                {/* passing in current user id and  sending in post link */}
+                <CommentSection currentUserId = {currentUserId} commentsId = {post.comments}/>
             </Popup>
 
         </div>
