@@ -10,7 +10,7 @@ class Comment(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="comment_author", on_delete=models.DO_NOTHING)
     comment = models.CharField(max_length=255)
     contentType = models.CharField(max_length=255)
-    published = models.DateTimeField(efault=timezone.now)
+    published = models.DateTimeField(default=timezone.now)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # id = models.URLField(primary_key=True)
     post = models.ForeignKey('post.Post', related_name="comment_post", on_delete=models.CASCADE)
