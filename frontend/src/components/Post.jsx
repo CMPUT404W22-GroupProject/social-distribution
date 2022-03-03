@@ -17,41 +17,68 @@ function Post({post}){
     const [isLiked, setIsLiked] = useState(false);
     const hasImage = false;
     const commentCount = post.count; //comment counter obtained from server
-    const author = post.author;
+    const postId = post.id;
+    const authorId = post.author;
+    const [author, setAuthor] = useState({});
     const commentsSrc = post.commentsSrc;
     const currentUserId = 1;
     const currentUserName = "Gurjog Singh"
+    const [likeId, setLikeId] = useState(0);
 
     //console.log("THIS IS POST", post);
 
    
 
-    /* useEffect(() => {
-
+     useEffect(() => {
         const fetchAuthor = async () => {
-            const result = await axios.get("authors/1");
-           
+            const result = await axios.get("authors/" + authorId + "/");
+            setAuthor(result.data);
         }
-
+        const fetchLikeCount = async () => {
+            const result = await axios.get("/authors/f9d6c844-b5d7-4b7f-b84b-d623e3dedf85/posts/0640839f-698a-420b-8c25-ef1422832b76/likes");
+            setLike(result.data.length);
+        }
+        fetchLikeCount();
         fetchAuthor();
-        
     },[])
- */
-    const likeHandler = () => {
+ 
+    const likeHandler = async () => {
 
         var newLike = {
-            "@context": "https://www.w3.org/ns/activitystreams",
-            "summary": currentUserName + " likes your post",
-            "type": "Like",
             "author": post.author,
-            "object": post.id
         }
-        {!isLiked && console.log("LIKE OBJECT: ",newLike)}
+
+        
+        if (!isLiked){
+            console.log("LIKE OBJECT: ",newLike);
+            try {
+                await axios.post("/authors/f9d6c844-b5d7-4b7f-b84b-d623e3dedf85/posts/0640839f-698a-420b-8c25-ef1422832b76/likes", newLike)
+                .then((response) => {
+                    console.log("THIS IS THE DATA",response.data);
+                    setLikeId(response.data.id);
+                });
+            } catch (error) {
+                console.log(error)
+            }
+        }  else {
+            console.log("DELETED LIKE");
+            try {
+                await axios.delete("/authors/f9d6c844-b5d7-4b7f-b84b-d623e3dedf85/posts/0640839f-698a-420b-8c25-ef1422832b76/likes/" + likeId)
+            } catch (error) {
+                console.log(error)
+            }
+
+        } 
 
         setLike(isLiked ? like - 1: like + 1); //if user has already liked it and called, will decrement. if user hasnt liked, will increment. 
         setIsLiked(!isLiked) //changes isliked state of user
 
         console.log("like changed!: ", like, isLiked);
+
+        
+
+
+
     }
 
     const shareHandler = () => {

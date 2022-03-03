@@ -8,6 +8,9 @@ import PeopleIcon from '@mui/icons-material/People'
 import { useRef } from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import UserContext from '../../context/userContext';
+
+
 
 
 
@@ -23,16 +26,17 @@ function CreatePost(){
     const [isFriend, setIsFriend] = useState(false);
     const [isUnlisted, setIsUnlisted] = useState(false);
     const [author, setAuthor] = useState([]);
+    const {id, setId} = useState(UserContext);
     //const isTextareaDisabled = postTitle.current.value.length === undefined
     //|| postDescription.current.value.length === 0 || 
     // postContent.current.value.length === 0 || postTags.current.value.length === 0
 
-
+    console.log("USER_ID: ", id);
 
     useEffect(() => {
 
       const fetchAuthor = async () => {
-          const result = await axios.get("/authors/1");
+          const result = await axios.get("/authors/f9d6c844-b5d7-4b7f-b84b-d623e3dedf85");
           setAuthor(result.data)
       }
 
@@ -78,7 +82,7 @@ function CreatePost(){
           "origin": "",
           "description": postDescription.current.value,
           "contentType": "text/plain",
-          //"author": author,
+          "author": 'f9d6c844-b5d7-4b7f-b84b-d623e3dedf85',
           "content": postContent.current.value,
           "categories": postTags.current.value,
           "count": 0,
@@ -106,7 +110,15 @@ function CreatePost(){
 
         try {
 
-         await axios.post("/authors/1/posts/", newPost);
+         await axios.post("/authors/f9d6c844-b5d7-4b7f-b84b-d623e3dedf85/posts/", newPost)
+         
+         /* .then((response) => {
+          console.log(response.data);
+          console.log(response.status);
+          console.log(response.statusText);
+          console.log(response.headers);
+          console.log(response.config);
+        }); */;
 
         } catch (error) {
           console.log(error)
