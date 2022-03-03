@@ -1,3 +1,4 @@
+from inbox.models import Inbox
 from post.models import Post
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from author.serializers import AuthorsSerializer
@@ -50,6 +51,7 @@ class PostSerializer(ModelSerializer):
 
     def create(self, validated_data):
         new_post = Post.objects.create(**validated_data)
+        Inbox.create_object_from_like(new_post) #Send post to inbox
         return new_post
 
     def update(self, instance, validated_data):
