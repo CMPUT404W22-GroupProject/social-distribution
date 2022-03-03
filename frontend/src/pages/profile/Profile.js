@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react' 
-import Feed from '../components/feed/Feed'
-import UserContext from '../context/userContext';
+import UserContext from '../../context/userContext';
 import axios from "axios"
-import Post from '../components/Post';
+import Post from '../../components/Post'
 
 
-function Home(){
+function Profile(){
 
     const {id, setId} = useContext(UserContext);
     const [authorData, setAuthorData] = useState('')
@@ -38,4 +37,4 @@ function Home(){
     )
 }
 
-export default Home;
+export default Profile;
