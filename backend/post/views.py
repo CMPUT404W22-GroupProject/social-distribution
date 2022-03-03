@@ -6,7 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .pagination import PostPageNumberPagination
+from rest_framework import permissions
 import os
 
 from post.serializers import PostSerializer
@@ -16,9 +18,21 @@ class PostList(ListCreateAPIView):
     serializer_class = PostSerializer
     pagination_class = PostPageNumberPagination
     author_id = None
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return Post.objects.filter(author_id=self.author_id).order_by('published')
+
+    # def form_valid(self, form):
+    #     form.instance.author = self.request.user
+    #     return super(PostList, self).form_valid(form)
+
+    # def get_user(self):
+    #     user = self.request.user
+    #     return user
+
+    # def perform_create(self, serializer):
+    #     serializer.save(author=self.get_user())
     
     # get recent posts of author
     def list(self, request, author_id):
@@ -38,10 +52,10 @@ class PostList(ListCreateAPIView):
     def create(self, request, author_id):
         try:
             Author.objects.get(pk=author_id)
-        except Author.DoesNotExist:
+        except Author.DosesNotExist:
             return HttpResponse("Author", status=404)
 
-        serializer = PostSerializer(data = request.data)
+        serializer = PostSerializer(data = request.data, context={'listRequest':request})
         
         if serializer.is_valid():
             serializer.save()
@@ -66,7 +80,7 @@ class PostDetails(APIView):
     def post(self, request, post_id, author_id):
         try: 
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
-            serializer = PostSerializer(data = post.data)
+            serializer = PostSerializer(data = request.data, context={'detailsRequest':request})
         except Post.DoesNotExist:
             return HttpResponse("Post not found.", status=401)
 
@@ -99,7 +113,7 @@ class PostDetails(APIView):
             return HttpResponse("Not right method", status=400)
         except Post.DoesNotExist:
             post = self.get_object(post_id)
-            serializer = PostSerializer(data = post.data)
+            serializer = PostSerializer(data = request.data, context={'detailsRequest':request})
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status = 201)
