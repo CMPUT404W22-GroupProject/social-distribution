@@ -35,10 +35,10 @@ class CommentList(ListCreateAPIView):
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer =  CommentSerializer(page, many=True, context={'request':request})
+            serializer =  CommentSerializer(page, many=True, context={'listRequest':request})
             return self.get_paginated_response(serializer.data)
 
-        serializer =  CommentSerializer(queryset, many=True, context={'request':request})
+        serializer =  CommentSerializer(queryset, many=True, context={'listRequest':request})
         return Response(serializer.data, status=200)
 
 
@@ -62,7 +62,7 @@ class CommentDetails(APIView):
     def get(self, request, author_id, post_id, comment_id):
         try:
             comment = Comment.objects.filter(post=post_id).get(pk=comment_id)
-            serializer = CommentSerializer(comment, context={'request':request})
+            serializer = CommentSerializer(comment, context={'detailsRequest':request})
             return Response(serializer.data, status=200)
         except Comment.DoesNotExist:
             return HttpResponse("Comment not found", status = 401)
