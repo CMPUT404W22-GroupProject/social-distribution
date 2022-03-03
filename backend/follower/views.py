@@ -14,9 +14,12 @@ import os
 class FollowerList(APIView):
 
     def get(self, request, author_id):
-        follower = Follower.objects.get(author=author_id)
-        serializer = FollowerSerializer(follower, context={'request':request})
-        return Response(serializer.data, status=200)
+        try:
+            follower = Follower.objects.get(author=author_id)
+            serializer = FollowerSerializer(follower, context={'request':request})
+            return Response(serializer.data, status=200)
+        except Follower.DoesNotExist:
+            return Response("This user doesn't have followers yet", status=400)
 
 class FollowerDetails(APIView):
 
@@ -26,7 +29,7 @@ class FollowerDetails(APIView):
             item = follower.items.get(pk=foreign_author_id)
             serializer = AuthorsSerializer(item, context={'request':request})
             return Response(serializer.data, status=200)
-        except:
+        except Follower.DoesNotExist:
             return Response("You are not following this user", status=404)
     
     def put(self, request, author_id, foreign_author_id):

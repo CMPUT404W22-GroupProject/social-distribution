@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .pagination import PostPageNumberPagination
 from rest_framework import permissions
 import os
+from rest_framework.permissions import IsAuthenticated
 
 from post.serializers import PostSerializer
 
@@ -23,17 +24,6 @@ class PostList(ListCreateAPIView):
     def get_queryset(self):
         return Post.objects.filter(author_id=self.author_id).order_by('published')
 
-    # def form_valid(self, form):
-    #     form.instance.author = self.request.user
-    #     return super(PostList, self).form_valid(form)
-
-    # def get_user(self):
-    #     user = self.request.user
-    #     return user
-
-    # def perform_create(self, serializer):
-    #     serializer.save(author=self.get_user())
-    
     # get recent posts of author
     def list(self, request, author_id):
 
@@ -54,6 +44,8 @@ class PostList(ListCreateAPIView):
             Author.objects.get(pk=author_id)
         except Author.DosesNotExist:
             return HttpResponse("Author", status=404)
+        if request.data.get('author') != str(author_id):
+            return Response("You cannot make a post for this URL", status=400)
 
         serializer = PostSerializer(data = request.data, context={'request':request})
         
@@ -65,8 +57,8 @@ class PostList(ListCreateAPIView):
 
 
 class PostDetails(APIView):
-
     # get post
+    # permission_classes = [IsAuthenticated]
     def get(self, request, post_id, author_id):
         try:
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
@@ -78,6 +70,9 @@ class PostDetails(APIView):
     #TODO add authentication
     # edit post
     def post(self, request, post_id, author_id):
+        if request.data.get('author') != str(author_id):
+            return Response("You cannot make a post for this URL", status=400)
+
         try: 
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
             serializer = PostSerializer(data = request.data, context={'request':request})
