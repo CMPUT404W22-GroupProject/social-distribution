@@ -28,8 +28,24 @@ class Author(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['displayName']
 
+    #The following are used in Like app
+    def __str__(self):
+        return self.type+","+self.host+","+self.displayName+","+self.url+","+self.github
+
+    def toString(self):
+        return {"type: ":self.type,
+                "host: ":self.host,
+                "displayName: " :self.displayName,
+                "url: ": self.url,
+                "github: ":self.github}
+
+    # def get_full_name(self):
+    #     return self.name
+
+    # def get_short_name(self):
+    #     return self.name.split()[0]
+
 @receiver(post_delete, sender=Author)
 def recipe_image_delete(sender, instance, **kwargs):
     if instance.profileImage:
         instance.profileImage.delete(False)
-        
