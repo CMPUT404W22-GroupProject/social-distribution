@@ -14,42 +14,64 @@ const CommentSection = ({currentUserId, commentsId}) => {
     const commentsPath = commentsUrl.pathname;
     const [author, setAuthor] = useState([]);
 
+    console.log("COMMENTSPATH: ", commentsPath);
+    
+    const fetchComments = async () => {
+        const result = await axios.get(commentsPath);
+        
+        setBackendComments(result.data.comments)
+    }
+
+    const fetchAuthor = async () => {
+        const result = await axios.get("/authors/1");
+        setAuthor(result.data)
+    }
+
     
 
     useEffect(() => {
         // this is where we fetch comments from the api
 
-        const fetchComments = async () => {
-            const result = await axios.get(commentsPath);
-            
-            setBackendComments(result.data.comments)
-        }
-
-        const fetchAuthor = async () => {
-            const result = await axios.get("/authors/1");
-            setAuthor(result.data)
-        }
-  
         fetchAuthor();
         fetchComments();
         
     }, []);
 
-const addComment = (text) => {
+const addComment  = async (text) => {
     //console.log("addComment:", text);
-    setBackendComments([text, ...backendComments])
+    //setBackendComments([text, ...backendComments])
 
     var date = new Date();
     var formattedDate = date.toISOString();
 
     var newComment = {
         "type": "comment",
+        //"author": author,
+        "comment": text,
+        "commentType": "text/markdown",
+        "published": formattedDate,
+    }
+    var newInternalComment = {
+        "type": "comment",
         "author": author,
         "comment": text,
         "commentType": "text/markdown",
         "published": formattedDate,
     }
-    setBackendComments([newComment, ...backendComments])
+    
+    try {
+
+        await axios.post(commentsPath + '/', newComment);
+
+       } catch (error) {
+         console.log(error)
+
+
+       }
+       //fetch from server again if comment is uploaded, ideally new one should show as well or display is internally
+       setBackendComments([newInternalComment, ...backendComments])
+       //OR
+       //fetchComments();
 
     console.log("addComment:", newComment);
 };

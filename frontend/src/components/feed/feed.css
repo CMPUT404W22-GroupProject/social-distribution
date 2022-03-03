@@ -1,3 +1,16 @@
 div {
   text-align: center;
 }
+
+.feedCreatePost {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.feedCreatePostIcon {
+  width: 3em !important;
+  align-items: center;
+  height: 3em !important;
+  cursor: pointer;
+  align-self: center;
+}

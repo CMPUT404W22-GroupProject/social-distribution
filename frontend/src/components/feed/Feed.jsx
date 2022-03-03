@@ -5,6 +5,8 @@ import Follow from "../follow/follow"
 import Like from '../like/like'
 import { useEffect, useState } from "react";
 import axios from "axios"
+import Popup from '../popup/Popup'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 function Feed(){
 
@@ -12,6 +14,7 @@ function Feed(){
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
     const userId = 1;
+    const [buttonPopup, setButtonPopup] = useState(false);
 
 
     useEffect(() => {
@@ -31,7 +34,11 @@ function Feed(){
     return (
 
         <div>
-        <CreatePost/>
+            <div className="feedCreatePost" >
+                        <AddCircleOutlineIcon htmlColor="blue" className="feedCreatePostIcon" onClick={() => setButtonPopup(true)}/>
+                        <span className="feedCreatePostText">Create Post!</span>
+                    </div>
+        
         <Follow/>
         <Like/>
         {posts.map((post) => (
@@ -45,7 +52,9 @@ function Feed(){
         <Post/>
         <Post/> */}
 
-
+<Popup trigger = {buttonPopup} setTrigger = {setButtonPopup}>
+                <CreatePost/>
+            </Popup>
 
         </div>
     )

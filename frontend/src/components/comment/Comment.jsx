@@ -1,8 +1,9 @@
 import React from "react";
-import '../comments.css'
+import '../comment/comment.css'
 import {format} from "timeago.js"
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import {useState, useEffect} from 'react';
+import PersonIcon from '@mui/icons-material/Person';
 
 const Comment = ({comment, currentUserId}) => {
         // commentBody, commentAuthor, commentDate, 
@@ -32,16 +33,14 @@ const Comment = ({comment, currentUserId}) => {
 
     return (
         <div className="comment">
-            <div className="comment-image-container">
-                <img alt="user-icon"></img>
-            </div>
+            <PersonIcon className="comment-image-container"/>
             <div className="comment-right-part">
-                <div className="comment-content">
                     <div className="comment-author">{comment.author.displayName}</div>
                     <div className="comment-date">{format(comment.published)}</div>
-                </div>
-           
-                { !isLiked && <div className="comment-left-part" onClick={likeHandler}>
+                
+            </div>
+            <div className="comment-text">{comment.comment}</div>
+            { !isLiked && <div className="comment-left-part" onClick={likeHandler}>
                         <FavoriteIcon htmlColor="grey" className="comment-like" />
                         <span className="comment-like-counterr">{like}</span>
                     </div> }
@@ -50,9 +49,6 @@ const Comment = ({comment, currentUserId}) => {
                         <FavoriteIcon htmlColor="red" className="comment-like" />
                         <span className="comment-like-counterr">{like}</span>
                     </div> }
-                
-                <div className="comment-text">{comment.comment}</div>
-            </div>
         </div>
     )
 };

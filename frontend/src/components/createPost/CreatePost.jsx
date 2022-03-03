@@ -23,6 +23,9 @@ function CreatePost(){
     const [isFriend, setIsFriend] = useState(false);
     const [isUnlisted, setIsUnlisted] = useState(false);
     const [author, setAuthor] = useState([]);
+    //const isTextareaDisabled = postTitle.current.value.length === undefined
+    //|| postDescription.current.value.length === 0 || 
+    // postContent.current.value.length === 0 || postTags.current.value.length === 0
 
 
 
@@ -75,7 +78,7 @@ function CreatePost(){
           "origin": "",
           "description": postDescription.current.value,
           "contentType": "text/plain",
-          "author": author,
+          //"author": author,
           "content": postContent.current.value,
           "categories": postTags.current.value,
           "count": 0,
@@ -99,19 +102,19 @@ function CreatePost(){
           newPost["unlisted"] = true;
         }
 
-
-
         console.log(newPost)
 
         try {
 
-         await axios.create("/authors/1/posts", newPost);
+         await axios.post("/authors/1/posts/", newPost);
 
         } catch (error) {
           console.log(error)
 
 
         }
+
+        alert("Shared! Check profile to see post!");
 
 
     }
@@ -189,7 +192,7 @@ function CreatePost(){
 
                 </div>
 
-                <Button className="createPostButton" type = "submit">Share</Button>
+                <Button className="createPostButton" type = "submit"  >Share</Button>
         
             </form>
           </div>

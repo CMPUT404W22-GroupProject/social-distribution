@@ -8,6 +8,9 @@
   margin-right: 27.5%;
   margin-bottom: 5%;
 }
+.card {
+  position: static;
+}
 .postTopLeft {
   display: flex;
   align-items: center;

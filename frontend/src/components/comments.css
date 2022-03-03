@@ -9,6 +9,8 @@
 
 .comments-container {
   margin-top: 40px;
+  overflow: scroll;
+  height: 250px;
 }
 
 .comment-form-title {
@@ -39,35 +41,4 @@
 .comment-form-button:disabled {
   opacity: 0.7;
   cursor: default;
-}
-
-.comment {
-  display: flex;
-  margin-bottom: 28px;
-}
-
-.comment-image-container {
-  margin-right: 12px;
-}
-
-.comment-image-container img {
-  border-radius: 50px;
-}
-
-.comment-right-part {
-  width: 100%;
-}
-
-.comment-content {
-  display: flex;
-}
-
-.comment-author {
-  margin-right: 8px;
-  font-size: 20px;
-  color: rgb(59, 130, 246);
-}
-
-.comment-text {
-  font-size: 18px;
 }
