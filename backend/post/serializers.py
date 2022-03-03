@@ -1,24 +1,28 @@
+from tkinter import E
 from post.models import Post
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, ReadOnlyField
 from author.serializers import AuthorsSerializer
 import os
 import json
 import requests
 from comment.views import CommentList
 from django.urls import path
+from comment.models import Comment
 
 # Basic Post Serializer
 class PostSerializer(ModelSerializer):
-    author = AuthorsSerializer(many=False, read_only=True)
+    # author = AuthorsSerializer(many=False, read_only=True)
+    # author = ReadOnlyField(source='author.id')
     commentsSrc = SerializerMethodField()
     id = SerializerMethodField()
     comments = SerializerMethodField()
+    count = SerializerMethodField()
 
     class Meta:
         model = Post
         fields = ('type', 'title', 'id', 'source', 'origin', 'description', 'contentType', 'content', 'author', 'categories', 'count', 
                     'comments', 'commentsSrc', 'published', 'visibility', 'unlisted')
-
+                    
     def get_id(self, post):
         request = self.context.get('listRequest')
         if request:
@@ -26,7 +30,7 @@ class PostSerializer(ModelSerializer):
         else:
             request = self.context.get('detailsRequest')
             return request.build_absolute_uri()
-    
+
     def get_comments(self, post):
         request = self.context.get('listRequest')
         if request:
@@ -47,6 +51,9 @@ class PostSerializer(ModelSerializer):
             return response
         except:
             return {}
+
+    def get_count(self, post):
+        return Comment.objects.filter(post=post.uuid).count()
 
     def create(self, validated_data):
         new_post = Post.objects.create(**validated_data)
