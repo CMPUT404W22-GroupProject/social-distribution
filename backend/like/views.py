@@ -106,6 +106,7 @@ class LikeList(APIView):
                 serializer.save(summary = author1.displayName + " likes your comment")
                 serializer.save(object1 = comment1)
             serializer.save(author = author1)
+            
             return Response(serializer.data, status = 201)
         else:
             return Response(serializer.errors, status = 400)
@@ -156,7 +157,8 @@ class LikedDetails(APIView):
                     result["object"]= post_object
                 elif each_object == "object" and comment_id=="":
                     result[each_object] = post_object
-                elif each_object != "author" and each_object!="object" and each_object!="id":
+                elif (each_object != "author" and each_object!="object" and each_object!="id"
+                    and not (each_object == "object" and comment_id!="") and not (each_object == "object1" and comment_id == "")):
                     result[each_object] = serializer.data[each_object]
                 elif each_object == "author":
                     result[each_object]= author
