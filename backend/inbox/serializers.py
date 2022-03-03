@@ -22,7 +22,6 @@ class InboxSerializer(ModelSerializer):
             url = url[:len(url)-6] # remove /inbox from link
             
             if inbox.like_object:
-                print("Like object")
                 url = url + "/posts/" +str(inbox.like_object.object.uuid) +'/likes/' + str(inbox.like_object.id)
             else:
                 print("Post object")

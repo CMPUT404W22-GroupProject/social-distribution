@@ -21,8 +21,8 @@ class Inbox(models.Model):
         return inbox
 
 
-    # @classmethod
-    # def create_object_from_post(cls, post):
-    #     inbox = cls(type="inbox", author = like.author, like_object = like)
-    #     inbox.save()
-    #     return inbox
+    @classmethod
+    def create_object_from_post(cls, post):
+        inbox = cls(type="inbox", author = post.author, post_object = post)
+        inbox.save()
+        return inbox
