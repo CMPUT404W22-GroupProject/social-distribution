@@ -43,7 +43,6 @@ class LikeList(APIView):
                 post_object = post_object + "/" + each_detail
 
         all_likes = Like.objects.all()
-        print(all_likes)
         serializer = LikeSerializer(all_likes, many = True)
         result = []
         if comment_id=="":
@@ -70,7 +69,6 @@ class LikeList(APIView):
             for each_object in serializer.data:
                 if not each_object['object1']:
                     continue
-                print("Its a comment")
                 level = {}
                 author = Author.objects.get(pk=each_object['author']).toString()
                 for each_item in each_object:
