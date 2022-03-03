@@ -9,8 +9,9 @@ class AuthorList(APIView):
     
     # Get all Authors
     def get(self, request): 
-        # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
-        # EX: return HttpResponse("You do not have permission to access this function.", status=403)
+        # if not request.user.is_authenticated:
+        #     return HttpResponse("You must be registered to access this function.", status = 401)
+
 
         all_authors = Author.objects.all()
         serializer = AuthorsSerializer(all_authors, many = True, context={'listRequest':request})
@@ -35,7 +36,10 @@ class AuthorDetails(APIView):
     
     # Get a specific author
     def get(self, request, author_id):
-        # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
+        
+        # if not request.user.is_authenticated:
+        #     return HttpResponse("You must be registered to access this function.", status = 401)
+
         try:
             author = Author.objects.get(pk=author_id)
             serializer = AuthorsSerializer(author, context={'detailsRequest':request})
@@ -47,7 +51,8 @@ class AuthorDetails(APIView):
     # Update an author
     def post(self, request, author_id):
 
-        # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
+        # if not request.user.is_authenticated:
+        #     return HttpResponse("You must be registered to access this function.", status = 401)
 
         try:
             author = Author.objects.get(pk=author_id)
@@ -56,23 +61,11 @@ class AuthorDetails(APIView):
 
         request_data = request.data.copy()
 
-        # Handle image change
-        # delete_image = False
-        # old_image = Author.profileImage
-        # new_image = request_data.get("profileImage")
-        # if new_image != old_image:
-        #     # set flag to delete image manually
-        #     delete_image = True
+
 
         serializer = AuthorsSerializer(author, data = request_data, partial=True, context={'detailsRequest':request})
         if serializer.is_valid():
             serializer.save()
-
-            # # delete image manually
-            # if delete_image:
-            #     if old_image and os.path.isfile(old_image.path):
-            #         os.remove(old_image.path)
-            #     author.save()
 
             return Response(serializer.data, status=200)
         else:
@@ -81,7 +74,8 @@ class AuthorDetails(APIView):
     # Delete an author
     def delete(self, request, author_id):
 
-        # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
+        # if not request.user.is_authenticated:
+        #     return HttpResponse("You must be registered to access this function.", status = 401)
 
         try:
             author = Author.objects.get(pk=author_id)

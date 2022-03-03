@@ -7,6 +7,7 @@ class AuthorModelTest(TestCase):
 
     def setUp(self):
         
+        # 127.0.0.1:8000 because there is no request being made via the server
         self.test_dict = {
              "host" : 'http://127.0.0.1:8000/',
              "displayName" : "testAuthor",
@@ -15,7 +16,7 @@ class AuthorModelTest(TestCase):
 
         self.author = Author.objects.create(**self.test_dict)
         
-        self.url = "http://127.0.0.1:8000/{0}".format(self.author.id)
+        self.url = "http://127.0.0.1:8000/{0}".format(self.author.uuid)
         self.author.url = self.url
 
     def testAuthorModel(self):

@@ -8,7 +8,7 @@ import json
 class AuthorsSerializer(ModelSerializer):
     class Meta:
         model = Author
-        fields = ("type", "id", "host", "displayName", "url", "github", )
+        fields = ("type", "id", "host", "displayName", "url", "github", "profileImage")
 
     id = SerializerMethodField()
     host = SerializerMethodField()
@@ -34,14 +34,16 @@ class AuthorsSerializer(ModelSerializer):
 
         # Gather host
         # May require tweaking, full_path might not be the way
-        try:
-            host = HttpRequest.request.get_full_path()
+        request = self.context.get('listRequest')
+        if not request:
+            request = self.context.get('detailsRequest')
+        host = request.build_absolute_uri().split("authors")[0]
 
-        except:
+        if host == "":
             host = 'http://127.0.0.1:8000/'
 
         # Build URL
-        url = host + str(new_author.id)
+        url = host + "authors/" + str(new_author.uuid)
         
         # Update Author object
         new_author.url = url
@@ -55,13 +57,13 @@ class AuthorsSerializer(ModelSerializer):
         instance.github = validated_data.get('github', instance.github)
 
         # Handle image change (delete old off filebase)
-        # old_image = instance.profileImage
-        # instance.profileImage = validated_data.get(' profileImage', old_image)
-        # # check if new image was given
-        # if instance.profileImage != old_image:
-        #     # delete old image
-        #     if old_image and os.path.isfile(old_image.path):
-        #         os.remove(old_image.path)
+        old_image = instance.profileImage
+        instance.profileImage = validated_data.get('profileImage', old_image)
+        # check if new image was given
+        if instance.profileImage != old_image:
+            # delete old image
+            if old_image and os.path.isfile(old_image.path):
+                os.remove(old_image.path)
         instance.save()
         
         return instance 
