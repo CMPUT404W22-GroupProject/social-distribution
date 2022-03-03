@@ -1,11 +1,12 @@
 from django.db import models
 import uuid
+from django.conf import settings
 # from author.models import Author
 # from post.models import Post
 
 class Comment(models.Model):
     type = models.CharField(default="comment", max_length=10)
-    author = models.ForeignKey('author.Author', related_name="comment_author", on_delete=models.DO_NOTHING)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="comment_author", on_delete=models.DO_NOTHING)
     comment = models.CharField(max_length=255)
     contentType = models.CharField(max_length=255)
     published = models.DateTimeField()

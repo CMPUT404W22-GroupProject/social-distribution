@@ -1,5 +1,5 @@
 from author.models import Author
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from django.http import HttpRequest
 import os
 import json
@@ -8,7 +8,25 @@ import json
 class AuthorsSerializer(ModelSerializer):
     class Meta:
         model = Author
-        fields = "__all__"
+        fields = ("type", "id", "host", "displayName", "url", "github", )
+
+    id = SerializerMethodField()
+    host = SerializerMethodField()
+
+    def get_id(self, author):
+        request = self.context.get('listRequest')
+        if request:
+            return request.build_absolute_uri() + str(author.uuid)
+        else:
+            request = self.context.get('detailsRequest')
+            return request.build_absolute_uri()
+    
+    def get_host(self, author):
+        request = self.context.get('listRequest')
+        if not request:
+            request = self.context.get('detailsRequest')
+        host = request.build_absolute_uri().split("authors")[0]
+        return host
 
     def create(self, validated_data):
         # Create author so we can get unique ID for URL + Host
