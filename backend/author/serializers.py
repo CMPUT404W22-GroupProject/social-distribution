@@ -41,35 +41,6 @@ class AuthorsSerializer(ModelSerializer):
     def create(self, validated_data):
         # Create author so we can get unique ID for URL + Host
         new_author = Author.objects.create(**validated_data)
-
-        # Gather host
-        # May require tweaking, full_path might not be the way
-# <<<<<<< tyler
-#         request = self.context.get('listRequest')
-#         if not request:
-#             request = self.context.get('detailsRequest')
-#         host = request.build_absolute_uri().split("authors")[0]
-
-#         if host == "":
-#             host = 'http://127.0.0.1:8000/'
-
-#         # Build URL
-#         url = host + "authors/" + str(new_author.uuid)
-# =======
-#         # try:
-#         #     host = HttpRequest.request.get_full_path()
-
-#         # except:
-#         #     host = 'http://127.0.0.1:8000/'
-
-#         # # Build URL
-#         # url = host + str(new_author.id)
-# >>>>>>> dev
-        
-        # Update Author object
-        # new_author.url = url
-        # new_author.host = host
-        # new_author.save()
         return new_author
 
     def update(self, instance, validated_data):

@@ -26,7 +26,6 @@ class FollowerDetails(APIView, LoginRequiredMixin):
     def get(self, request, author_id, foreign_author_id):
         try:
             follower = Follower.objects.get(author=author_id)
-            print(follower)
             item = follower.items.get(pk=foreign_author_id)
             serializer = AuthorsSerializer(item, context={'request':request})
             return Response(serializer.data, status=200)
