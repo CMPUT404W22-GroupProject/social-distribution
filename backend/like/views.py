@@ -109,16 +109,12 @@ class LikeList(APIView):
         serializer = LikeSerializer(data = request_data)
         author1 = Author.objects.get(pk=serializer.initial_data['author'])
         post1 = Post.objects.get(pk=post_id)
-
         if serializer.is_valid():
             if comment_id=="":
-                serializer.save(summary = author1.displayName + " likes your post")
-                serializer.save(object = post1)
+                serializer.save(summary = author1.displayName + " likes your POST", author = author1, object = post1)
             else:
                 comment1 = Comment.objects.get(pk=comment_id)
-                serializer.save(summary = author1.displayName + " likes your comment")
-                serializer.save(object = post1, object1 = comment1)
-            serializer.save(author = author1)
+                serializer.save(summary = author1.displayName + " likes your comment",  author = author1, object = post1, object1 = comment1)
             
             return Response(serializer.data, status = 201)
         else:

@@ -1,7 +1,9 @@
 from re import search
+import re
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, request
 from inbox.models import Inbox
+from like.serializers import LikeSerializer
 from post.models import Post
 from author.models import Author
 from rest_framework.views import APIView
@@ -26,7 +28,6 @@ class InboxList(ListCreateAPIView):
     
     #Get inbox 
     def list(self, request, author_id):
-
         try:
             Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
@@ -38,17 +39,15 @@ class InboxList(ListCreateAPIView):
         author = AuthorsSerializer(author5, context={'request':request})
         if page is not None:
             serializer =  InboxSerializer(page, many=True, context={'listRequest':request})
-
             for each_object in serializer.data:
-                each_object['author'] = author.data
+                each_object['author'] = author.data['id']
             return self.get_paginated_response(serializer.data)
-
         serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
         return Response(serializer.data, status=200)
 
-     #Create a new post
-    def create(self, request, author_id):
-        return HttpResponse("Sent to inbox", status=401) 
+      # Add a like object FOR POSTS
+    def post(self, request, author_id):
+        return HttpResponse("Sent to inbox", status=201) 
 
     #Clear inbox
     def delete(self, request, author_id):
