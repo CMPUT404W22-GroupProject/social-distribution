@@ -31,22 +31,19 @@ class LikeList(APIView):
     def get(self, request, author_id, post_id, comment_id=""): 
         self.checkErors(author_id,post_id, comment_id)
         author11 = Author.objects.get(pk=author_id)
+        post11 = Post.objects.get(pk=post_id)
+
         if comment_id!="":
             comment11 = Comment.objects.get(pk=comment_id)
-            try: 
-                likes = Like.objects.filter(author=author11, object1 = comment11).all()
-                if not likes:
-                    return Response({}, status = 200)
+            all_likes = Like.objects.filter(author=author11, object = post11, object1 = comment11).all()
+            if not all_likes:
+                return Response({}, status = 200)
+        else:
+            all_likes = Like.objects.filter(author=author11, object = post11).all()
+            if not all_likes:
+                return Response({}, status = 200)
 
-            except Like.DoesNotExist:
-                return Response({}, status = 200)
-        try: 
-            post11 = Post.objects.get(pk=post_id)
-            likes = Like.objects.filter(author=author11, object = post11).all()
-            if not likes:
-                return Response({}, status = 200)
-        except Like.DoesNotExist:
-            return Response({}, status = 200)
+
         # Creating the links to objects
         http_host = request.META.get('HTTP_HOST')
         if http_host[0]!="h":
@@ -59,7 +56,6 @@ class LikeList(APIView):
             if each_detail != "":
                 post_object = post_object + "/" + each_detail
 
-        all_likes = Like.objects.all()
         serializer = LikeSerializer(all_likes, many = True)
         result = []
         if comment_id=="":
@@ -109,17 +105,16 @@ class LikeList(APIView):
         request_data = request.data.copy()
         serializer = LikeSerializer(data = request_data)
         author1 = Author.objects.get(pk=serializer.initial_data['author'])
-        if comment_id !="":
-            comment1 = Comment.objects.get(pk=comment_id)
-        else:
-            post1 = Post.objects.get(pk=post_id)
+        post1 = Post.objects.get(pk=post_id)
+
         if serializer.is_valid():
             if comment_id=="":
                 serializer.save(summary = author1.displayName + " likes your post")
                 serializer.save(object = post1)
             else:
+                comment1 = Comment.objects.get(pk=comment_id)
                 serializer.save(summary = author1.displayName + " likes your comment")
-                serializer.save(object1 = comment1)
+                serializer.save(object = post1, object1 = comment1)
             serializer.save(author = author1)
             
             return Response(serializer.data, status = 201)
