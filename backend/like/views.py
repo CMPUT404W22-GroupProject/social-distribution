@@ -36,11 +36,11 @@ class LikeList(APIView):
 
         if comment_id!="":
             comment11 = Comment.objects.get(pk=comment_id)
-            all_likes = Like.objects.filter(author=author11, object = post11, object1 = comment11).all()
+            all_likes = Like.objects.filter(object = post11, object1 = comment11).all()
             if not all_likes:
                 return Response({}, status = 200)
         else:
-            all_likes = Like.objects.filter(author=author11, object = post11).all()
+            all_likes = Like.objects.filter(object = post11).all()
             if not all_likes:
                 return Response({}, status = 200)
 
