@@ -4,15 +4,22 @@ from django.http import HttpRequest
 import json
 from PIL import Image
 import tempfile
+import os
 
 class AuthorListTest(APITestCase):
     """Test the AuthorList class in views.py"""
 
     def setUp(self):
-        
+        image = Image.new('RGB', (123, 123))
+        temp = tempfile.NamedTemporaryFile(suffix='.jpg')
+        image.save(temp)
+        temp.seek(0)
+
+
         self.author_data = {
         "displayName" : "APITest",
         "github" : "https://github.com/CMPUT404W22-GroupProject/social-distribution",
+        "profileImage" : temp,
         }
     
     def testViewAuthors(self):
@@ -48,18 +55,24 @@ class AuthorDetailsTest(APITestCase):
 
     def setUp(self):
         
+        image = Image.new('RGB', (123, 123))
+        temp = tempfile.NamedTemporaryFile(suffix='.jpg')
+        image.save(temp)
+        temp.seek(0)
+        
         self.author_data = {
         "displayName" : "APITest",
         "github" : "https://github.com/CMPUT404W22-GroupProject/social-distribution",
+        "profileImage" : temp
         }
         
         # Get object and it's id
         response = self.client.post("/authors/", self.author_data)
-        self.author_id = response.data["id"]
+        self.author_id = response.data["id"].split("/")[-1]
         
         # What the host and url should be for automated test
-        self.host = 'http://127.0.0.1:8000/'
-        self.url = 'http://127.0.0.1:8000/{0}'.format(self.author_id)
+        self.host = 'http://testserver/'
+        self.url = 'http://testserver/authors/{0}'.format(self.author_id)
 
     def testAuthorDetails(self):
         """Test GET request for author's details"""
@@ -74,6 +87,7 @@ class AuthorDetailsTest(APITestCase):
         self.assertEqual(response.data["github"], self.author_data["github"])
         self.assertEqual(response.data["url"], self.url)
         self.assertEqual(response.data["host"], self.host)
+        self.assertNotEqual(response.data["profileImage"], None)
 
     def testAuthorUpdate(self):
         """Test POST request for author updating"""

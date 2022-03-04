@@ -20,12 +20,10 @@ class InboxSerializer(ModelSerializer):
             request = self.context.get('listRequest')
             url = request.build_absolute_uri()
             url = url[:len(url)-6] # remove /inbox from link
-            
             if inbox.like_object:
-                url = url + "/posts/" +str(inbox.like_object.object.uuid) +'/likes/' + str(inbox.like_object.id)
+                url = url + "/posts/" +str(inbox.like_object.object.uuid) + "/likes/" + str(inbox.like_object.id)
             else:
-                print("Post object")
-                # url = url + "/posts/" +str(inbox.post_object.object.uuid)
+                url = url + "/posts/" +str(inbox.post_object.uuid)
             response = requests.get(url).json()
             return response
         except:

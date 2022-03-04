@@ -23,7 +23,10 @@ class InboxList(ListCreateAPIView):
     
     # get recent posts of author
     def list(self, request, author_id):
-
+        try:
+            Author.objects.get(pk=author_id)
+        except Author.DoesNotExist:
+            return HttpResponse("Author does not exist", status=404)
         self.author_id = author_id
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
