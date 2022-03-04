@@ -25,29 +25,21 @@ class PostSerializer(ModelSerializer):
                     'comments', 'commentsSrc', 'published', 'visibility', 'unlisted')
                     
     def get_id(self, post):
-        request = self.context.get('listRequest')
-        if request:
-            return request.build_absolute_uri() + str(post.uuid)
-        else:
-            request = self.context.get('detailsRequest')
-            return request.build_absolute_uri()
+        request = self.context.get('request')
+        url_no_id = request.build_absolute_uri().split('/posts/')[0]
+        return url_no_id + '/posts/' + str(post.uuid)
 
     def get_comments(self, post):
-        request = self.context.get('listRequest')
-        if request:
-            return request.build_absolute_uri() + str(post.uuid) + '/comments'
-        else:
-            request = self.context.get('detailsRequest')
-            return request.build_absolute_uri() + 'comments'
+        request = self.context.get('request')
+        url_no_id = request.build_absolute_uri().split('/posts/')[0]
+        return url_no_id + '/posts/' + str(post.uuid) + '/comments'
+
     
     def get_commentsSrc(self, post):
         try:
-            request = self.context.get('listRequest')
-            if request:
-                url = request.build_absolute_uri() + str(post.uuid) + '/comments'
-            else:
-                request = self.context.get('detailsRequest')
-                url = request.build_absolute_uri() + 'comments'
+            request = self.context.get('request')
+            url_no_id = request.build_absolute_uri().split('/posts/')[0]
+            url = url_no_id + '/posts/' + str(post.uuid) + '/comments'
             response = requests.get(url).json()
             return response
         except:

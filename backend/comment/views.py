@@ -44,11 +44,11 @@ class CommentList(ListCreateAPIView):
 
     def create(self, request, author_id, post_id):
         try:
-            Post.objects.filter(author_id=author_id).get(pk=post_id)
+            post = Post.objects.filter(author_id=author_id).get(pk=post_id)
         except Post.DoesNotExist:
             return HttpResponse("Post not found.", status=401)
         
-        serializer = CommentSerializer(data=request.data)
+        serializer = CommentSerializer(data=request.data, context={'request':request, 'post':post})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)

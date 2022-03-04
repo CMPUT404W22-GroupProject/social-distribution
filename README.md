@@ -23,6 +23,13 @@ To add packages you have installed:
 
 **NOTE:** Adding packages while not in a virtual environment will add **all** packages installed on your computer.
 
+Testing
+=======
+
+To run the automated backend tests:
+1. Navigate to the `/backend` folder
+2. `python manage.py test tests`
+
 Licensing
 =========
 
