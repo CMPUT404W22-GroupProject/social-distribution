@@ -6,7 +6,7 @@ from author.serializers import AuthorsSerializer
 from post import serializers
 
 class CommentSerializer(ModelSerializer):
-    author = AuthorsSerializer(many=False, read_only=True)
+    # author = AuthorsSerializer(many=False, read_only=True)
     id = SerializerMethodField()
 
     class Meta:
@@ -21,5 +21,6 @@ class CommentSerializer(ModelSerializer):
             "none"
 
     def create(self, validated_data):
+        validated_data['post'] = self.context.get('post')
         new_comment = Comment.objects.create(**validated_data)
         return new_comment
