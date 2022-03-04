@@ -14,7 +14,7 @@ class AuthorList(APIView):
 
 
         all_authors = Author.objects.all()
-        serializer = AuthorsSerializer(all_authors, many = True, context={'listRequest':request})
+        serializer = AuthorsSerializer(all_authors, many = True, context={'request':request})
         return Response(serializer.data, status = 200)
 
     # Add an Author
@@ -23,7 +23,7 @@ class AuthorList(APIView):
         # Mutable copy
         request_data = request.data.copy()
 
-        serializer = AuthorsSerializer(data = request_data, context={'listRequest':request})
+        serializer = AuthorsSerializer(data = request_data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = 201)
@@ -42,7 +42,7 @@ class AuthorDetails(APIView):
 
         try:
             author = Author.objects.get(pk=author_id)
-            serializer = AuthorsSerializer(author, context={'detailsRequest':request})
+            serializer = AuthorsSerializer(author, context={'request':request})
             return Response(serializer.data, status = 200)
 
         except Author.DoesNotExist:
@@ -63,7 +63,7 @@ class AuthorDetails(APIView):
 
 
 
-        serializer = AuthorsSerializer(author, data = request_data, partial=True, context={'detailsRequest':request})
+        serializer = AuthorsSerializer(author, data = request_data, partial=True, context={'request':request})
         if serializer.is_valid():
             serializer.save()
 
