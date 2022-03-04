@@ -9,11 +9,11 @@ import requests
 from comment.views import CommentList
 from django.urls import path
 from comment.models import Comment
+from author.models import Author
 
 # Basic Post Serializer
 class PostSerializer(ModelSerializer):
     # author = AuthorsSerializer(many=False, read_only=True)
-    # author = ReadOnlyField(source='author.id')
     commentsSrc = SerializerMethodField()
     id = SerializerMethodField()
     comments = SerializerMethodField()

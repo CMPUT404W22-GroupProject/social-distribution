@@ -21,35 +21,38 @@ class FollowerList(APIView):
         except Follower.DoesNotExist:
             return Response("This user doesn't have followers yet", status=400)
 
-class FollowerDetails(APIView):
+class FollowerDetails(APIView, LoginRequiredMixin):
 
     def get(self, request, author_id, foreign_author_id):
         try:
             follower = Follower.objects.get(author=author_id)
+            print(follower)
             item = follower.items.get(pk=foreign_author_id)
             serializer = AuthorsSerializer(item, context={'request':request})
             return Response(serializer.data, status=200)
-        except Follower.DoesNotExist:
+        except Author.DoesNotExist and Follower.DoesNotExist:
             return Response("You are not following this user", status=404)
+
     
     def put(self, request, author_id, foreign_author_id):
         if author_id == foreign_author_id:
             return Response("You cannot follow yourself", status=400)
         try:
-            instance = Follower.objects.get(author=author_id)
-        except Follower.DoesNotExist:
-            instance=None
-        
-        try:
-            author = instance.items.get(pk=foreign_author_id)
-            return Response("You are already followed by this user", status=400)
+            author = Author.objects.get(pk=author_id)
+            new_follower = Author.objects.get(pk=foreign_author_id)
         except Author.DoesNotExist:
-            serializer = FollowerSerializer(instance, data=request.data, context={'request':request, 'foreign_author_id': foreign_author_id})
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=201)
-            else:
-                return Response(serializer.errors, status=400)
+            return Response("Author does not exist", status=404)
+        try:
+            instance = Follower.objects.get(author=author_id)
+            instance.items.add(new_follower)
+        except Follower.DoesNotExist:
+            instance = Follower.objects.create(author=author, items=[])
+            instance.items.set(new_follower)
+        
+        serializer = FollowerSerializer(instance, context={'request':request})
+        return Response(serializer.data, status=201)
+
+
 
     def delete(self, request, author_id, foreign_author_id):
         if author_id == foreign_author_id:
@@ -60,6 +63,7 @@ class FollowerDetails(APIView):
             return Response("There's no one to unfollow", status=400)
         try:
             instance.items.remove(foreign_author_id)
+            instance.save()
             return Response("Unfollow successfully", status=204)
         except Author.DoesNotExist:
             return Response("You cannot unfollow", status=401)

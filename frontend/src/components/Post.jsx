@@ -26,6 +26,7 @@ function Post({post}){
     const commentsSrc = post.commentsSrc;
     const [likeId, setLikeId] = useState(0);
 
+
      useEffect(() => {
          //fetches data from the server
         const fetchAuthor = async () => {
@@ -88,7 +89,7 @@ function Post({post}){
     }
 
     const shareHandler = () => {
-        console.log("share the post!");
+        
     }
 
     return(
@@ -96,6 +97,7 @@ function Post({post}){
             <Card >
                 <Card.Header>
                     <div className="postTopLeft">
+
                         {/* <img className="postProfileImg" /> */}
                         <PersonIcon className="postProfileImg"/>
                         <span className="postUsername">
@@ -118,6 +120,7 @@ function Post({post}){
                     {(post.contentType !== "image/base64") &&
                         <Card.Text>
                             {post.content}
+
                         </Card.Text>}
                     {
                         (post.contentType === "image/base64") &&
@@ -139,6 +142,7 @@ function Post({post}){
     
                 <Card.Footer className="text-muted">
                     <div className="postOptions">
+
 
                         { !isLiked && 
                             <div className="postOption" onClick={likeHandler}>

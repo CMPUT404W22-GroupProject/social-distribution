@@ -1,3 +1,4 @@
+from re import search
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, request
 from inbox.models import Inbox
@@ -8,6 +9,8 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from .pagination import InboxPageNumberPagination
+from author.serializers import AuthorsSerializer
+
 import os
 # Create your views here.
 from inbox.serializers import InboxSerializer
@@ -21,8 +24,9 @@ class InboxList(ListCreateAPIView):
     def get_queryset(self):
         return Inbox.objects.filter(author_id=self.author_id)
     
-    # get recent posts of author
+    #Get inbox 
     def list(self, request, author_id):
+
         try:
             Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
@@ -30,10 +34,28 @@ class InboxList(ListCreateAPIView):
         self.author_id = author_id
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
+        author5 = Author.objects.get(pk=author_id)
+        author = AuthorsSerializer(author5, context={'request':request})
         if page is not None:
             serializer =  InboxSerializer(page, many=True, context={'listRequest':request})
+
+            for each_object in serializer.data:
+                each_object['author'] = author.data
             return self.get_paginated_response(serializer.data)
 
         serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
-
         return Response(serializer.data, status=200)
+
+     #Create a new post
+    def create(self, request, author_id):
+        return HttpResponse("Sent to inbox", status=401) 
+
+    #Clear inbox
+    def delete(self, request, author_id):
+        # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
+        author11 = Author.objects.get(pk=author_id)
+        try:
+            Inbox.objects.filter(author=author11).all().delete()
+            return HttpResponse("Successfully cleared inbox.", status=201)
+        except  Inbox.DoesNotExist:
+            return HttpResponse("No inbox found.", status=401) 

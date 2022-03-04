@@ -37,7 +37,8 @@ class Author(AbstractBaseUser, PermissionsMixin):
                 "host: ":self.host,
                 "displayName: " :self.displayName,
                 "url: ": self.url,
-                "github: ":self.github}
+                "github: ":self.github,
+                "id": self.uuid}
 
     # def get_full_name(self):
     #     return self.name
