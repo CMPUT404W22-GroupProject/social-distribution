@@ -29,7 +29,6 @@ class PostModelTest(TestCase):
 
     def testPostModel(self):
         """Test all Post fields"""
-        print(self.author.uuid)
         self.assertEqual(self.post.title, self.post_data["title"])
         self.assertEqual(self.post.description, self.post_data["description"])
         self.assertEqual(self.post.contentType, self.post_data["contentType"])
