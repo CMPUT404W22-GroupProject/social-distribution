@@ -30,7 +30,24 @@ class LikeList(APIView):
 
     def get(self, request, author_id, post_id, comment_id=""): 
         self.checkErors(author_id,post_id, comment_id)
-        #Creating the links to objects
+        author11 = Author.objects.get(pk=author_id)
+        if comment_id!="":
+            comment11 = Comment.objects.get(pk=comment_id)
+            try: 
+                likes = Like.objects.filter(author=author11, object1 = comment11).all()
+                if not likes:
+                    return Response({}, status = 200)
+
+            except Like.DoesNotExist:
+                return Response({}, status = 200)
+        try: 
+            post11 = Post.objects.get(pk=post_id)
+            likes = Like.objects.filter(author=author11, object = post11).all()
+            if not likes:
+                return Response({}, status = 200)
+        except Like.DoesNotExist:
+            return Response({}, status = 200)
+        # Creating the links to objects
         http_host = request.META.get('HTTP_HOST')
         if http_host[0]!="h":
             http_host = "http://"+http_host
