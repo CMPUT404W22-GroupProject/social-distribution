@@ -3,6 +3,7 @@ from re import L
 from django.shortcuts import render
 from django.http import HttpResponse
 from author.models import Author
+from author.serializers import AuthorsSerializer
 from post.models import Post
 from comment.models import Comment
 from like.models import Like
@@ -64,7 +65,8 @@ class LikeList(APIView):
                 if each_object['object1']:
                     continue
                 level = {}
-                author = Author.objects.get(pk=each_object['author']).toString()
+                author5 = Author.objects.get(pk=each_object['author'])
+                author = AuthorsSerializer(author5, context={'request':request})
                 for each_item in each_object:
                     if each_item =="context":
                         level["@context"] = each_object[each_item]
@@ -75,7 +77,7 @@ class LikeList(APIView):
                     elif each_item != "author" and each_item!="object1":
                         level[each_item] = each_object[each_item]
                     elif each_item=="author":
-                        level[each_item]= author
+                        level[each_item]= author.data
                 result.append(level)
         else:
             #If it's a COMMENT
@@ -83,7 +85,8 @@ class LikeList(APIView):
                 if not each_object['object1']:
                     continue
                 level = {}
-                author = Author.objects.get(pk=each_object['author']).toString()
+                author5 = Author.objects.get(pk=each_object['author'])
+                author = AuthorsSerializer(author5, context={'request':request})
                 for each_item in each_object:
                     if each_item =="context":
                         level["@context"] = each_object[each_item]
@@ -94,7 +97,7 @@ class LikeList(APIView):
                     elif each_item != "author" and each_item!="object":
                         level[each_item] = each_object[each_item]
                     elif each_item=="author":
-                        level[each_item]= author
+                        level[each_item]= author.data
                 result.append(level)
         return Response(result, status = 200)
 
@@ -158,7 +161,8 @@ class LikedDetails(APIView):
         like = Like.objects.get(pk=like_id)
         serializer = LikeSerializer(like)
         result = {}
-        author = Author.objects.get(pk=author_id).toString()
+        author5 = Author.objects.get(pk=author_id)
+        author = AuthorsSerializer(author5, context={'request':request})
         try:
             for each_object in serializer.data:
                 if each_object =="context":
@@ -171,7 +175,7 @@ class LikedDetails(APIView):
                     and not (each_object == "object" and comment_id!="") and not (each_object == "object1" and comment_id == "")):
                     result[each_object] = serializer.data[each_object]
                 elif each_object == "author":
-                    result[each_object]= author
+                    result[each_object]= author.data
             return Response(result, status = 200)
         except Like.DoesNotExist:
             return HttpResponse("Like not found.", status = 401)

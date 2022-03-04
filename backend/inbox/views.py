@@ -21,7 +21,7 @@ class InboxList(ListCreateAPIView):
     def get_queryset(self):
         return Inbox.objects.filter(author_id=self.author_id)
     
-    # get recent posts of author
+    #Get inbox 
     def list(self, request, author_id):
         try:
             Author.objects.get(pk=author_id)
@@ -37,3 +37,13 @@ class InboxList(ListCreateAPIView):
         serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
 
         return Response(serializer.data, status=200)
+
+    #Clear inbox
+    def delete(self, request, author_id):
+        # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
+        author11 = Author.objects.get(pk=author_id)
+        try:
+            Inbox.objects.filter(author=author11).all().delete()
+            return HttpResponse("Successfully cleared inbox.", status=201)
+        except  Inbox.DoesNotExist:
+            return HttpResponse("No inbox found.", status=401) 
