@@ -26,7 +26,6 @@ class PostList(ListCreateAPIView):
 
     # get recent posts of author
     def list(self, request, author_id):
-
         self.author_id = author_id
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
@@ -41,14 +40,15 @@ class PostList(ListCreateAPIView):
     # create a new post
     def create(self, request, author_id):
         try:
-            Author.objects.get(pk=author_id)
-        except Author.DosesNotExist:
+            author = Author.objects.get(pk=author_id)
+        except Author.DoesNotExist:
             return HttpResponse("Author", status=404)
-        if request.data.get('author') != str(author_id):
-            return Response("You cannot make a post for this URL", status=400)
 
+        # if request.data.get('author') != author:
+        #     print(request.data)
+        #     return Response("You cannot make a post for this URL", status=400)
         serializer = PostSerializer(data = request.data, context={'request':request})
-        
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = 201)
@@ -70,9 +70,8 @@ class PostDetails(APIView):
     #TODO add authentication
     # edit post
     def post(self, request, post_id, author_id):
-        if request.data.get('author') != str(author_id):
-            return Response("You cannot make a post for this URL", status=400)
-
+        # if request.data.get('author') != str(author_id):
+        #     return Response("You cannot make a post for this URL", status=400)
         try: 
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
             serializer = PostSerializer(data = request.data, context={'request':request})
