@@ -61,7 +61,7 @@ class LikeList(APIView):
         if comment_id=="":
             #If it is a POST
             for each_object in serializer.data:
-                if not each_object['object']:
+                if each_object['object1']:
                     continue
                 level = {}
                 author = Author.objects.get(pk=each_object['author']).toString()
