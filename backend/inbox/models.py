@@ -8,15 +8,19 @@ from post.models import Post
 class Inbox(models.Model):
     type = models.TextField(default="inbox")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    
     like_object = models.ForeignKey(Like, on_delete=models.CASCADE,blank=True, null=True)
     post_object = models.ForeignKey(Post, on_delete=models.CASCADE,blank=True, null=True)
 
 
-
-
     @classmethod
     def create_object_from_like(cls, like):
-        inbox = cls(type="inbox", author = like.author, like_object = like)
+        if not like.object1:
+            # if its a like on a post
+            inbox = cls(type="inbox", author = like.object.author, like_object = like)
+        else:
+            # if its a like on a comment
+            inbox = cls(type="inbox", author = like.object1.author, like_object = like)
         inbox.save()
         return inbox
 

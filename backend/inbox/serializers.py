@@ -15,6 +15,8 @@ class InboxSerializer(ModelSerializer):
         model = Inbox
         fields = ('type', 'author', 'items')
 
+
+
     def get_items(self, inbox):
         try:
             request = self.context.get('listRequest')
