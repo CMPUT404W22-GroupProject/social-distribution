@@ -11,5 +11,6 @@ urlpatterns = [
     path('<uuid:author_id>/inbox', inboxView.InboxList.as_view()),
     path('<uuid:author_id>/', authorView.AuthorDetails.as_view()),
     path('<uuid:author_id>/liked', likeView.LikedDetails.as_view()),
-    path('<uuid:author_id>/posts/', include('post.urls'))
+    path('<uuid:author_id>/posts/', include('post.urls')),
+    path('<uuid:author_id>/followers/', include('follower.urls'))
 ]
