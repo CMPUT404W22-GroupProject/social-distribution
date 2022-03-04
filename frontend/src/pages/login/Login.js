@@ -19,12 +19,14 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setLoggedIn(true)
+        setId(id)
+        console.log(id)
         navigate('/home')
     }
 
     return (
         <div className='login'>
-            <form className='login_form' onSubmit={(e) => handleSubmit(e)} >
+            <form className='login_form' onClick={(e) => handleSubmit(e)}>
                 <h1>Login</h1>
 
                 <input type='id' placeholder='id' 
@@ -39,7 +41,7 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}/>
 
-                <button className='submit_btn'>Log In</button>
+                <button className='submit_btn' >Log In</button>
             </form>
         </div>
     )
