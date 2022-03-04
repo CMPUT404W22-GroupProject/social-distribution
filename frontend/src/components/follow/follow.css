@@ -1,0 +1,44 @@
+.followCard {
+  width: 45%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  margin-top: 5%;
+  margin-left: 27.5%;
+  margin-right: 27.5%;
+  margin-bottom: 5%;
+}
+.followTopLeft {
+  display: flex;
+  align-items: center;
+}
+
+.followProfileImg {
+  /* width: 32px;
+    height: 32px; */
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.followUsername {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 10px;
+}
+
+.followDate {
+  font-size: 12px;
+}
+
+.acceptFollowButton {
+  align-items: center;
+  margin-right: 15px;
+  cursor: pointer;
+  background-color: green;
+}
+.declineFollowButton {
+  align-items: center;
+  margin-right: 15px;
+  cursor: pointer;
+  background-color: red;
+}

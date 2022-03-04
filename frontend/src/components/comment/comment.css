@@ -1,0 +1,39 @@
+.comment-image-container {
+  margin-right: 12px;
+}
+
+.comment {
+  display: flex;
+  padding-bottom: 20px;
+}
+
+.comment-image-container img {
+  border-radius: 50px;
+}
+
+.comment-left-part {
+  right: 0;
+  max-width: 25px;
+  min-width: 25px;
+}
+
+.comment-right-part {
+  max-width: 100px;
+  min-width: 100px;
+  margin-right: 10px;
+}
+
+.comment-author {
+  margin-right: 8px;
+  font-size: 20px;
+  color: rgb(59, 130, 246);
+}
+
+.comment-text {
+  font-size: 18px;
+  max-width: 415px;
+
+  text-align: left;
+  overflow: scroll;
+  margin-right: 30px;
+}

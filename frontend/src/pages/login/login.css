@@ -1,0 +1,44 @@
+.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    align-items: center;
+    font-family: 'inter';
+
+}
+
+.login_form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login_form > h1 {
+    font-size: 35px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    letter-spacing: -1px;
+}
+
+.login_form > input {
+    min-width: 380px;
+    padding: 20px 0;
+    padding-left: 15px;
+    margin-bottom: 10px;
+    outline: none;
+    border: 1px solid rgba(0,0,0,0.24);
+    font-family: 'inter';
+    border-radius: 2px;
+    font-size: 15px;
+}
+
+.submit_btn{
+    padding: 17px 30px;
+    margin-top: 10px;
+    background: black;
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-family: "Inter";
+    border-radius: 3px;
+}
