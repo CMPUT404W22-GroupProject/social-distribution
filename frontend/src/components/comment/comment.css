@@ -2,16 +2,25 @@
   margin-right: 12px;
 }
 
+.comment {
+  display: flex;
+  padding-bottom: 20px;
+}
+
 .comment-image-container img {
   border-radius: 50px;
 }
 
-.comment-right-part {
-  width: 100%;
+.comment-left-part {
+  right: 0;
+  max-width: 25px;
+  min-width: 25px;
 }
 
-.comment-content {
-  display: flex;
+.comment-right-part {
+  max-width: 100px;
+  min-width: 100px;
+  margin-right: 10px;
 }
 
 .comment-author {
@@ -22,4 +31,9 @@
 
 .comment-text {
   font-size: 18px;
+  max-width: 415px;
+
+  text-align: left;
+  overflow: scroll;
+  margin-right: 30px;
 }

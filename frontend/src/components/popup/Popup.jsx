@@ -3,6 +3,7 @@ import './popup.css'
 import {Button} from 'react-bootstrap'
 
 function Popup(props) {
+    //This is the general popup template and functionality
 
     return (props.trigger) ? (
 
@@ -14,18 +15,8 @@ function Popup(props) {
                 {props.children}
 
             </div>
-
-
         </div>
-
-
-
     ) : "";
-
-
-
-
-
 }
 
 export default Popup;

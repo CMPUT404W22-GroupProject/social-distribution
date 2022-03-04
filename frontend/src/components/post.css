@@ -8,6 +8,9 @@
   margin-right: 27.5%;
   margin-bottom: 5%;
 }
+.card {
+  position: static;
+}
 .postTopLeft {
   display: flex;
   align-items: center;
@@ -52,4 +55,28 @@
 .postIcon {
   width: 40px !important;
   margin-right: 3px;
+}
+
+.postTitle {
+  text-align: left;
+  margin-left: 10px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+.postDesc {
+  text-align: left;
+  margin-left: 10px;
+  font-size: 12px;
+  color: gray !important;
+  font-weight: bold;
+}
+.postTags {
+  text-align: right;
+  bottom: 0;
+  font-size: 10px;
+  margin-right: 10px;
+  margin-bottom: 7px;
+}
+.text-center {
+  padding-top: 7px;
 }
