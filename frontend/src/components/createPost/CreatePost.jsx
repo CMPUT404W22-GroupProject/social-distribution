@@ -7,13 +7,20 @@ import LockIcon from '@mui/icons-material/Lock'
 import PeopleIcon from '@mui/icons-material/People'
 import { useRef } from 'react'
 import { useState } from 'react'
-
+import axios from 'axios'
+import { useContext } from 'react'
+import UserContext from '../../context/userContext'
+import {createPost} from '../api/api'
 
 function CreatePost(){
+
+    const {id} = useContext(UserContext)
     const postBody = useRef();
     const [file, setFile] = useState(null); //used for storing the file that is uploaded
     const [base64, setBase64] = useState("");
 
+
+    const [postData, setPostData] = useState({})
     
     const uploadImage = async (e) => {
       const uploadedFile = e.target.files[0];
@@ -45,8 +52,30 @@ function CreatePost(){
         e.preventDefault() //prevents screen from refreshing when submit button is clicked
         console.log("Body: ", postBody.current.value)
         console.log("file:", file, "base64:", base64)
-
+        axios({
+          method: 'post',
+          url: `http://127.0.0.1:8000/authors/${id}/posts/`,
+          data: {
+            "type": "post",
+            "title": "placeholder title",
+            "source": "",
+            "origin": "",
+            "description": "test post",
+            "contentType": "text/plain",
+            "content": `${postBody.current.value}`,
+            "author": `${id}`,
+            "categories": "nothing",
+            "count": 0,
+            "commentsSrc": {},
+            "published": "2022-03-04T06:56:48Z",
+            "visibility": "PUBLIC",
+            "unlisted": false
+          }
+        }).then((res)=> {
+          console.log(res)
+        })
     }
+    
 
     
    

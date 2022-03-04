@@ -17,33 +17,18 @@ function Post({post}){
     const commentCount = 5; //comment counter obtained from server
     const [author, setAuthor] = useState({});
 
-    console.log("THIS IS POST", post)
-
     useEffect(() => {
-
-        const fetchAuthor = async () => {
-            const result = await axios.get("authors/1");
-           
-        }
-
-        fetchAuthor();
         
     },[])
-
-
-
-
 
     const likeHandler = () => {
 
         setLike(isLiked ? like - 1: like + 1); //if user has already liked it and called, will decrement. if user hasnt liked, will increment. 
         setIsLiked(!isLiked) //changes isliked state of user
-
-        console.log("like changed!: ", like, isLiked);
     }
 
     const shareHandler = () => {
-        console.log("share the post!");
+        
     }
 
     return(
@@ -54,13 +39,13 @@ function Post({post}){
                     <div className="postTopLeft">
                     {/* <img className="postProfileImg" /> */}
                     <PersonIcon className="postProfileImg"/>
-                    <span className="postUsername">Bob</span>
+                    <span className="postUsername">{post.title}</span>
                     <span className="postDate">1 hour ago</span>
                      </div> 
                 </Card.Header>
                 <Card.Body className="text-center">
                         <Card.Text>
-                            With supporting text below as a natural lead-in to additional content.
+                            {post.content}
                         </Card.Text>
                      
                 </Card.Body>
@@ -71,7 +56,7 @@ function Post({post}){
                     
                     { !isLiked && <div className="postOption" onClick={likeHandler}>
                         <ThumbUpIcon htmlColor="blue" className="postIcon" />
-                        <span className="postLikeCounter">{like}</span>
+                        <span className="postLikeCounter">{post.like}</span>
                     </div>}
 
                     { isLiked && <div className="postOption" onClick={likeHandler}>

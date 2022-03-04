@@ -1,16 +1,30 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import Container from 'react-bootstrap/Container'
 import UserContext from '../context/userContext'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+
+
+const linkStyle = {
+  margin: "1rem",
+  textDecoration: "none",
+  color: 'white'
+};
 
 function NavBar() {
 
 
-  const {loggedIn, setLoggedIn} = useContext(UserContext)
+  let {loggedIn, setLoggedIn} = useContext(UserContext)
+
+  const {id} = useContext(UserContext)
   const navigate = useNavigate();
   console.log(loggedIn)
+
+
+  useEffect(() => {
+    console.log(loggedIn)
+  })
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -22,11 +36,11 @@ function NavBar() {
     <Navbar bg="dark" variant="dark">
         <Container>
             <Nav>
-            {loggedIn && <Nav.Link href="/home">Home</Nav.Link>}
-            {loggedIn && <Nav.Link href="/">Profile</Nav.Link>}
-            {loggedIn && <Nav.Link href="/login" onClick={(e) => handleLogout(e)}>Logout</Nav.Link>}
-            {!loggedIn && <Nav.Link href="/login">Login</Nav.Link>}
-            {!loggedIn && <Nav.Link href="/login">Register</Nav.Link>}
+            {loggedIn && (<Link style={linkStyle} to='/home'>Home</Link>)}
+            {loggedIn && (<Link style={linkStyle} to={`/profile/:${id}`}>Profile</Link>)}
+            {loggedIn && (<Link style={linkStyle} onClick={(e) => handleLogout(e)} to='/login'>Logout</Link>)}
+
+            {!loggedIn && (<Link style={linkStyle} to='/login'>Login</Link>)}
             </Nav>
         </Container>
   </Navbar>
