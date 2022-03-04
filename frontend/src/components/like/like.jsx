@@ -6,6 +6,7 @@ import axios from "axios"
 import {format} from "timeago.js"
 
 function Like({}){
+    //this is how the like object will appear in the inbox
 
     return(
         <div className='likeCard'>
@@ -28,11 +29,7 @@ function Like({}){
             </Card>
 
         </div>
-
-
     )
-
-
 }
 
 export default Like;

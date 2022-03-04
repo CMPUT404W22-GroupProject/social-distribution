@@ -10,16 +10,12 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import UserContext from '../../context/userContext';
 
-
-
-
-
 function CreatePost(){
     const postContent = useRef();
     const postDescription = useRef();
     const postTitle = useRef();
     const postTags = useRef();
-    const [file, setFile] = useState(null); //used for storing the file that is uploaded
+    const [file, setFile] = useState(null); //used for storing the image that is uploaded
     const [base64, setBase64] = useState("");
     const [isPublic, setIsPublic] = useState(false);
     const [isPrivate, setIsPrivate] = useState(false);
@@ -27,24 +23,21 @@ function CreatePost(){
     const [isUnlisted, setIsUnlisted] = useState(false);
     const [author, setAuthor] = useState([]);
     const {id, setId} = useState(UserContext);
-    //const isTextareaDisabled = postTitle.current.value.length === undefined
-    //|| postDescription.current.value.length === 0 || 
-    // postContent.current.value.length === 0 || postTags.current.value.length === 0
-
-    console.log("USER_ID: ", id);
-
+    const authorId = "01a96c4b-8ca3-421e-b2ea-feeb2744f8e5";
+    
     useEffect(() => {
-
+      //fetches author when component is called
       const fetchAuthor = async () => {
-          const result = await axios.get("/authors/f9d6c844-b5d7-4b7f-b84b-d623e3dedf85");
+          //fetches auhor
+          const result = await axios.get("/authors/" + authorId);
           setAuthor(result.data)
       }
-
       fetchAuthor();
-      
   },[])
     
     const uploadImage = async (e) => {
+      //handles uploading image
+      //ADD CITATION
       const uploadedFile = e.target.files[0];
       const encodedImage = await convertToBase64(uploadedFile)
       console.log("uploading image");
@@ -54,7 +47,8 @@ function CreatePost(){
     }
 
     const convertToBase64 = (uploadedFile) => {
-
+      //converts image to Base64
+      //ADD CITATION
       return new Promise((resolve, reject) => {
 
         const fileReader = new FileReader();
@@ -71,18 +65,18 @@ function CreatePost(){
     };
 
     const submitPost = async (e) =>{
-        e.preventDefault() //prevents screen from refreshing when submit button is clicked
-        /* console.log("Body: ", postContent.current.value)
-        console.log("file:", file, "base64:", base64) */
+        //Handles the submition of the post, sends post to server
 
-        var newPost = {
+        e.preventDefault() //prevents screen from refreshing when submit button is clicked
+        
+        var newPost = { //the json file that will be sent
           "type": "post",
           "title": postTitle.current.value,
           "source": "",
           "origin": "",
           "description": postDescription.current.value,
           "contentType": "text/plain",
-          "author": 'f9d6c844-b5d7-4b7f-b84b-d623e3dedf85',
+          "author": authorId,
           "content": postContent.current.value,
           "categories": postTags.current.value,
           "count": 0,
@@ -94,7 +88,6 @@ function CreatePost(){
         var date = new Date();
         var formattedDate = date.toISOString();
         newPost["published"] = formattedDate;
-
 
         if (isPublic === true){
           newPost["visibility"] = "PUBLIC";
@@ -108,26 +101,29 @@ function CreatePost(){
 
         console.log(newPost)
 
-        try {
-
-         await axios.post("/authors/f9d6c844-b5d7-4b7f-b84b-d623e3dedf85/posts/", newPost)
-         
-         /* .then((response) => {
-          console.log(response.data);
-          console.log(response.status);
-          console.log(response.statusText);
-          console.log(response.headers);
-          console.log(response.config);
-        }); */;
-
-        } catch (error) {
-          console.log(error)
-
-
+        //if image is selected and there is no content, so image only post
+        if ((base64 !== "") && (postContent.current.value === "")){
+          newPost["content"] = base64;
+          newPost["contentType"] = "image/base64";
+          console.log("newPOST W BASE64: ", newPost)
         }
 
-        alert("Shared! Check profile to see post!");
+        var status = null;
 
+        try {
+         await axios.post("/authors/" + authorId + "/posts/", newPost)
+         .then((response) => {
+           status = response.status;
+         })
+        } catch (error) {
+          console.log(error)
+        }
+        if (status === 201) {
+        alert("Shared! Check profile to see post!");
+        window.location.href = window.location.href;
+        } else {
+          alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
+        }
 
     }
 
@@ -143,12 +139,12 @@ function CreatePost(){
                 ref={postTitle}
               />
               <input
-                placeholder="Description"
+                placeholder="Describe it a little"
                 className="createPostInput"
                 ref={postDescription}
               />
               <input
-                placeholder="Create a Post!"
+                placeholder="What's in your mind?"
                 className="createPostInput"
                 ref={postContent}
               />
@@ -158,9 +154,8 @@ function CreatePost(){
                 ref={postTags}
               />
             </div>
+
             <hr className="createPostHr"/>
-
-
 
             <form className="createPostBottom" onSubmit={submitPost}>
                 <div className="createPostOptions">
@@ -183,7 +178,6 @@ function CreatePost(){
                         <span className="createPostOptionText">Public?</span>
                     </div>
 
-    
 
                     <div className="createPostOption" onClick={choosePrivate}>
                         <LockIcon htmlColor="red" className="createPostIcon" />
@@ -200,8 +194,6 @@ function CreatePost(){
                         <span className="createPostOptionText">Unlisted?</span>
                     </div>
 
-                    
-
                 </div>
 
                 <Button className="createPostButton" type = "submit"  >Share</Button>
@@ -211,30 +203,31 @@ function CreatePost(){
         </div>
       );
 
-    
-
+  
       function chooseFriend(){
+        //if user chooses friend icon
 
             console.log("I choose friend!");
             setIsFriend(true);
     }
+      function choosePublic(){
+        //if user chooses public icon
 
-        function choosePublic(){
-
-            console.log("I choose public post");
-            setIsPublic(true);
+          console.log("I choose public post");
+          setIsPublic(true);
     }
+      function choosePrivate(){
+        //if user chooses private icon
 
-        function choosePrivate(){
-
-            console.log("I choose private post");
-            setIsPrivate(true);
+          console.log("I choose private post");
+          setIsPrivate(true);
     }
       function chooseUnlisted(){
+        //if user chooses unlisted
 
-      console.log("I choose unlisted post");
-      setIsUnlisted(true);
-}
+          console.log("I choose unlisted post");
+          setIsUnlisted(true);
+    }
 
 }
 

@@ -7,6 +7,8 @@ import axios from "axios"
 import {format} from "timeago.js"
 
 function Follow({}){
+    //This is the follow card displayed in the inbox to notify if a follow request has been recieved,
+    //and handles accept and decline of requests
 
     return(
         <div className='followCard'>
@@ -36,12 +38,14 @@ function Follow({}){
     )
 
     function acceptFollow () {
+        //if user chooses accept
         console.log("Follow Accepted!");
         alert("You have accepted the request!");
         
     };
 
     function declineFollow () {
+        //if a user chooses decline
         console.log("Follow Declined!");
         alert("You have declined the request!");
         

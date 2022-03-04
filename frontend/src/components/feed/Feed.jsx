@@ -7,58 +7,115 @@ import { useEffect, useState } from "react";
 import axios from "axios"
 import Popup from '../popup/Popup'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import UserContext from '../../context/userContext';
 import { useContext } from "react"
+import PaginationControlled from "../paginationFeed"
 
 function Feed(){
+    //This is the main feed of the application, will house the createPost and other inbox related components
 
     const [posts, setPosts] = useState([]);
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
-    const userId = 'f9d6c844-b5d7-4b7f-b84b-d623e3dedf85';
+    const userId = "01a96c4b-8ca3-421e-b2ea-feeb2744f8e5";
     const [buttonPopup, setButtonPopup] = useState(false);
-    const {id, setId} = useContext(UserContext);
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(1);
+    
 
-    console.log("USER_ID: ", id);
-
+    //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
 
     useEffect(() => {
-
+        //get data from inbox here
         //if type is post, then put to post, if type is like then add to like and so on
-
         const fetchPosts = async () => {
-            const result = await axios.get("/authors/f9d6c844-b5d7-4b7f-b84b-d623e3dedf85/posts");
-            setRecievedData(result);
-            setPosts(result.data.results);
+            //fetch posts from user/author id, these are posts created by the user/author
+            if (page === 1){
+                const result = await axios.get("/authors/" + userId + "/posts");
+                setRecievedData(result);
+                setCount(result.data.count);
+                 //puts posts in array + sorts from newest to oldest
+                setPosts(result.data.results.sort((p1, p2) => {
+                return new Date(p2.published) - new Date(p1.published)
+            }));
+            } else {
+                const result = await axios.get("/authors/" + userId + "/posts?page=" + page);
+                setCount(result.data.count);
+                setRecievedData(result);
+                //puts posts in array + sorts from newest to oldest
+                setPosts(result.data.results.sort((p1, p2) => {
+                return new Date(p2.published) - new Date(p1.published)
+            }));
+            }
+            
         }
-
         fetchPosts();
-        
-    },[])
+    },[page])
 
+    function refreshPage(){
+        //https://stackoverflow.com/questions/3715047/how-to-reload-a-page-using-javascript
+        window.location.href = window.location.href;
+        return false;
+    }
+
+    const handleCallBack = (childData) => {
+        //https://www.geeksforgeeks.org/how-to-pass-data-from-child-component-to-its-parent-in-reactjs/
+        setPage(childData);
+    }
+
+    
     return (
+        //returning feed that will have createPost + other appropriate components shown to user form their inbox
 
         <div>
+            {/*createPost button here, when clicked popup will popup*/}
             <div className="feedCreatePost" >
-                        <AddCircleOutlineIcon htmlColor="blue" className="feedCreatePostIcon" onClick={() => setButtonPopup(true)}/>
-                        <span className="feedCreatePostText">Create Post!</span>
-                    </div>
-        
-        {posts.map((post) => (
-            <Post key = {post.id} post = {post}/>
-        ))}
-        
-        {/* <Post/>
-        <Post/>
-        <Post/>
-        <Post/>
-        <Post/>
-        <Post/> */}
+                <AddCircleOutlineIcon 
+                    htmlColor="blue" 
+                    className="feedCreatePostIcon" 
+                    onClick={() => setButtonPopup(true)}
+                    />
+                <span 
+                    className="feedCreatePostText">
+                        Create Post!
+                </span>
+            </div>
 
-<Popup trigger = {buttonPopup} setTrigger = {setButtonPopup}>
-                <CreatePost/>
+            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
+
+            {(posts.length === 0) && //display message if post array is empty
+            <div className="feedNoPostMessage">
+                <SentimentVeryDissatisfiedIcon 
+                    htmlColor = "Red"
+                    className="feedNoPostImage"/>
+                <span
+                    className="feedNoPostText">
+                    No new posts!
+                </span>
+                <RefreshIcon
+                    className="feedNoPostRefresh"
+                    onClick = {refreshPage}/>
+            </div>}
+ 
+           {(posts.length !== 0) && // Fetched data is being displayed here, if post array isnt empty
+            posts.map((post) => (
+                <Post 
+                    key = {post.id} 
+                    post = {post}
+                />
+            ))}
+
+            
+
+            {/*popup with createPost component in it, called when button is clicked*/}
+            <Popup 
+                trigger = {buttonPopup} 
+                setTrigger = {setButtonPopup}
+                >
+                    <CreatePost/>
             </Popup>
-
         </div>
     )
 

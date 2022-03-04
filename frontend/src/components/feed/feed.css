@@ -14,3 +14,28 @@ div {
   cursor: pointer;
   align-self: center;
 }
+
+.feedNoPostMessage {
+  display: flex;
+  margin-top: 7%;
+  align-self: center;
+  flex-direction: column;
+}
+
+.feedNoPostImage {
+  align-self: center;
+  width: 7em !important;
+  height: 7em !important;
+}
+.feedNoPostText {
+  text-align: center;
+  font-weight: bold;
+  font-size: 50px;
+}
+.feedNoPostRefresh {
+  margin-top: 1%;
+  align-self: center;
+  width: 2em !important;
+  height: 2em !important;
+  cursor: pointer;
+}

@@ -8,64 +8,69 @@ import axios from "axios"
 import { badgeUnstyledClasses } from "@mui/base";
 import { NewReleases } from "@mui/icons-material";
 
-const CommentSection = ({currentUserId, commentsId}) => {
+const CommentSection = ({myAuthorId, commentsId}) => {
+    //Handles the main comment events such as submitting comments, retrieving comments.
     const [backendComments, setBackendComments] = useState([]);
     const commentsUrl = new URL(commentsId);
     const commentsPath = commentsUrl.pathname;
     const [author, setAuthor] = useState([]);
 
-    console.log("COMMENTSPATH: ", commentsPath);
+    //console.log("COMMENTSPATH: ", commentsPath);
     
     const fetchComments = async () => {
-        const result = await axios.get(commentsPath);
-        
-        setBackendComments(result.data.comments)
+        try {
+            const result = await axios.get(commentsPath);
+            //puts posts in array + sorts from newest to oldest
+            setBackendComments(result.data.comments.sort((p1, p2) => {
+            return new Date(p2.published) - new Date(p1.published)
+            }))
+        } catch(error){
+        }
     }
 
     const fetchAuthor = async () => {
-        const result = await axios.get("/authors/1");
+        try {
+        const result = await axios.get("/authors/" + myAuthorId);
         setAuthor(result.data)
+        } catch(error){
+        }
     }
-
-    
 
     useEffect(() => {
         // this is where we fetch comments from the api
-
         fetchAuthor();
         fetchComments();
         
     }, []);
 
 const addComment  = async (text) => {
-    //console.log("addComment:", text);
-    //setBackendComments([text, ...backendComments])
+    //formats comment and handles the submition 
 
     var date = new Date();
     var formattedDate = date.toISOString();
 
     var newComment = {
         "type": "comment",
-        //"author": author,
+        "author": myAuthorId,
         "comment": text,
-        "commentType": "text/markdown",
-        "published": formattedDate,
+        "contentType": "text/plain",
+        "published": formattedDate
     }
     var newInternalComment = {
         "type": "comment",
-        "author": author,
+        "author": myAuthorId,
         "comment": text,
-        "commentType": "text/markdown",
         "published": formattedDate,
     }
     
     try {
-
-        await axios.post(commentsPath + '/', newComment);
+        await axios.post(commentsPath + '/', newComment)
+        .then((response) => {
+            newInternalComment["id"] = response.data.id;
+        });
 
        } catch (error) {
          console.log(error)
-
 
        }
        //fetch from server again if comment is uploaded, ideally new one should show as well or display is internally
@@ -79,23 +84,19 @@ const addComment  = async (text) => {
         <div className="comments">
             <h3 className="comments-title"> Comments</h3>
             <div className="comment-form-title">Post a comment!</div>
-            <CreateComment submitLabel = "Post" handleSubmit={addComment} currentUserId ={currentUserId} />
+            <CreateComment submitLabel = "Post" handleSubmit={addComment} myAuthorId ={myAuthorId} />
             
             <div className="comments-container">
                 {/* //remember to send in key = {backendComment.id} when you have it */}
                 {console.log("COMMENTS", backendComments)}
                 {backendComments.map((backendComment) => (
                     
-                    <Comment key = {backendComment.id} currentUserId = {currentUserId} comment = {backendComment} />
+                    <Comment key = {backendComment.id} myAuthorId = {myAuthorId} comment = {backendComment} />
                     //commentBody = {b.comment} commentAuthor = {b.author.displayName} commentDate = {b.published}
 
                 ))}
             </div>
         </div>
-
-
-
-
     )
 };
 
