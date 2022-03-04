@@ -12,21 +12,31 @@ class AuthorsSerializer(ModelSerializer):
 
     id = SerializerMethodField()
     host = SerializerMethodField()
+    url = SerializerMethodField()
 
     def get_id(self, author):
-        request = self.context.get('listRequest')
-        if request:
-            return request.build_absolute_uri() + str(author.uuid)
-        else:
-            request = self.context.get('detailsRequest')
-            return request.build_absolute_uri()
+        try:    
+            request = self.context.get('request')
+            host = request.build_absolute_uri().split('/authors/')[0]
+            return host + '/authors/' + str(author.uuid)
+        except:
+            return {}
+    
+    def get_url(self, author):
+        try:    
+            request = self.context.get('request')
+            host = request.build_absolute_uri().split('/authors/')[0]
+            return host + '/authors/' + str(author.uuid)
+        except:
+            return {}
     
     def get_host(self, author):
-        request = self.context.get('listRequest')
-        if not request:
-            request = self.context.get('detailsRequest')
-        host = request.build_absolute_uri().split("authors")[0]
-        return host
+        try:    
+            request = self.context.get('request')
+            host = request.build_absolute_uri().split('authors')[0]
+            return host
+        except:
+            return {}
 
     def create(self, validated_data):
         # Create author so we can get unique ID for URL + Host
@@ -34,19 +44,19 @@ class AuthorsSerializer(ModelSerializer):
 
         # Gather host
         # May require tweaking, full_path might not be the way
-        try:
-            host = HttpRequest.request.get_full_path()
+        # try:
+        #     host = HttpRequest.request.get_full_path()
 
-        except:
-            host = 'http://127.0.0.1:8000/'
+        # except:
+        #     host = 'http://127.0.0.1:8000/'
 
-        # Build URL
-        url = host + str(new_author.id)
+        # # Build URL
+        # url = host + str(new_author.id)
         
         # Update Author object
-        new_author.url = url
-        new_author.host = host
-        new_author.save()
+        # new_author.url = url
+        # new_author.host = host
+        # new_author.save()
         return new_author
 
     def update(self, instance, validated_data):
