@@ -7,7 +7,7 @@ from post.models import Post
 # Create your models here.
 class Inbox(models.Model):
     type = models.TextField(default="inbox")
-    author = models.ForeignKey(Author, related_name="inbox_author", on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
     like_object = models.ForeignKey(Like, on_delete=models.CASCADE,blank=True, null=True)
     post_object = models.ForeignKey(Post, on_delete=models.CASCADE,blank=True, null=True)
 
