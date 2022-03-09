@@ -60,8 +60,6 @@ class PostSerializer(ModelSerializer):
         instance.description = validated_data.get('description', instance.description)
         instance.categories = validated_data.get('categories', instance.categories)
         instance.content = validated_data.get('content', instance.content)
-        instance.count = validated_data.get('count', instance.count)
-        instance.comments = validated_data.get('comments', instance.comments)
         instance.visibility = validated_data.get('visibility', instance.visibility)
         instance.unlisted = validated_data.get('unlisted', instance.unlisted)
 

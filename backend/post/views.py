@@ -74,7 +74,7 @@ class PostDetails(APIView):
         #     return Response("You cannot make a post for this URL", status=400)
         try: 
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
-            serializer = PostSerializer(data = request.data, context={'request':request})
+            serializer = PostSerializer(post, data = request.data, context={'request':request})
         except Post.DoesNotExist:
             return HttpResponse("Post not found.", status=401)
 
