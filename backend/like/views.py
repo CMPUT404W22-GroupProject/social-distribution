@@ -44,19 +44,25 @@ class LikeList(APIView):
             if not all_likes:
                 return Response({}, status = 200)
 
-
         # Creating the links to objects
-        http_host = request.META.get('HTTP_HOST')
-        if http_host[0]!="h":
-            http_host = "http://"+http_host
-        path_info = request.META.get('PATH_INFO')
-        post_object = http_host
-        for each_detail in path_info.split("/"):
-            if each_detail == "likes":
-                break
-            if each_detail != "":
-                post_object = post_object + "/" + each_detail
+        # http_host = request.META.get('HTTP_HOST')
+        # if http_host[0]!="h":
+            # http_host = "http://"+http_host
+        # path_info = request.META.get('PATH_INFO')
 
+        # for each_detail in path_info.split("/"):
+        #     if each_detail == "likes":
+        #         break
+        #     if each_detail != "":
+        #         post_object = post_object + "/" + each_detail
+        # print("Post object: ", post_object)
+        # print("PATH INFO: ", path_info)
+        # print("\n\n")
+        # print()
+
+        url_no_id = request.build_absolute_uri()
+        post_object = request.build_absolute_uri().split('/likes')[0]
+        
         serializer = LikeSerializer(all_likes, many = True)
         result = []
         if comment_id=="":
@@ -71,7 +77,7 @@ class LikeList(APIView):
                     if each_item =="context":
                         level["@context"] = each_object[each_item]
                     elif each_item=="id":
-                        level[each_item] = http_host+path_info+"/"+str(each_object[each_item])
+                        level[each_item] = url_no_id+"/"+str(each_object[each_item])
                     elif each_item=="object":
                         level[each_item] = post_object
                     elif each_item != "author" and each_item!="object1":
@@ -93,7 +99,7 @@ class LikeList(APIView):
                     elif each_item=="object1":
                         level["object"] = post_object
                     elif each_item=="id": 
-                        level[each_item] = http_host+path_info+"/"+str(each_object[each_item])
+                        level[each_item] = url_no_id+"/"+str(each_object[each_item])
                     elif each_item != "author" and each_item!="object":
                         level[each_item] = each_object[each_item]
                     elif each_item=="author":
@@ -103,7 +109,7 @@ class LikeList(APIView):
 
     # Add a like object FOR POSTS
     def post(self, request, author_id, post_id, comment_id=""):
-        self.checkErors(author_id,post_id, comment_id)
+        # self.checkErors(author_id,post_id, comment_id)
         # Mutable copy
         request_data = request.data.copy()
         serializer = LikeSerializer(data = request_data)
@@ -111,7 +117,7 @@ class LikeList(APIView):
         post1 = Post.objects.get(pk=post_id)
         if serializer.is_valid():
             if comment_id=="":
-                serializer.save(summary = author1.displayName + " likes your POST", author = author1, object = post1)
+                serializer.save(summary = author1.displayName + " likes your post", author = author1, object = post1)
             else:
                 comment1 = Comment.objects.get(pk=comment_id)
                 serializer.save(summary = author1.displayName + " likes your comment",  author = author1, object = post1, object1 = comment1)
