@@ -149,16 +149,18 @@ class LikedDetails(APIView):
 
     def get(self, request, author_id, post_id, like_id, comment_id=""):
         self.checkErrors(author_id, post_id, like_id, comment_id)
-        http_host = request.META.get('HTTP_HOST')
-        if http_host[0]!="h":
-            http_host = "http://"+http_host
-        path_info = request.META.get('PATH_INFO').split("/")
-        post_object = http_host
-        for each_detail in path_info:
-            if each_detail == "likes":
-                break
-            if each_detail != "":
-                post_object = post_object + "/" + each_detail
+        # http_host = request.META.get('HTTP_HOST')
+        # if http_host[0]!="h":
+        #     http_host = "http://"+http_host
+        # path_info = request.META.get('PATH_INFO').split("/")
+        # post_object = http_host
+        # for each_detail in path_info:
+        #     if each_detail == "likes":
+        #         break
+        #     if each_detail != "":
+        #         post_object = post_object + "/" + each_detail
+
+        post_object = request.build_absolute_uri().split('/likes')[0]
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
         like = Like.objects.get(pk=like_id)
         serializer = LikeSerializer(like)
@@ -191,9 +193,9 @@ class LikedDetails(APIView):
             like = Like.objects.get(pk=like_id)
             like.delete()
             if comment_id=="":
-                return HttpResponse("Successfully unliked the post.", status=201)
+                return HttpResponse("Successfully unliked the post.", status=204)
             else:
-                return HttpResponse("Successfully unliked the comment.", status=201)
+                return HttpResponse("Successfully unliked the comment.", status=204)
         except  Like.DoesNotExist:
             return HttpResponse("Like object not found.", status=401) 
 
