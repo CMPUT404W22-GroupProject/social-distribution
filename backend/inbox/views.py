@@ -40,10 +40,15 @@ class InboxList(ListCreateAPIView):
         author5 = Author.objects.get(pk=author_id)
         author = AuthorsSerializer(author5, context={'request':request})
         if page is not None:
-            serializer =  InboxSerializer(page, many=True, context={'listRequest':request})
+            serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
             for each_object in serializer.data:
                 each_object['author'] = author.data['id']
             return self.get_paginated_response(serializer.data)
+        # if queryset:
+        #     serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
+        #     for each_object in serializer.data:
+        #         each_object['author'] = author.data['id']
+        #     return Response(serializer.data, status=200)
         serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
         return Response(serializer.data, status=200)
 
