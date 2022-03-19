@@ -1,26 +1,22 @@
 from re import search
-import re
+from typing import final
 from django.shortcuts import render
-from django.http import HttpResponse, Http404, request
+from django.http import HttpResponse
 from like.models import Like
 from inbox.models import Inbox
 from comment.models import Comment
-from like.serializers import LikeSerializer
 from post.models import Post
 from author.models import Author
-from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.pagination import PageNumberPagination
 from .pagination import InboxPageNumberPagination
 from author.serializers import AuthorsSerializer
-
-import os
-# Create your views here.
 from inbox.serializers import InboxSerializer
 
-class InboxList(ListCreateAPIView):
+# Create your views here.
 
+class InboxList(ListCreateAPIView):
     serializer_class = InboxSerializer
     pagination_class = InboxPageNumberPagination
     author_id = None
@@ -39,25 +35,27 @@ class InboxList(ListCreateAPIView):
         page = self.paginate_queryset(queryset)
         author5 = Author.objects.get(pk=author_id)
         author = AuthorsSerializer(author5, context={'request':request})
+        items = []
         if page is not None:
             serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
             for each_object in serializer.data:
                 each_object['author'] = author.data['id']
-            return self.get_paginated_response(serializer.data)
-        # if queryset:
-        #     serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
-        #     for each_object in serializer.data:
-        #         each_object['author'] = author.data['id']
-        #     return Response(serializer.data, status=200)
+                items.append(each_object["items"])
+
+            paginated_items = self.paginate_queryset(items)
+            result = {}
+            result['type'] = "inbox"
+            result['author'] = str(request.build_absolute_uri().split('/inbox')[0])
+            result['items'] = paginated_items
+          
+            return Response(result, status=200)
         serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
         return Response(serializer.data, status=200)
 
     def post(self, request, author_id):
         request_data = request.data.copy()
-
         # An inbox object is created whenever a post, like, comment, follow is sent. 
         # This object refers to the original item sent through their id.
-
         try:
             #If the request type is a post
             if request_data["type"].lower()=="post":
@@ -83,7 +81,6 @@ class InboxList(ListCreateAPIView):
             return HttpResponse("Sent to inbox", status=201) 
         except:
             return HttpResponse("Error", status=400) 
-
 
     #Clear inbox
     def delete(self, request, author_id):

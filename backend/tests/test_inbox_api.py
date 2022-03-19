@@ -71,7 +71,7 @@ class InboxListTest(APITestCase):
         
         # Ensure it was actually posted
         response = self.client.get("/authors/" + str(self.author.uuid) + "/inbox")
-        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(len(response.data["items"]), 1)
    
 
     def testInboxClear(self):
@@ -87,7 +87,7 @@ class InboxListTest(APITestCase):
 
         # Ensure object was removed
         response = self.client.get("/authors/" + str(self.author.uuid) +"/inbox")
-        self.assertEqual(response.data["count"], 0)
+        self.assertEqual(len(response.data["items"]), 0)
 
 
     def tearDown(self):
