@@ -3,7 +3,7 @@ from author.models import Author
 
 from like.models import Like
 from post.models import Post
-
+from comment.models import Comment
 # Create your models here.
 class Inbox(models.Model):
     type = models.TextField(default="inbox")
@@ -11,6 +11,7 @@ class Inbox(models.Model):
     
     like_object = models.ForeignKey(Like, on_delete=models.CASCADE,blank=True, null=True)
     post_object = models.ForeignKey(Post, on_delete=models.CASCADE,blank=True, null=True)
+    comment_object = models.ForeignKey(Comment, on_delete=models.CASCADE,blank=True, null=True)
 
 
     @classmethod
@@ -28,5 +29,12 @@ class Inbox(models.Model):
     @classmethod
     def create_object_from_post(cls, post):
         inbox = cls(type="inbox", author = post.author, post_object = post)
+        inbox.save()
+        return inbox
+
+
+    @classmethod
+    def create_object_from_comment(cls, comment):
+        inbox = cls(type="inbox", author = comment.author, comment_object = comment)
         inbox.save()
         return inbox
