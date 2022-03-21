@@ -1,8 +1,6 @@
 from django.db import models
 from .managers import AccountManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.db.models.signals import post_delete
-from django.dispatch.dispatcher import receiver
 import uuid
 
 class Author(AbstractBaseUser, PermissionsMixin):

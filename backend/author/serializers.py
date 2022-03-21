@@ -49,15 +49,7 @@ class AuthorsSerializer(ModelSerializer):
         # Only update the following fields
         instance.displayName = validated_data.get('displayName', instance.displayName)
         instance.github = validated_data.get('github', instance.github)
-
-        # Handle image change (delete old off filebase)
-        old_image = instance.profileImage
-        instance.profileImage = validated_data.get('profileImage', old_image)
-        # check if new image was given
-        if instance.profileImage != old_image:
-            # delete old image
-            if old_image and os.path.isfile(old_image.path):
-                os.remove(old_image.path)
+        instance.profileImage = validated_data.get('profileImage', instance.profileImage)
         instance.save()
         
         return instance 
@@ -69,7 +61,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             validators=[UniqueValidator(queryset=Author.objects.all())]
             )
 
-    
     class Meta:
         model = Author
         fields = ('displayName', 'email', 'password', 'uuid')
@@ -77,7 +68,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             'password': {'write_only':True},
             'uuid': {'read_only':True},
         }
-
 
     def create(self, validated_data):
         author = Author.objects.create_user(
@@ -87,7 +77,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         author.displayName = validated_data['displayName']
         author.save()
         return author
-
 
 #Login Serializer
 class LoginSerializer(serializers.Serializer):
