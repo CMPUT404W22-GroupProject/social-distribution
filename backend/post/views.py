@@ -11,6 +11,8 @@ from .pagination import PostPageNumberPagination
 from rest_framework import permissions
 import os
 from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAuthorOrReadOnly
+from rest_framework import generics, permissions
 
 from post.serializers import PostSerializer
 
@@ -19,6 +21,8 @@ class PostList(ListCreateAPIView):
     serializer_class = PostSerializer
     pagination_class = PostPageNumberPagination
     author_id = None
+    # permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsAuthorOrReadOnly,)
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
@@ -32,9 +36,7 @@ class PostList(ListCreateAPIView):
         if page is not None:
             serializer =  PostSerializer(page, many=True, context={'request':request})
             return self.get_paginated_response(serializer.data)
-
         serializer =  PostSerializer(queryset, many=True, context={'request':request})
-
         return Response(serializer.data, status=200)
 
     # create a new post
@@ -48,7 +50,6 @@ class PostList(ListCreateAPIView):
         #     print(request.data)
         #     return Response("You cannot make a post for this URL", status=400)
         serializer = PostSerializer(data = request.data, context={'request':request})
-
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = 201)
@@ -59,6 +60,7 @@ class PostList(ListCreateAPIView):
 class PostDetails(APIView):
     # get post
     # permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthorOrReadOnly,)
     def get(self, request, post_id, author_id):
         try:
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
@@ -74,7 +76,7 @@ class PostDetails(APIView):
         #     return Response("You cannot make a post for this URL", status=400)
         try: 
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
-            serializer = PostSerializer(data = request.data, context={'request':request})
+            serializer = PostSerializer(post, data = request.data, context={'request':request})
         except Post.DoesNotExist:
             return HttpResponse("Post not found.", status=401)
 
@@ -112,3 +114,6 @@ class PostDetails(APIView):
                 return Response(serializer.data, status = 201)
             else:
                 return Response(serializer.errors, status = 400) # bad request
+
+# class ImagePostDetails(APIView):
+#     def get(self, request, post_id, author_id):
