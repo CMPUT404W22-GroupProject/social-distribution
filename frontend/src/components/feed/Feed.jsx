@@ -19,7 +19,7 @@ function Feed(){
     const [posts, setPosts] = useState([]);
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
-    const userId = "01a96c4b-8ca3-421e-b2ea-feeb2744f8e5";
+    const userId = "a168a4c4-f76f-4c9d-bf0a-986c7c46b51a";
     const [buttonPopup, setButtonPopup] = useState(false);
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(1);

@@ -23,7 +23,7 @@ function CreatePost(){
     const [isUnlisted, setIsUnlisted] = useState(false);
     const [author, setAuthor] = useState([]);
     const {id, setId} = useState(UserContext);
-    const authorId = "01a96c4b-8ca3-421e-b2ea-feeb2744f8e5";
+    const authorId = "a168a4c4-f76f-4c9d-bf0a-986c7c46b51a";
     
     useEffect(() => {
       //fetches author when component is called

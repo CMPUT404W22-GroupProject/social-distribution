@@ -21,7 +21,7 @@ function Post({post}){
     const hasImage = false;
     const postAuthorId = post.author;//this is just the ID of POST author, NOT entire object,
     const commentCount = post.count; //comment counter obtained from server
-    const myAuthorId = "01a96c4b-8ca3-421e-b2ea-feeb2744f8e5"; // this is my user author id, get from Context
+    const myAuthorId = "a168a4c4-f76f-4c9d-bf0a-986c7c46b51a"; // this is my user author id, get from Context
     const [author, setAuthor] = useState({});
     const commentsSrc = post.commentsSrc;
     const [likeId, setLikeId] = useState(0);

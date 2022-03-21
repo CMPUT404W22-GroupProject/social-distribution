@@ -19,10 +19,10 @@ function App() {
             <NavBar/>
             <Routes>
               <Route exact path='/login' element={<Login/>}/>
-              <Route element={<PrivateRoute/>}>
+              {/* <Route element={<PrivateRoute/>}> */}
                 <Route exact path='/profile/:id' element={<Profile/>}/>
                 <Route exact path='/home' element={<Home/>}/>
-              </Route>
+              {/*</Route>*/}
             </Routes> 
           </Router>
           </UserContextProvider>
