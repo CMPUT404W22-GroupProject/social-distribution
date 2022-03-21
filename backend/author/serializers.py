@@ -1,8 +1,10 @@
 from author.models import Author
+from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from django.http import HttpRequest
+from django.contrib.auth import authenticate
 import os
-import json
+
 
 # Basic Author Serializer
 class AuthorsSerializer(ModelSerializer):
@@ -59,3 +61,41 @@ class AuthorsSerializer(ModelSerializer):
         instance.save()
         
         return instance 
+
+#Register Serializer
+class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+            required=True,
+            validators=[UniqueValidator(queryset=Author.objects.all())]
+            )
+
+    
+    class Meta:
+        model = Author
+        fields = ('displayName', 'email', 'password', 'uuid')
+        extra_kwargs = {
+            'password': {'write_only':True},
+            'uuid': {'read_only':True},
+        }
+
+
+    def create(self, validated_data):
+        author = Author.objects.create_user(
+            validated_data['email'],
+            validated_data['password'],
+        )
+        author.displayName = validated_data['displayName']
+        author.save()
+        return author
+
+
+#Login Serializer
+class LoginSerializer(serializers.Serializer):
+    email = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        author = authenticate(**data)
+        if author and author.is_active:
+            return author
+        raise serializers.ValidationError("Incorrect Credentials")

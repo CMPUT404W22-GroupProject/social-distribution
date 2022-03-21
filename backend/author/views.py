@@ -2,8 +2,9 @@ from django.http import HttpResponse
 from author.models import Author
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from author.serializers import AuthorsSerializer
-import os
+from author.serializers import AuthorsSerializer, RegisterSerializer, LoginSerializer
+from rest_framework.authtoken.models import Token
+from rest_framework import status
 
 class AuthorList(APIView):
     
@@ -11,8 +12,6 @@ class AuthorList(APIView):
     def get(self, request): 
         # if not request.user.is_authenticated:
         #     return HttpResponse("You must be registered to access this function.", status = 401)
-
-
         all_authors = Author.objects.all()
         serializer = AuthorsSerializer(all_authors, many = True, context={'request':request})
         return Response(serializer.data, status = 200)
@@ -84,3 +83,38 @@ class AuthorDetails(APIView):
 
         except  Author.DoesNotExist:
             return HttpResponse("Author not found.", status=401) 
+
+class RegisterUser(APIView):
+    #Register a new users
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            author = serializer.save()
+            return Response({
+                "user" : serializer.data,
+                "token": Token.objects.create(user=author)[1]
+
+             }, status=status.HTTP_201_CREATED)
+        if Author.objects.filter(email__iexact=request.data['email']).exists():
+            return Response({"Status 0": "User with this email already exist"}, status=status.HTTP_409_CONFLICT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginUser(APIView):
+    #allows users created to login.
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            author = serializer.validated_data
+            # add additional user info to response
+            serialized_data = serializer.data
+            serialized_data["uuid"] = author.uuid
+            serialized_data["displayName"] = author.displayName
+            serialized_data.pop("password")
+            
+            return Response({
+                "user" : serialized_data,
+                "token": Token.objects.create(user=author)[1]
+
+             }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
