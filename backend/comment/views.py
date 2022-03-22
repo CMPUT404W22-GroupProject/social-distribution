@@ -5,9 +5,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from post.models import Post
 from comment.models import Comment
+from author.models import Author
 from comment.serializers import CommentSerializer, CommentSerializerGet
 from .pagination import CommentPageNumberPagination
-from rest_framework import permissions
 
 
 class CommentList(ListCreateAPIView):
