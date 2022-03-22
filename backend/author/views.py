@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 import os
 
 class AuthorList(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    # permission_classes = (permissions.IsAuthenticated,)
     # Get all Authors
     def get(self, request): 
         # if not request.user.is_authenticated:
@@ -35,7 +35,7 @@ class AuthorList(APIView):
 
 class AuthorDetails(APIView):
     # We require a author_id to be passed with the request (in the url) to get a user
-    permission_classes = (permissions.IsAuthenticated,)
+    # permission_classes = (permissions.IsAuthenticated,)
     # Get a specific author
     def get(self, request, author_id):
         
