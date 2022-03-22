@@ -27,11 +27,11 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
 ]
-
 
 # Application definition
 
@@ -46,10 +46,6 @@ INSTALLED_APPS = [
     # 'django.contrib.sites',
     'rest_framework',
     'rest_auth',
-    'allauth', 
-    'allauth.account', 
-    'allauth.socialaccount', 
-    'rest_auth.registration', 
     'rest_framework.authtoken',
     'author',
     'comment',
@@ -90,6 +86,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
+
 
 ROOT_URLCONF = 'config.urls'
 
