@@ -20,3 +20,5 @@ class Post(models.Model):
     visibility = models.CharField(max_length=255)
     unlisted = models.BooleanField()
     image = models.TextField(blank=True)
+    id = models.URLField(blank=True, null=True)
+    comments = models.URLField(blank=True, null=True)
