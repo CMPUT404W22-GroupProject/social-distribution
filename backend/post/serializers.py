@@ -10,6 +10,10 @@ from comment.views import CommentList
 from django.urls import path
 from comment.models import Comment
 from author.models import Author
+import uuid
+from requests.auth import HTTPBasicAuth
+from comment import views
+from urllib3.exceptions import InsecureRequestWarning
 
 # Basic Post Serializer
 class PostSerializer(ModelSerializer):
@@ -18,6 +22,7 @@ class PostSerializer(ModelSerializer):
     id = SerializerMethodField()
     comments = SerializerMethodField()
     count = SerializerMethodField()
+    author = SerializerMethodField()
 
     class Meta:
         model = Post
@@ -38,15 +43,20 @@ class PostSerializer(ModelSerializer):
     def get_commentsSrc(self, post):
         try:
             request = self.context.get('request')
-            url_no_id = request.build_absolute_uri().split('/posts/')[0]
-            url = url_no_id + '/posts/' + str(post.uuid) + '/comments'
-            response = requests.get(url).json()
+            response = CommentList.as_view()(request=request._request, author_id=post.author.uuid, post_id=post.uuid).data
             return response
-        except:
+        except Exception as e:
             return {}
 
     def get_count(self, post):
         return Comment.objects.filter(post=post.uuid).count()
+    
+    def get_author(self, post):
+        request = self.context.get('request')
+        request_uuid = uuid.UUID(str(request.user))
+        author = Author.objects.get(pk=request_uuid)
+        serializer = AuthorsSerializer(author, context={'request':request})
+        return serializer.data
 
     def create(self, validated_data):
         new_post = Post.objects.create(**validated_data)
@@ -60,8 +70,6 @@ class PostSerializer(ModelSerializer):
         instance.description = validated_data.get('description', instance.description)
         instance.categories = validated_data.get('categories', instance.categories)
         instance.content = validated_data.get('content', instance.content)
-        instance.count = validated_data.get('count', instance.count)
-        instance.comments = validated_data.get('comments', instance.comments)
         instance.visibility = validated_data.get('visibility', instance.visibility)
         instance.unlisted = validated_data.get('unlisted', instance.unlisted)
 

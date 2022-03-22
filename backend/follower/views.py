@@ -29,8 +29,8 @@ class FollowerDetails(APIView, LoginRequiredMixin):
             item = follower.items.get(pk=foreign_author_id)
             serializer = AuthorsSerializer(item, context={'request':request})
             return Response(serializer.data, status=200)
-        except Author.DoesNotExist and Follower.DoesNotExist:
-            return Response("You are not following this user", status=404)
+        except:
+            return Response("You are not followed by this user", status=404)
 
     
     def put(self, request, author_id, foreign_author_id):

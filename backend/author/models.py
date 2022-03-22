@@ -14,15 +14,17 @@ class Author(AbstractBaseUser, PermissionsMixin):
     profileImage = models.TextField(blank=True)
     is_staff = models.BooleanField(default=False)
     # is_auth = models.BooleanField(default=False) # ADMIN MUST MANUALLY AUTHENTICATE
+    is_active = models.BooleanField(default=True)
 
     objects = AccountManager()
 
+    EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['displayName']
 
     #The following are used in Like app
     def __str__(self):
-        return self.type+","+self.host+","+self.displayName+","+self.url+","+self.github
+        return str(self.uuid)
 
     def toString(self):
         return {"type: ":self.type,
