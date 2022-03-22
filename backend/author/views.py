@@ -60,8 +60,6 @@ class AuthorDetails(APIView):
 
         request_data = request.data.copy()
 
-
-
         serializer = AuthorsSerializer(author, data = request_data, partial=True, context={'request':request})
         if serializer.is_valid():
             serializer.save()
@@ -93,7 +91,7 @@ class RegisterUser(APIView):
             author = serializer.save()
             return Response({
                 "user" : serializer.data,
-                "token": Token.objects.create(user=author)[1]
+                "token": Token.objects.create(user=author).key
 
              }, status=status.HTTP_201_CREATED)
         if Author.objects.filter(email__iexact=request.data['email']).exists():
@@ -114,7 +112,7 @@ class LoginUser(APIView):
             
             return Response({
                 "user" : serialized_data,
-                "token": Token.objects.create(user=author)[1]
+                "token": Token.objects.create(user=author).key
 
              }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
