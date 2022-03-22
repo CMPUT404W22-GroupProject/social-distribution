@@ -14,7 +14,7 @@ class Post(models.Model):
     description = models.TextField()
     contentType = models.CharField(max_length=255)
     content = models.TextField()
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="post_author", on_delete=models.CASCADE) # when Author is deleted, Post will be deleted
+    author = models.ForeignKey(Author, related_name="post_author", on_delete=models.CASCADE) # when Author is deleted, Post will be deleted
     categories = models.TextField()
     published = models.DateTimeField(default=timezone.now)
     visibility = models.CharField(max_length=255)

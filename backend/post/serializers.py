@@ -17,12 +17,11 @@ from urllib3.exceptions import InsecureRequestWarning
 
 # Basic Post Serializer
 class PostSerializer(ModelSerializer):
-    # author = AuthorsSerializer(many=False, read_only=True)
+
     commentsSrc = SerializerMethodField()
     id = SerializerMethodField()
     comments = SerializerMethodField()
     count = SerializerMethodField()
-    author = SerializerMethodField()
 
     class Meta:
         model = Post
@@ -43,20 +42,13 @@ class PostSerializer(ModelSerializer):
     def get_commentsSrc(self, post):
         try:
             request = self.context.get('request')
-            response = CommentList.as_view()(request=request._request, author_id=post.author.uuid, post_id=post.uuid).data
+            response = CommentList.as_view()(request=request._request, method="GET", author_id=post.author.uuid, post_id=post.uuid).data
             return response
         except Exception as e:
             return {}
 
     def get_count(self, post):
         return Comment.objects.filter(post=post.uuid).count()
-    
-    def get_author(self, post):
-        request = self.context.get('request')
-        request_uuid = uuid.UUID(str(request.user))
-        author = Author.objects.get(pk=request_uuid)
-        serializer = AuthorsSerializer(author, context={'request':request})
-        return serializer.data
 
     def create(self, validated_data):
         new_post = Post.objects.create(**validated_data)
@@ -76,3 +68,6 @@ class PostSerializer(ModelSerializer):
         instance.save()
         
         return instance
+
+class PostSerializerGet(PostSerializer):
+    author = AuthorsSerializer(many=False, read_only=True)
