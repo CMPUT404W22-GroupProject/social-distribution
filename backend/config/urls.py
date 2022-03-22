@@ -16,10 +16,13 @@ Including another URLconf
 from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
+from author.views import RegisterUser, LoginUser
 
 urlpatterns = [
     path('authors/', include('author.urls')),
     path('admin/', admin.site.urls),
+    path('register/' , RegisterUser.as_view()),
+    path('login/' , LoginUser.as_view()),
     # path('like/', include('like.urls')),
     # path('api-auth/', include('rest_framework.urls')),
 ]
