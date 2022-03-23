@@ -13,6 +13,7 @@ from rest_framework.pagination import PageNumberPagination
 from .pagination import InboxPageNumberPagination
 from author.serializers import AuthorsSerializer
 from inbox.serializers import InboxSerializer
+from rest_framework import generics, permissions
 
 # Create your views here.
 
@@ -38,6 +39,7 @@ class InboxList(ListCreateAPIView):
         items = []
         if page is not None:
             serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
+            # print(serializer.data)
             for each_object in serializer.data:
                 each_object['author'] = author.data['id']
                 items.append(each_object["items"])
@@ -61,6 +63,7 @@ class InboxList(ListCreateAPIView):
             if request_data["type"].lower()=="post":
                 post_id = request_data["id"]
                 new_post = Post.objects.get(uuid = post_id)
+                # print(new_post.uuid)
                 Inbox.create_object_from_post(new_post)
 
             #If the request type is a comment

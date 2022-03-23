@@ -22,11 +22,15 @@ class InboxSerializer(ModelSerializer):
         try:
             request = self.context.get('listRequest')
             url = request.build_absolute_uri()
+            while url[-1]!="x":
+                url = url[:len(url)-1]
             url = url[:len(url)-6] # remove /inbox from link
+            print(url)
             if inbox.like_object:
                 url = url + "/posts/" +str(inbox.like_object.object.uuid) + "/likes/" + str(inbox.like_object.id)
             elif inbox.post_object:
                 url = url + "/posts/" +str(inbox.post_object.uuid)
+                # print(url)
             elif inbox.comment_object:
                 url = url + "/posts/" +str(inbox.comment_object.post.uuid) + "/comments/" + str(inbox.comment_object.uuid)
             response = requests.get(url).json()

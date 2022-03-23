@@ -25,7 +25,8 @@ class CommentSerializer(ModelSerializer):
     
     def get_author(self, comment):
         request = self.context.get('request')
-        request_uuid = uuid.UUID(str(request.user))
+        # request_uuid = uuid.UUID(str(request.user))
+        request_uuid = str(request).split('/posts/')[0].split('authors/')[1]
         author = Author.objects.get(pk=request_uuid)
         serializer = AuthorsSerializer(author, context={'request':request})
         return serializer.data

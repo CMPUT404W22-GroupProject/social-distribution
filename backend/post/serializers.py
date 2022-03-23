@@ -53,14 +53,15 @@ class PostSerializer(ModelSerializer):
     
     def get_author(self, post):
         request = self.context.get('request')
-        request_uuid = uuid.UUID(str(request.user))
+        # request_uuid = uuid.UUID(str(request.user))
+        request_uuid = str(request).split('/posts/')[0].split('authors/')[1]
         author = Author.objects.get(pk=request_uuid)
         serializer = AuthorsSerializer(author, context={'request':request})
         return serializer.data
 
     def create(self, validated_data):
         new_post = Post.objects.create(**validated_data)
-        Inbox.create_object_from_post(new_post) #Send post to inbox
+        # Inbox.create_object_from_post(new_post) #Send post to inbox
         return new_post
 
     def update(self, instance, validated_data):
