@@ -18,13 +18,8 @@ class Inbox(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
 
     @classmethod
-    def create_object_from_like(cls, like):
-        if not like.object1:
-            # if its a like on a post
-            inbox = cls(type="inbox", author = like.object.author, like_object = like)
-        else:
-            # if its a like on a comment
-            inbox = cls(type="inbox", author = like.object1.author, like_object = like)
+    def create_object_from_like(cls, like, author_id):
+        inbox = cls(type="inbox", author_id = author_id, like_object = like)
         inbox.save()
         return inbox
 

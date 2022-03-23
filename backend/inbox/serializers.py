@@ -31,8 +31,8 @@ class InboxSerializer(ModelSerializer):
 
             elif inbox.comment_object:
                 url = inbox.comment_object.id
-
+            print(url)
             response = requests.get(url).json()
             return response
-        except:
+        except Exception as e:
             return {}
