@@ -2,16 +2,11 @@ from django.http import HttpResponse
 from author.models import Author
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from author.serializers import AuthorsSerializer, RegisterSerializer, LoginSerializer
 from rest_framework.authtoken.models import Token
-from rest_framework import status
-
-from author.serializers import AuthorsSerializer
-from rest_framework import generics, permissions
+from rest_framework import status, generics, permissions
 from django.views.decorators.csrf import csrf_exempt
 import os
-
 
 class AuthorList(APIView):
     permission_classes = (permissions.IsAuthenticated,)
