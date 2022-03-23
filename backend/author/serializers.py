@@ -43,6 +43,15 @@ class AuthorsSerializer(ModelSerializer):
     def create(self, validated_data):
         # Create author so we can get unique ID for URL + Host
         new_author = Author.objects.create(**validated_data)
+        request = self.context.get('request')
+
+        host = request.build_absolute_uri().split('/authors/')[0]
+
+        new_author.host = host
+        new_author.id = host + '/authors/' + str(new_author.uuid)
+        new_author.url = host + '/authors/' + str(new_author.uuid)
+
+        new_author.save()
         return new_author
 
     def update(self, instance, validated_data):

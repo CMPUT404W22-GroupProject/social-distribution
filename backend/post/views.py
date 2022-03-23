@@ -13,17 +13,24 @@ import os
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAuthorOrReadOnly
 from rest_framework import generics, permissions
+from follower.models import Follower
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
+from rest_framework.parsers import JSONParser
+from django.urls import reverse
+import json
+from inbox.views import InboxList
+import urllib.parse
 
-from post.serializers import PostSerializer
+from post.serializers import PostSerializer, PostSerializerGet
+
 
 class PostList(ListCreateAPIView):
 
     serializer_class = PostSerializer
     pagination_class = PostPageNumberPagination
     author_id = None
-    # permission_classes = (permissions.IsAuthenticated,)
-    permission_classes = (IsAuthorOrReadOnly,)
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = (IsAuthorOrReadOnly,)
 
     def get_queryset(self):
         return Post.objects.filter(author_id=self.author_id).order_by('published')
@@ -34,9 +41,9 @@ class PostList(ListCreateAPIView):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer =  PostSerializer(page, many=True, context={'request':request})
+            serializer =  PostSerializerGet(page, many=True, context={'request':request})
             return self.get_paginated_response(serializer.data)
-        serializer =  PostSerializer(queryset, many=True, context={'request':request})
+        serializer =  PostSerializerGet(queryset, many=True, context={'request':request})
         return Response(serializer.data, status=200)
 
     # create a new post
@@ -44,11 +51,8 @@ class PostList(ListCreateAPIView):
         try:
             author = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
-            return HttpResponse("Author", status=404)
+            return Response("Author not found", status=404)
 
-        # if request.data.get('author') != author:
-        #     print(request.data)
-        #     return Response("You cannot make a post for this URL", status=400)
         serializer = PostSerializer(data = request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
@@ -60,14 +64,14 @@ class PostList(ListCreateAPIView):
 class PostDetails(APIView):
     # get post
     # permission_classes = [IsAuthenticated]
-    permission_classes = (IsAuthorOrReadOnly,)
+    
     def get(self, request, post_id, author_id):
         try:
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
-            serializer = PostSerializer(post, context={'request':request})
+            serializer = PostSerializerGet(post, context={'request':request})
             return Response(serializer.data, status=200)
         except Post.DoesNotExist:
-            return HttpResponse("Post not found", status = 401)
+            return Response("Post not found", status = 404)
         
     #TODO add authentication
     # edit post
@@ -78,7 +82,7 @@ class PostDetails(APIView):
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
             serializer = PostSerializer(post, data = request.data, context={'request':request})
         except Post.DoesNotExist:
-            return HttpResponse("Post not found.", status=401)
+            return Response("Post not found", status=404)
 
         if serializer.is_valid():
             serializer.save()
@@ -94,7 +98,7 @@ class PostDetails(APIView):
             post.delete()
             return Response("Post deleted.", status=204)
         except Post.DoesNotExist:
-            return HttpResponse("Post not found", status = 401)
+            return Response("Post not found", status = 404)
 
 
     # create new post with post_id
@@ -102,11 +106,11 @@ class PostDetails(APIView):
         try: 
             Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
-            return HttpResponse("Author not found.", status=401)
+            return Response("Author not found", status=404)
 
         try:
             Post.objects.filter(author_id=author_id).get(pk=post_id)
-            return HttpResponse("Not right method", status=400)
+            return Response("Not right method", status=400)
         except Post.DoesNotExist:
             serializer = PostSerializer(data = request.data, context={'request':request})
             if serializer.is_valid():
