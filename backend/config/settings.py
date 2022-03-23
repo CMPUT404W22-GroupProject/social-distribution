@@ -27,11 +27,11 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
 ]
-
 
 # Application definition
 
@@ -45,11 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 'django.contrib.sites',
     'rest_framework',
-    'rest_auth',
-    'allauth', 
-    'allauth.account', 
-    'allauth.socialaccount', 
-    'rest_auth.registration', 
     'rest_framework.authtoken',
     'author',
     'comment',
@@ -79,7 +74,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
+        'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 2,
@@ -90,6 +85,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
+
 
 ROOT_URLCONF = 'config.urls'
 

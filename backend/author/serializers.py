@@ -1,8 +1,10 @@
 from author.models import Author
+from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from django.http import HttpRequest
+from django.contrib.auth import authenticate
 import os
-import json
+
 
 # Basic Author Serializer
 class AuthorsSerializer(ModelSerializer):
@@ -47,15 +49,42 @@ class AuthorsSerializer(ModelSerializer):
         # Only update the following fields
         instance.displayName = validated_data.get('displayName', instance.displayName)
         instance.github = validated_data.get('github', instance.github)
-
-        # Handle image change (delete old off filebase)
-        old_image = instance.profileImage
-        instance.profileImage = validated_data.get('profileImage', old_image)
-        # check if new image was given
-        if instance.profileImage != old_image:
-            # delete old image
-            if old_image and os.path.isfile(old_image.path):
-                os.remove(old_image.path)
+        instance.profileImage = validated_data.get('profileImage', instance.profileImage)
         instance.save()
         
         return instance 
+
+#Register Serializer
+class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+            required=True,
+            validators=[UniqueValidator(queryset=Author.objects.all())]
+            )
+
+    class Meta:
+        model = Author
+        fields = ('displayName', 'email', 'password', 'uuid')
+        extra_kwargs = {
+            'password': {'write_only':True},
+            'uuid': {'read_only':True},
+        }
+
+    def create(self, validated_data):
+        author = Author.objects.create_user(
+            validated_data['email'],
+            validated_data['password'],
+        )
+        author.displayName = validated_data['displayName']
+        author.save()
+        return author
+
+#Login Serializer
+class LoginSerializer(serializers.Serializer):
+    email = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        author = authenticate(**data)
+        if author and author.is_active:
+            return author
+        raise serializers.ValidationError("Incorrect Credentials")
