@@ -40,13 +40,11 @@ class InboxList(ListCreateAPIView):
         items = []
         if page is not None:
             serializer =  InboxSerializer(queryset, many=True, context={'listRequest':request})
-            print(serializer)
             for each_object in serializer.data:
                 each_object['author'] = author.data['id']
                 items.append(each_object["items"])
 
             paginated_items = self.paginate_queryset(items)
-            print("paginated", paginated_items)
             result = {}
             result['type'] = "inbox"
             result['author'] = str(request.build_absolute_uri().split('/inbox')[0])
@@ -59,7 +57,6 @@ class InboxList(ListCreateAPIView):
 
     def post(self, request, author_id):
         request_data = request.data.copy()
-        print(request_data)
         # An inbox object is created whenever a post, like, comment, follow is sent. 
         # This object refers to the original item sent through their id.
         try:
@@ -67,7 +64,6 @@ class InboxList(ListCreateAPIView):
             if request_data["type"].lower()=="post":
                 post_id = request_data["id"]
                 new_post = Post.objects.get(id = post_id)
-                print(new_post, "new")
                 Inbox.create_object_from_post(new_post, author_id)
 
             #If the request type is a comment
@@ -80,10 +76,13 @@ class InboxList(ListCreateAPIView):
             elif request_data["type"].lower()=="like":
                 like_id = request_data["id"]
                 new_like = Like.objects.get(id = like_id)
-                Inbox.create_object_from_like(new_like)
+                Inbox.create_object_from_like(new_like, author_id)
 
+            
             #If the request type is a follow
-            # else:
+            elif request_data["type"].lower() == "follow":
+                follow_id = request_data['id']
+                # new_follow = FollowRequest.objects
             
             return Response("Sent to inbox", status=201) 
         except:
