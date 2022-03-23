@@ -95,9 +95,9 @@ const addComment  = async (text) => {
 
 
        //fetch from server again if comment is uploaded, ideally new one should show as well or display is internally
-       setBackendComments([newInternalComment, ...backendComments])
+       //setBackendComments([newInternalComment, ...backendComments])
        //OR
-       //fetchComments();
+       fetchComments();
 
     console.log("addComment:", newComment);
 };

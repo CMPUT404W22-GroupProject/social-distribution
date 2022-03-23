@@ -25,7 +25,8 @@ function Post({post}){
     const postAuthor = post.author; //entire author object derived from post
     const postAuthorId = postAuthor.id; //this is just the ID of POST author, NOT entire object,
     const commentCount = post.count; //comment counter obtained from server
-    const myAuthorId = "3db7243e-0822-45bb-b3ce-28ff9e378e16"; // this is my user author id, get from Context
+    const myAuthorId = "0611a7c9-2801-42d5-adb8-7df4a2079c17"; // this is my user author id, get from Context
+    const myAuthorIdPath = "/authors/0611a7c9-2801-42d5-adb8-7df4a2079c17"; //this is my user author id path, ideally retrieved from Context
     const [author, setAuthor] = useState({});
     const commentsSrc = post.commentsSrc;
     const [likeId, setLikeId] = useState(0);
@@ -48,13 +49,20 @@ function Post({post}){
             setAuthor(result.data);
         } */
         const fetchLikeCount = async () => {
-            const result = await axios.get(postPath + "/likes");
+            await axios.get(postPath + "/likes")
+            .then((response) => {
+                const result = response;
+                const likeObjectRecieved = response.data;
+                hasAuthorAlreadyLiked(likeObjectRecieved);
 
-            if (result.data.length !== undefined){
-                setLike(result.data.length);
-                setLikeObjects(result.data);
+                if (result.data.length !== undefined){
+                    setLike(result.data.length);
+                    setLikeObjects(result.data);
+    
+                }
+            });
+            console.log("POSTAUJTHORID: ", postAuthorId);
 
-            }
             
             /* if (result.data.length !== undefined ){
                 if (result.data.some(i => i.id.includes(likeId))){
@@ -67,6 +75,23 @@ function Post({post}){
                 }
             } */
         }
+
+        const hasAuthorAlreadyLiked = (likeObjectRecieved) => {
+            likeObjectRecieved.forEach((like) => {
+                //chekcing to see if logged in user has already liked the post i.e. seeing if logged in user is already in like object list
+                // if so, then isLiked will be set to true. This is will avoid user liking the same object multiple times. 
+                const likeAuthorUrl = new URL(like.author.id);
+                const likeAuthorPath = likeAuthorUrl.pathname;
+                console.log("likeAuthorPAth: ", likeAuthorPath)
+                if (likeAuthorPath === myAuthorIdPath){
+                    console.log("SET TO TRUE")
+                    setIsLiked(true);
+                    const likeIdUrl = new URL(like.id);
+                    const likeIdUrlPath = likeIdUrl.pathname;
+                    setLikeId(likeIdUrlPath);
+                }
+            })
+        } 
         fetchLikeCount();
         //fetchAuthor();
     },[])
@@ -78,7 +103,9 @@ function Post({post}){
         }
         if (!isLiked){
             console.log("LIKE OBJECT: ",newLike);
+            //sending POST req with like object to post object
             try {
+                //THIS WILL BE REMOVED LATER, CANT POST TO THIS LINK ONLY GET
                 await axios.post(postPath + "/likes", newLike)
                 .then((response) => {
                     //console.log("THIS IS THE DATA",response.data);
@@ -87,10 +114,25 @@ function Post({post}){
             } catch (error) {
                 console.log(error)
             }
+
+            //sending POST req with like object to inbox of post author
+            try {
+                await axios.post(postAuthorId + "/inbox/", newLike)
+                .then((response) => {
+                    //console.log("THIS IS THE DATA",response.data);
+                    //setLikeId(response.data.id);
+                });
+            } catch (error) {
+                console.log(error)
+            }
+
+
         }  else {
             console.log("DELETED LIKE");
             try {
-                await axios.delete( postPath + "/likes/" + likeId)
+                //await axios.delete( postPath + "/likes/" + likeId)
+                //likeId is already full path
+                await axios.delete(likeId)
             } catch (error) {
                 console.log(error)
             }
@@ -220,7 +262,7 @@ function Post({post}){
               
                             <PersonIcon htmlColor="blue" className="createPostIcon" />
                              
-                            <span className="createPostOptionText">{liker.displayName}</span>
+                            <span className="createPostOptionText">{liker.author.displayName}</span>
                         </div>
                           ))
                           }

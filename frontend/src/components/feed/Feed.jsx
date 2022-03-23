@@ -24,12 +24,13 @@ function Feed({id, feedType}){
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
     const [inbox, setInbox] = useState([]);
-    const userId = "3db7243e-0822-45bb-b3ce-28ff9e378e16";
+    const userId = "0611a7c9-2801-42d5-adb8-7df4a2079c17";
     const [buttonPopup, setButtonPopup] = useState(false);
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(1);
     const [authorId, setAuthorId] = useState(JSON.parse(id)["id"]); //authorId from URL
     const [urlAuthor, setUrlAuthor] = useState({});
+    const emptyObject = {}// temporary for Follow
     
 
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
@@ -148,6 +149,8 @@ function Feed({id, feedType}){
             </div>
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
+
+            <div><Follow follow = {emptyObject}/></div>
 
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">

@@ -39,13 +39,16 @@ function Follow({follow}){
 
     function acceptFollow () {
         //if user chooses accept
+        //sends POST request to ***/followers of logged in user (so my AuthorId), with follower object
         console.log("Follow Accepted!");
         alert("You have accepted the request!");
+
         
     };
 
     function declineFollow () {
         //if a user chooses decline
+        //send DEL request to ***/inbox of logged in user and deletes this follower object
         console.log("Follow Declined!");
         alert("You have declined the request!");
         

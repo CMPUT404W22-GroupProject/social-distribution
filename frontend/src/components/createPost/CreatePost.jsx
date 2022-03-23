@@ -26,7 +26,7 @@ function CreatePost(){
     const [isUnlisted, setIsUnlisted] = useState(false);
     const [author, setAuthor] = useState({});
     const {id, setId} = useState(UserContext);
-    const authorId = "3db7243e-0822-45bb-b3ce-28ff9e378e16";
+    const authorId = "0611a7c9-2801-42d5-adb8-7df4a2079c17";
     const [followers, setFollowers] = useState([]);// followers of authorID, initial is empty object
     const [buttonPopup, setButtonPopup] = useState(false);
     const [isPlain, setisPlain] = useState(false);
