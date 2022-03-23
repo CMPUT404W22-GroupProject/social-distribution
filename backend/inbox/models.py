@@ -4,15 +4,18 @@ from author.models import Author
 from like.models import Like
 from post.models import Post
 from comment.models import Comment
+from django.utils import timezone
+from follower.models import FollowRequest
+
 # Create your models here.
 class Inbox(models.Model):
     type = models.TextField(default="inbox")
+    like_object = models.ForeignKey(Like, blank=True, on_delete=models.CASCADE, null=True)
+    post_object = models.ForeignKey(Post, blank=True, on_delete=models.CASCADE, null=True)
+    comment_object = models.ForeignKey(Comment, blank=True, on_delete=models.CASCADE, null=True)
+    follow_request_object = models.ForeignKey(FollowRequest, blank=True, on_delete=models.CASCADE, null=True)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    
-    like_object = models.ForeignKey(Like, on_delete=models.CASCADE,blank=True, null=True)
-    post_object = models.ForeignKey(Post, on_delete=models.CASCADE,blank=True, null=True)
-    comment_object = models.ForeignKey(Comment, on_delete=models.CASCADE,blank=True, null=True)
-
+    created_date = models.DateTimeField(default=timezone.now)
 
     @classmethod
     def create_object_from_like(cls, like):
@@ -27,14 +30,14 @@ class Inbox(models.Model):
 
 
     @classmethod
-    def create_object_from_post(cls, post):
-        inbox = cls(type="inbox", author = post.author, post_object = post)
+    def create_object_from_post(cls, post, author_id):
+        inbox = cls(type="inbox", author_id = author_id, post_object = post)
         inbox.save()
         return inbox
 
 
     @classmethod
-    def create_object_from_comment(cls, comment):
-        inbox = cls(type="inbox", author = comment.author, comment_object = comment)
+    def create_object_from_comment(cls, comment, author_id):
+        inbox = cls(type="inbox", author_id = author_id, comment_object = comment)
         inbox.save()
         return inbox

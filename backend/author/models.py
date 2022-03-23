@@ -10,6 +10,7 @@ class Author(AbstractBaseUser, PermissionsMixin):
     displayName = models.CharField(max_length=150)
     url = models.URLField(blank=True)
     host = models.URLField(blank=True)
+    id = models.URLField(blank=True)
     github = models.URLField()
     profileImage = models.TextField(blank=True)
     is_staff = models.BooleanField(default=False)
