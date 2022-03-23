@@ -65,7 +65,6 @@ class PostSerializer(ModelSerializer):
         #     followers = Follower.objects.get(author=new_post.author.uuid)
         #     for follower in followers.items.all():
         #         Inbox.create_object_from_post(new_post, follower.uuid)
-
         return new_post
 
     def update(self, instance, validated_data):
