@@ -7,7 +7,7 @@ from django.conf import settings
 # Create your models here.
 class Post(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    type = models.CharField(default="post", max_length=255)
+    type = models.CharField(default="post", max_length=4, editable=False)
     title = models.CharField(max_length=255)
     source = models.URLField(blank=True) #TODO we are not gonna implement share feature for part 1 so this will be the same as id
     origin = models.URLField(blank=True) #TODO same as id

@@ -24,4 +24,5 @@ urlpatterns = [
     path('register/' , RegisterUser.as_view()),
     path('login/' , LoginUser.as_view()),
     # path('like/', include('like.urls')),
+    path('api-auth/', include('rest_framework.urls')),
 ]

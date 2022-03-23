@@ -7,10 +7,10 @@ from post.models import Post
 from comment.models import Comment
 from comment.serializers import CommentSerializer
 from .pagination import CommentPageNumberPagination
+from rest_framework import permissions
 
 
 class CommentList(ListCreateAPIView):
-
     serializer_class = CommentSerializer
     pagination_class = CommentPageNumberPagination
     post_id = None
@@ -20,7 +20,6 @@ class CommentList(ListCreateAPIView):
 
     # get recent posts of author
     def list(self, request, author_id, post_id):
-
         try: 
             Post.objects.filter(author_id=author_id).get(pk=post_id)
         except Post.DoesNotExist:
@@ -57,7 +56,6 @@ class CommentList(ListCreateAPIView):
 
 
 class CommentDetails(APIView):
-
     # get comment
     def get(self, request, author_id, post_id, comment_id):
         try:
