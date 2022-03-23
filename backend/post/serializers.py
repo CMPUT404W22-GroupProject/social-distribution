@@ -1,5 +1,5 @@
 from lib2to3.pytree import convert
-from tkinter import E
+# from tkinter import E
 # from inbox.models import Inbox
 from post.models import Post
 from rest_framework.serializers import ModelSerializer, SerializerMethodField, ReadOnlyField
@@ -61,10 +61,10 @@ class PostSerializer(ModelSerializer):
 
         new_post.save()
 
-        if new_post.visibility == "FRIENDS":
-            followers = Follower.objects.get(author=new_post.author.uuid)
-            for follower in followers.items.all():
-                Inbox.create_object_from_post(new_post, follower.uuid)
+        # if new_post.visibility == "FRIENDS":
+        #     followers = Follower.objects.get(author=new_post.author.uuid)
+        #     for follower in followers.items.all():
+        #         Inbox.create_object_from_post(new_post, follower.uuid)
 
         return new_post
 

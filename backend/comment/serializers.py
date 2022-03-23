@@ -23,7 +23,7 @@ class CommentSerializer(ModelSerializer):
 
         new_comment.save()
 
-        Inbox.create_object_from_comment(new_comment, validated_data['post'].author.uuid)
+        # Inbox.create_object_from_comment(new_comment, validated_data['post'].author.uuid)
         return new_comment
 
 class CommentSerializerGet(CommentSerializer):
