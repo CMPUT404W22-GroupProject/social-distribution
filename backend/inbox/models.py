@@ -36,3 +36,9 @@ class Inbox(models.Model):
         inbox = cls(type="inbox", author_id = author_id, comment_object = comment)
         inbox.save()
         return inbox
+
+    @classmethod
+    def create_object_from_follow_request(cls, follow_request, author_id):
+        inbox = cls(type="inbox", author_id=author_id, follow_request_object=follow_request)
+        inbox.save()
+        return inbox

@@ -8,6 +8,8 @@ from comment.models import Comment
 from author.models import Author
 from comment.serializers import CommentSerializer, CommentSerializerGet
 from .pagination import CommentPageNumberPagination
+from urllib.parse import urlparse
+import requests
 
 
 class CommentList(ListCreateAPIView):
@@ -22,23 +24,23 @@ class CommentList(ListCreateAPIView):
     def list(self, request, author_id, post_id):
         try: 
             Post.objects.filter(author_id=author_id).get(pk=post_id)
+            self.post_id = post_id
+            queryset = self.filter_queryset(self.get_queryset())
+
+            # there is no comment to a post
+            if not queryset:
+                return Response("No comments", status=404)
+
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer =  CommentSerializerGet(page, many=True, context={'request':request})
+                return self.get_paginated_response(serializer.data)
+
+            serializer =  CommentSerializerGet(queryset, many=True, context={'request':request})
+            return Response(serializer.data, status=200)
+
         except Post.DoesNotExist:
-            return Response("Post not found.", status=404)
-
-        self.post_id = post_id
-        queryset = self.filter_queryset(self.get_queryset())
-
-        # there is no comment to a post
-        if not queryset:
-            return Response("No comments", status=404)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer =  CommentSerializerGet(page, many=True, context={'request':request})
-            return self.get_paginated_response(serializer.data)
-
-        serializer =  CommentSerializerGet(queryset, many=True, context={'request':request})
-        return Response(serializer.data, status=200)
+            return Response("Comment not found", status=404)
 
 
     def create(self, request, author_id, post_id):
@@ -62,4 +64,4 @@ class CommentDetails(APIView):
             serializer = CommentSerializerGet(comment, context={'request':request})
             return Response(serializer.data, status=200)
         except Comment.DoesNotExist:
-            return Response("Comment not found", status = 404)
+            return Response("Comment not found", status=404)

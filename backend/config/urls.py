@@ -19,7 +19,7 @@ from django.urls import path
 from author.views import RegisterUser, LoginUser
 
 urlpatterns = [
-    path('authors/', include('author.urls')),
+    path('service/authors/', include('author.urls')),
     path('admin/', admin.site.urls),
     path('register/' , RegisterUser.as_view()),
     path('login/' , LoginUser.as_view()),
