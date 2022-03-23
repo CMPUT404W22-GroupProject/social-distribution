@@ -29,7 +29,6 @@ class InboxSerializer(ModelSerializer):
                 url = url + "/posts/" +str(inbox.like_object.object.uuid) + "/likes/" + str(inbox.like_object.id)
             elif inbox.post_object:
                 url = url + "/posts/" +str(inbox.post_object.uuid)
-                # print(url)
             elif inbox.comment_object:
                 url = url + "/posts/" +str(inbox.comment_object.post.uuid) + "/comments/" + str(inbox.comment_object.uuid)
             response = requests.get(url).json()
