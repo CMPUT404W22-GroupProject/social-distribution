@@ -4,6 +4,7 @@ from author.models import Author
 from like.models import Like
 from post.models import Post
 from comment.models import Comment
+from django.utils import timezone
 from follower.models import FollowRequest
 
 # Create your models here.
@@ -14,6 +15,7 @@ class Inbox(models.Model):
     comment_object = models.ForeignKey(Comment, blank=True, on_delete=models.CASCADE, null=True)
     follow_request_object = models.ForeignKey(FollowRequest, blank=True, on_delete=models.CASCADE, null=True)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    created_date = models.DateTimeField(default=timezone.now)
 
     @classmethod
     def create_object_from_like(cls, like):
@@ -26,15 +28,16 @@ class Inbox(models.Model):
         inbox.save()
         return inbox
 
+
     @classmethod
     def create_object_from_post(cls, post, author_id):
-        inbox = cls(type="post", author_id = author_id, post_object = post)
+        inbox = cls(type="inbox", author_id = author_id, post_object = post)
         inbox.save()
         return inbox
 
 
     @classmethod
     def create_object_from_comment(cls, comment, author_id):
-        inbox = cls(type="comment", author_id = author_id, comment_object = comment)
+        inbox = cls(type="inbox", author_id = author_id, comment_object = comment)
         inbox.save()
         return inbox
