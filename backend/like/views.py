@@ -10,6 +10,10 @@ from like.models import Like
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from like.serializers import LikeSerializer
+import requests
+from urllib.parse import urlparse
+import uuid
+import collections
 
 # Create your views here.
 class LikeList(APIView):
@@ -29,82 +33,34 @@ class LikeList(APIView):
         except Comment.DoesNotExist:
             return HttpResponse("Comment not found", status=404)
 
+
     def get(self, request, author_id, post_id, comment_id=""): 
         self.checkErors(author_id,post_id, comment_id)
-        author11 = Author.objects.get(pk=author_id)
-        post11 = Post.objects.get(pk=post_id)
+        full_url = request.build_absolute_uri()
+        url = full_url.split('/like')[0]
+        hostname = urlparse(full_url).hostname
 
-        if comment_id!="":
-            comment11 = Comment.objects.get(pk=comment_id)
-            all_likes = Like.objects.filter(object = post11, object1 = comment11).all()
-            if not all_likes:
-                return Response({}, status = 200)
-        else:
-            all_likes = Like.objects.filter(object = post11).all()
-            if not all_likes:
-                return Response({}, status = 200)
+        # 1a. Check if like object exists on local server
+        all_likes = Like.objects.filter(object=url)
+        # 2. Check if like object exists on remote server
+        if not all_likes:
+            # 3. Invalid request
+            if hostname == "localhost" or hostname == "127.0.0.1":
+                return Response("Like not found", status=404)
+            else:
+                response = requests.get(full_url)
+                if response.status_code == 200:
+                    return Response(response.json(), status=200)
+                else:
+                    return Response("Like not found", status=404)
 
-        # Creating the links to objects
-        # http_host = request.META.get('HTTP_HOST')
-        # if http_host[0]!="h":
-            # http_host = "http://"+http_host
-        # path_info = request.META.get('PATH_INFO')
-
-        # for each_detail in path_info.split("/"):
-        #     if each_detail == "likes":
-        #         break
-        #     if each_detail != "":
-        #         post_object = post_object + "/" + each_detail
-        # print("Post object: ", post_object)
-        # print("PATH INFO: ", path_info)
-        # print("\n\n")
-        # print()
-
-        url_no_id = request.build_absolute_uri()
-        post_object = request.build_absolute_uri().split('/likes')[0]
-        
-        serializer = LikeSerializer(all_likes, many = True)
+        # 1b. 
+        serializer = LikeSerializer(all_likes, many=True, context={'request': request})
         result = []
-        if comment_id=="":
-            #If it is a POST
-            for each_object in serializer.data:
-                if each_object['object1']:
-                    continue
-                level = {}
-                author5 = Author.objects.get(pk=each_object['author'])
-                author = AuthorsSerializer(author5, context={'request':request})
-                for each_item in each_object:
-                    if each_item =="context":
-                        level["@context"] = each_object[each_item]
-                    elif each_item=="id":
-                        level[each_item] = url_no_id+"/"+str(each_object[each_item])
-                    elif each_item=="object":
-                        level[each_item] = post_object
-                    elif each_item != "author" and each_item!="object1":
-                        level[each_item] = each_object[each_item]
-                    elif each_item=="author":
-                        level[each_item]= author.data
-                result.append(level)
-        else:
-            #If it's a COMMENT
-            for each_object in serializer.data:
-                if not each_object['object1']:
-                    continue
-                level = {}
-                author5 = Author.objects.get(pk=each_object['author'])
-                author = AuthorsSerializer(author5, context={'request':request})
-                for each_item in each_object:
-                    if each_item =="context":
-                        level["@context"] = each_object[each_item]
-                    elif each_item=="object1":
-                        level["object"] = post_object
-                    elif each_item=="id": 
-                        level[each_item] = url_no_id+"/"+str(each_object[each_item])
-                    elif each_item != "author" and each_item!="object":
-                        level[each_item] = each_object[each_item]
-                    elif each_item=="author":
-                        level[each_item]= author.data
-                result.append(level)
+        for each in serializer.data:
+            update = collections.OrderedDict([('@context', v) if k == 'context' else (k, v) for k, v in each.items()])
+            result.append(update)
+
         return Response(result, status = 200)
 
     # Add a like object FOR POSTS
@@ -112,21 +68,31 @@ class LikeList(APIView):
         # self.checkErors(author_id,post_id, comment_id)
         # Mutable copy
         request_data = request.data.copy()
-        serializer = LikeSerializer(data = request_data)
-        author1 = Author.objects.get(pk=serializer.initial_data['author'])
-        post1 = Post.objects.get(pk=post_id)
+        try:
+            response = requests.get(request_data['object']).json()
+            if response['type'] != "post" and response['type'] != "comment":
+                return Response("Object doesn't exist", status=404)
+        except:
+            return Response("Object doesn't exist", status=404)
+        
+        try:
+            author_data = request_data['author']
+            author_url = author_data['id']
+            pathname = urlparse(author_url).path
+            author_uuid = uuid.UUID(pathname.split('authors/')[1])
+            author = Author.objects.get(uuid=author_uuid)
+            request_data['author'] = author
+        except:
+            return Response("Author info not found", status=404)
+
+        serializer = LikeSerializer(data = request_data, context={'request': request})
         if serializer.is_valid():
-            if comment_id=="":
-                serializer.save(summary = author1.displayName + " likes your post", author = author1, object = post1)
-            else:
-                comment1 = Comment.objects.get(pk=comment_id)
-                serializer.save(summary = author1.displayName + " likes your comment",  author = author1, object = post1, object1 = comment1)
-            
+            serializer.save(author=author)
             return Response(serializer.data, status = 201)
         else:
             return Response(serializer.errors, status = 400)
 
-class LikedDetails(APIView):
+class LikeDetails(APIView):
     # We require a author_id, post_id, and/or comment_id to be passed with the request (in the url) to get a like object
     def checkErrors(self, author_id, post_id, like_id, comment_id=""):
         try:
@@ -149,41 +115,30 @@ class LikedDetails(APIView):
 
     def get(self, request, author_id, post_id, like_id, comment_id=""):
         self.checkErrors(author_id, post_id, like_id, comment_id)
-        # http_host = request.META.get('HTTP_HOST')
-        # if http_host[0]!="h":
-        #     http_host = "http://"+http_host
-        # path_info = request.META.get('PATH_INFO').split("/")
-        # post_object = http_host
-        # for each_detail in path_info:
-        #     if each_detail == "likes":
-        #         break
-        #     if each_detail != "":
-        #         post_object = post_object + "/" + each_detail
+        full_url = request.build_absolute_uri()
+        hostname = urlparse(full_url).hostname
 
-        post_object = request.build_absolute_uri().split('/likes')[0]
-        # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
-        like = Like.objects.get(pk=like_id)
-        serializer = LikeSerializer(like)
-        result = {}
-        author5 = Author.objects.get(pk=author_id)
-        author = AuthorsSerializer(author5, context={'request':request})
         try:
-            for each_object in serializer.data:
-                if each_object =="context":
-                    result["@context"] = serializer.data[each_object]
-                elif each_object == "object1" and comment_id != "":
-                    result["object"]= post_object
-                elif each_object == "object" and comment_id=="":
-                    result[each_object] = post_object
-                elif (each_object != "author" and each_object!="object" and each_object!="id"
-                    and not (each_object == "object" and comment_id!="") and not (each_object == "object1" and comment_id == "")):
-                    result[each_object] = serializer.data[each_object]
-                elif each_object == "author":
-                    result[each_object]= author.data
-            return Response(result, status = 200)
+            # 1a. Check if like object exists on local server
+            like = Like.objects.get(id=full_url)
+            
         except Like.DoesNotExist:
-            return HttpResponse("Like not found.", status = 401)
+            # 2. Check if like object exists on remote server
+            # 3. Invalid request
+            if hostname == "localhost" or hostname == "127.0.0.1":
+                return Response("Like not found", status=404)
+            else:
+                response = requests.get(full_url)
+                if response.status_code == 200:
+                    return Response(response.json(), status=200)
+                else:
+                    return Response("Like not found", status=404)
 
+
+        serializer = LikeSerializer(like,  context={'request': request})
+        update = collections.OrderedDict([('@context', v) if k == 'context' else (k, v) for k, v in serializer.data.items()])
+
+        return Response(update, status=200)
 
     #Unlike a post or comment
     def delete(self, request, author_id, post_id, like_id, comment_id=""):
@@ -199,3 +154,39 @@ class LikedDetails(APIView):
         except  Like.DoesNotExist:
             return HttpResponse("Like object not found.", status=401) 
 
+
+class LikedDetails(APIView):
+
+    def get(self, request, author_id):
+
+        full_url = request.build_absolute_uri()
+        url = full_url.split('/liked')[0]
+        hostname = urlparse(full_url).hostname
+
+        #1a. Check if like object exists on local server
+        all_liked = Like.objects.filter(author_id=author_id)
+
+        # 2. Check if like object exists on remote server
+        if not all_liked:
+            # 3. Invalid request
+            if hostname == "localhost" or hostname == "127.0.0.1":
+                return Response("Like not found", status=404)
+            else:
+                response = requests.get(full_url)
+                if response.status_code == 200:
+                    return Response(response.json(), status=200)
+                else:
+                    return Response("Like not found", status=404)
+        
+        # 1b.
+        serializer = LikeSerializer(all_liked, many=True, context={'request': request})
+        items = []
+        for each in serializer.data:
+            update = collections.OrderedDict([('@context', v) if k == 'context' else (k, v) for k, v in each.items()])
+            items.append(update)
+
+        result = {}
+        result['type'] = "liked"
+        result['items'] = items
+
+        return Response(result, status = 200)
