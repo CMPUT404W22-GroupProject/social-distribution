@@ -15,6 +15,10 @@ from urllib.parse import urlparse
 import uuid
 import collections
 
+def api_endpoint(url):
+    scheme, netloc, path, params, query, fragment = urlparse(url)
+    return '{}://{}/{}{}'.format(scheme, netloc, "service", path)
+
 # Create your views here.
 class LikeList(APIView):
     # Get all Likes, for all authors
@@ -37,24 +41,13 @@ class LikeList(APIView):
     def get(self, request, author_id, post_id, comment_id=""): 
         self.checkErors(author_id,post_id, comment_id)
         full_url = request.build_absolute_uri()
-        url = full_url.split('/like')[0]
-        hostname = urlparse(full_url).hostname
+        api_url = api_endpoint(full_url)
+        url = api_url.split('/like')[0]
 
-        # 1a. Check if like object exists on local server
         all_likes = Like.objects.filter(object=url)
-        # 2. Check if like object exists on remote server
         if not all_likes:
-            # 3. Invalid request
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("Like not found", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Like not found", status=404)
-
-        # 1b. 
+            return Response("Like not found", status=404)
+            
         serializer = LikeSerializer(all_likes, many=True, context={'request': request})
         result = []
         for each in serializer.data:
@@ -62,6 +55,7 @@ class LikeList(APIView):
             result.append(update)
 
         return Response(result, status = 200)
+
 
     # Add a like object FOR POSTS
     def post(self, request, author_id, post_id, comment_id=""):
@@ -116,29 +110,17 @@ class LikeDetails(APIView):
     def get(self, request, author_id, post_id, like_id, comment_id=""):
         self.checkErrors(author_id, post_id, like_id, comment_id)
         full_url = request.build_absolute_uri()
-        hostname = urlparse(full_url).hostname
+        url = api_endpoint(full_url)
 
         try:
-            # 1a. Check if like object exists on local server
-            like = Like.objects.get(id=full_url)
+            like = Like.objects.get(id=url)
+            serializer = LikeSerializer(like,  context={'request': request})
+            update = collections.OrderedDict([('@context', v) if k == 'context' else (k, v) for k, v in serializer.data.items()])
+            return Response(update, status=200)
             
         except Like.DoesNotExist:
-            # 2. Check if like object exists on remote server
-            # 3. Invalid request
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("Like not found", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Like not found", status=404)
+            return Response("Like not found", status=404)
 
-
-        serializer = LikeSerializer(like,  context={'request': request})
-        update = collections.OrderedDict([('@context', v) if k == 'context' else (k, v) for k, v in serializer.data.items()])
-
-        return Response(update, status=200)
 
     #Unlike a post or comment
     def delete(self, request, author_id, post_id, like_id, comment_id=""):
@@ -147,38 +129,19 @@ class LikeDetails(APIView):
         try:
             like = Like.objects.get(pk=like_id)
             like.delete()
-            if comment_id=="":
-                return HttpResponse("Successfully unliked the post.", status=204)
-            else:
-                return HttpResponse("Successfully unliked the comment.", status=204)
+            return Response("Successfully unliked", status=204)
         except  Like.DoesNotExist:
-            return HttpResponse("Like object not found.", status=401) 
+            return Response("Like object not found.", status=401) 
 
 
 class LikedDetails(APIView):
 
     def get(self, request, author_id):
 
-        full_url = request.build_absolute_uri()
-        url = full_url.split('/liked')[0]
-        hostname = urlparse(full_url).hostname
-
-        #1a. Check if like object exists on local server
         all_liked = Like.objects.filter(author_id=author_id)
-
-        # 2. Check if like object exists on remote server
         if not all_liked:
-            # 3. Invalid request
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("Like not found", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Like not found", status=404)
-        
-        # 1b.
+            return Response("This author hasn't liked anything yet", status=404)
+
         serializer = LikeSerializer(all_liked, many=True, context={'request': request})
         items = []
         for each in serializer.data:

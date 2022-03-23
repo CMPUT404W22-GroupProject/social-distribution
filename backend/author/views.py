@@ -22,11 +22,7 @@ class AuthorList(ListCreateAPIView):
 
     # Get all Authors
     def list(self, request): 
-        # if not request.user.is_authenticated:
-        #     return HttpResponse("You must be registered to access this function.", status = 401)
-        full_url = request.build_absolute_uri()
-        hostname = urlparse(full_url).hostname
-        if hostname == "localhost" or hostname == "127.0.0.1":
+        try:
             queryset = self.filter_queryset(self.get_queryset())
             page = self.paginate_queryset(queryset)
             if page is not None:
@@ -35,12 +31,8 @@ class AuthorList(ListCreateAPIView):
             serializer = AuthorsSerializer(queryset, many=True, context={'request':request})
             return Response(serializer.data, status=200)
         
-        else: 
-            response = requests.get(full_url)
-            if response.status_code == 200:
-                return Response(response.json(), status=200)
-            else:
-                return Response("Post not found", status=404)
+        except: 
+            return Response("Author not found", status=404)
 
     # Add an Author
     def post(self, request):
@@ -70,16 +62,7 @@ class AuthorDetails(APIView):
             return Response(serializer.data, status = 200)
 
         except Author.DoesNotExist:
-            full_url = request.build_absolute_uri()
-            hostname = urlparse(full_url).hostname
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("Author not found", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Post not found", status=404)
+            return Response("Author not found", status=404)
 
     # Update an author
     def post(self, request, author_id):

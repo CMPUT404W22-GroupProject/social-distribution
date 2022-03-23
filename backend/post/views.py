@@ -44,16 +44,7 @@ class PostList(ListCreateAPIView):
             return Response(serializer.data, status=200)
         
         except Author.DoesNotExist:
-            full_url = request.build_absolute_uri()
-            hostname = urlparse(full_url).hostname
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("Post not found", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Post not found", status=404)
+            return Response("Post not found", status=404)
 
     # create a new post
     def create(self, request, author_id):
@@ -80,16 +71,7 @@ class PostDetails(APIView):
             serializer = PostSerializerGet(post, context={'request':request})
             return Response(serializer.data, status=200)
         except Post.DoesNotExist:
-            full_url = request.build_absolute_uri()
-            hostname = urlparse(full_url).hostname
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("Post not found", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Post not found", status=404)
+            return Response("Post not found", status=404)
         
     #TODO add authentication
     # edit post

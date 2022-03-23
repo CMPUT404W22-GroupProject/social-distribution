@@ -38,18 +38,9 @@ class CommentList(ListCreateAPIView):
 
             serializer =  CommentSerializerGet(queryset, many=True, context={'request':request})
             return Response(serializer.data, status=200)
-            
+
         except Post.DoesNotExist:
-            full_url = request.build_absolute_uri()
-            hostname = urlparse(full_url).hostname
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("Comment not found", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Comment not found", status=404)
+            return Response("Comment not found", status=404)
 
 
     def create(self, request, author_id, post_id):
@@ -73,13 +64,4 @@ class CommentDetails(APIView):
             serializer = CommentSerializerGet(comment, context={'request':request})
             return Response(serializer.data, status=200)
         except Comment.DoesNotExist:
-            full_url = request.build_absolute_uri()
-            hostname = urlparse(full_url).hostname
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("Comment not found", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Comment not found", status=404)
+            return Response("Comment not found", status=404)

@@ -22,17 +22,7 @@ class FollowerList(APIView):
             return Response(serializer.data, status=200)
 
         except Follower.DoesNotExist:
-
-            full_url = request.build_absolute_uri()
-            hostname = urlparse(full_url).hostname
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("Follower not found", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Follower not found", status=404)
+            return Response("Follower not found", status=404)
 
 class FollowerDetails(APIView, LoginRequiredMixin):
 
@@ -43,16 +33,7 @@ class FollowerDetails(APIView, LoginRequiredMixin):
             serializer = AuthorsSerializer(item, context={'request':request})
             return Response(serializer.data, status=200)
         except:
-            full_url = request.build_absolute_uri()
-            hostname = urlparse(full_url).hostname
-            if hostname == "localhost" or hostname == "127.0.0.1":
-                return Response("You are not followed by this user", status=404)
-            else:
-                response = requests.get(full_url)
-                if response.status_code == 200:
-                    return Response(response.json(), status=200)
-                else:
-                    return Response("Follower not found", status=404)
+            return Response("Follower not found", status=404)
 
     
     def put(self, request, author_id, foreign_author_id):
