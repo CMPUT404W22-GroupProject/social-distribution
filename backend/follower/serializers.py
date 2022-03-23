@@ -2,6 +2,7 @@ from follower.models import FollowRequest
 from follower.models import Follower
 from rest_framework.serializers import ModelSerializer
 from author.serializers import AuthorsSerializer
+from author.models import Author
 
 class FollowerSerializer(ModelSerializer):
     items = AuthorsSerializer(many=True)
@@ -11,8 +12,8 @@ class FollowerSerializer(ModelSerializer):
         fields = ("type", "items")
     
 class FollowRequestSerializer(ModelSerializer):
-    actor = AuthorsSerializer(many=False, read_only=True)
-    object = AuthorsSerializer(many=False, read_only=True)
+    # actor = AuthorsSerializer(many=False, read_only=True)
+    # object = AuthorsSerializer(many=False, read_only=True)
 
     class Meta:
         model = FollowRequest
