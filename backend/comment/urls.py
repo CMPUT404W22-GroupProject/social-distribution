@@ -8,5 +8,5 @@ urlpatterns = [
     path('', views.CommentList.as_view()),
     path('<uuid:comment_id>/', views.CommentDetails.as_view()),
     path('<uuid:comment_id>/likes', views1.LikeList.as_view()),
-    path('<uuid:comment_id>/likes/<int:like_id>', views1.LikedDetails.as_view()),
+    path('<uuid:comment_id>/likes/<int:like_id>', views1.LikeDetails.as_view()),
 ]
