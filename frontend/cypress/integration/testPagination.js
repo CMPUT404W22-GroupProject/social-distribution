@@ -13,6 +13,7 @@ describe('testPagination', () => {
             const postDescription = 'post ' + i + ' description';
             const postContent = 'post ' + i + ' content';
             const postTags = 'post' + i + ', post1' + i + ', post' + i;
+            cy.wait(200);
             expect(cy.findByTestId('AddCircleOutlineIcon')).to.exist;
             cy.findByTestId('AddCircleOutlineIcon').click();
                 cy.findByPlaceholderText(/title!/i).type(postTitle);

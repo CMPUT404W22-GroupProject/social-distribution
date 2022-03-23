@@ -8,11 +8,13 @@ import axios from "axios"
 import { badgeUnstyledClasses } from "@mui/base";
 import { NewReleases } from "@mui/icons-material";
 
-const CommentSection = ({myAuthorId, commentsId}) => {
+const CommentSection = ({myAuthorId, commentsId, commentCount, postAuthorId}) => {
     //Handles the main comment events such as submitting comments, retrieving comments.
     const [backendComments, setBackendComments] = useState([]);
     const commentsUrl = new URL(commentsId);
     const commentsPath = commentsUrl.pathname;
+    const postAuthorUrl = new URL(postAuthorId);
+    const postAuthorIdPath = postAuthorUrl.pathname;
     const [author, setAuthor] = useState([]);
 
     //console.log("COMMENTSPATH: ", commentsPath);
@@ -62,21 +64,40 @@ const addComment  = async (text) => {
         "comment": text,
         "published": formattedDate,
     }
-    
+    //sending comment to post first, waiting for id
     try {
         await axios.post(commentsPath + '/', newComment)
         .then((response) => {
             newInternalComment["id"] = response.data.id;
+            newComment["id"] = response.data.id;
+            console.log("NEW COMMENT FOR INBOX: ", newComment);
         });
 
        } catch (error) {
          console.log(error)
-
        }
+    //sending comment to inbox of post owner 
+
+    try {
+        await axios.post(postAuthorIdPath + '/inbox/', newComment)
+        .then((response) => {
+        });
+
+       } catch (error) {
+         console.log(error)
+       }
+
+
+
+
+
+
+
+
        //fetch from server again if comment is uploaded, ideally new one should show as well or display is internally
-       setBackendComments([newInternalComment, ...backendComments])
+       //setBackendComments([newInternalComment, ...backendComments])
        //OR
-       //fetchComments();
+       fetchComments();
 
     console.log("addComment:", newComment);
 };

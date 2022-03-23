@@ -19,10 +19,12 @@ function App() {
             <NavBar/>
             <Routes>
               <Route exact path='/login' element={<Login/>}/>
-              <Route element={<PrivateRoute/>}>
+              {/* <Route element={<PrivateRoute/>}> */}
                 <Route exact path='/profile/:id' element={<Profile/>}/>
-                <Route exact path='/home' element={<Home/>}/>
-              </Route>
+               { /*<Route exact path='/home' element={<Home/>}/>*/}
+                <Route exact path='/authors/:id/inbox' element={<Home feedType = "inbox"/>}/>
+                <Route exact path='/authors/:id/posts' element={<Home feedType = "posts"/>}/> 
+              {/*</Route>*/}
             </Routes> 
           </Router>
           </UserContextProvider>
