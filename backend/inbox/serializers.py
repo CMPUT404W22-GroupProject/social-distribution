@@ -25,14 +25,24 @@ class InboxSerializer(ModelSerializer):
         try:
             if inbox.like_object:
                 url = inbox.like_object.id
+                response = requests.get(url).json()
 
             elif inbox.post_object:
                 url = inbox.post_object.id
+                response = requests.get(url).json()
 
             elif inbox.comment_object:
                 url = inbox.comment_object.id
-            print(url)
-            response = requests.get(url).json()
+                response = requests.get(url).json()
+
+            elif inbox.follow_request_object:
+                follow_request = inbox.follow_request_object
+                response = {}
+                response['type'] = "follow"
+                response['summary'] = follow_request.summary
+                response['actor'] = requests.get(follow_request.actor).json()
+                response['object'] = requests.get(follow_request.object).json()
+
             return response
         except Exception as e:
             return {}

@@ -12,5 +12,7 @@ class Follower(models.Model):
 class FollowRequest(models.Model):
     type = models.CharField(default="follow", max_length=6, editable=False)
     summary = models.CharField(max_length=255)
-    actor = models.ForeignKey(Author, related_name="actor", on_delete=models.CASCADE)
-    object = models.ForeignKey(Author, related_name="object", on_delete=models.CASCADE)
+    actor = models.URLField()
+    object = models.URLField()
+    # actor = models.ForeignKey(Author, related_name="actor", on_delete=models.CASCADE)
+    # object = models.ForeignKey(Author, related_name="object", on_delete=models.CASCADE)

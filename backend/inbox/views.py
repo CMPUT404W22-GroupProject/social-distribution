@@ -15,6 +15,7 @@ from .pagination import InboxPageNumberPagination
 from author.serializers import AuthorsSerializer
 from inbox.serializers import InboxSerializer
 from post.serializers import PostSerializerGet
+from follower.serializers import FollowRequestSerializer
 import uuid
 
 class InboxList(ListCreateAPIView):        
@@ -81,11 +82,24 @@ class InboxList(ListCreateAPIView):
             
             #If the request type is a follow
             elif request_data["type"].lower() == "follow":
-                follow_id = request_data['id']
-                # new_follow = FollowRequest.objects
+                actor_data = request_data['actor']
+                if type(actor_data) is dict:
+                    request_data['actor'] = actor_data['id']
+
+                object_data = request_data['object']
+                if type(object_data) is dict:
+                    request_data['object'] = object_data['id']
+
+                print("request_data",request_data)
+                serializer = FollowRequestSerializer(data=request_data, context={'request':request})
+                if serializer.is_valid():
+                    new_follow_request = serializer.save()
+                    Inbox.create_object_from_follow_request(new_follow_request, author_id)
+                else:
+                    return Response(serializer.errors, status=400)
             
             return Response("Sent to inbox", status=201) 
-        except:
+        except Exception as e:
             return Response("Error", status=400) 
 
     #Clear inbox
