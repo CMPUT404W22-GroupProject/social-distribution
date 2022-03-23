@@ -22,6 +22,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.parsers import JSONParser
 from django.urls import reverse
 from inbox.models import Inbox
+from urllib.parse import urlparse
 
 
 # Basic Post Serializer
@@ -53,11 +54,12 @@ class PostSerializer(ModelSerializer):
         new_post = Post.objects.create(**validated_data)
         request = self.context.get('request')
 
-        url_post = request.build_absolute_uri().split('/posts/')[0]
-        new_post.id = url_post + '/posts/' + str(new_post.uuid)
+        full_url = request.build_absolute_uri()
 
-        url_comment = request.build_absolute_uri().split('/posts/')[0]
-        new_post.comments = url_comment + '/posts/' + str(new_post.uuid) + '/comments'
+        url_author = full_url.replace("/service", "").split('/posts/')[0]
+        new_post.id = url_author + '/posts/' + str(new_post.uuid)
+        
+        new_post.comments = new_post.id + '/comments'
 
         new_post.save()
 

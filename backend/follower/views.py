@@ -9,6 +9,8 @@ from follower.serializers import FollowerSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.mixins import LoginRequiredMixin
 import os
+from urllib.parse import urlparse
+import requests
 
 # Create your views here.
 class FollowerList(APIView):
@@ -18,8 +20,19 @@ class FollowerList(APIView):
             follower = Follower.objects.get(author=author_id)
             serializer = FollowerSerializer(follower, context={'request':request})
             return Response(serializer.data, status=200)
+
         except Follower.DoesNotExist:
-            return Response("This user doesn't have followers yet", status=400)
+
+            full_url = request.build_absolute_uri()
+            hostname = urlparse(full_url).hostname
+            if hostname == "localhost" or hostname == "127.0.0.1":
+                return Response("Follower not found", status=404)
+            else:
+                response = requests.get(full_url)
+                if response.status_code == 200:
+                    return Response(response.json(), status=200)
+                else:
+                    return Response("Follower not found", status=404)
 
 class FollowerDetails(APIView, LoginRequiredMixin):
 
@@ -30,7 +43,16 @@ class FollowerDetails(APIView, LoginRequiredMixin):
             serializer = AuthorsSerializer(item, context={'request':request})
             return Response(serializer.data, status=200)
         except:
-            return Response("You are not followed by this user", status=404)
+            full_url = request.build_absolute_uri()
+            hostname = urlparse(full_url).hostname
+            if hostname == "localhost" or hostname == "127.0.0.1":
+                return Response("You are not followed by this user", status=404)
+            else:
+                response = requests.get(full_url)
+                if response.status_code == 200:
+                    return Response(response.json(), status=200)
+                else:
+                    return Response("Follower not found", status=404)
 
     
     def put(self, request, author_id, foreign_author_id):

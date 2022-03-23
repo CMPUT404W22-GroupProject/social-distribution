@@ -5,22 +5,15 @@ from author.models import Author
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
-from django.contrib.auth.mixins import LoginRequiredMixin
 from .pagination import PostPageNumberPagination
 from rest_framework import permissions
 import os
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAuthorOrReadOnly
 from rest_framework import generics, permissions
-from follower.models import Follower
-from rest_framework.request import Request
-from rest_framework.test import APIRequestFactory
-from rest_framework.parsers import JSONParser
-from django.urls import reverse
 import json
-from inbox.views import InboxList
-import urllib.parse
+from urllib.parse import urlparse
+import requests
 
 from post.serializers import PostSerializer, PostSerializerGet
 
@@ -37,14 +30,30 @@ class PostList(ListCreateAPIView):
 
     # get recent posts of author
     def list(self, request, author_id):
-        self.author_id = author_id
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer =  PostSerializerGet(page, many=True, context={'request':request})
-            return self.get_paginated_response(serializer.data)
-        serializer =  PostSerializerGet(queryset, many=True, context={'request':request})
-        return Response(serializer.data, status=200)
+        # check if author exists on local server
+        try:
+            Author.objects.get(pk=author_id)
+
+            self.author_id = author_id
+            queryset = self.filter_queryset(self.get_queryset())
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer =  PostSerializerGet(page, many=True, context={'request':request})
+                return self.get_paginated_response(serializer.data)
+            serializer =  PostSerializerGet(queryset, many=True, context={'request':request})
+            return Response(serializer.data, status=200)
+        
+        except Author.DoesNotExist:
+            full_url = request.build_absolute_uri()
+            hostname = urlparse(full_url).hostname
+            if hostname == "localhost" or hostname == "127.0.0.1":
+                return Response("Post not found", status=404)
+            else:
+                response = requests.get(full_url)
+                if response.status_code == 200:
+                    return Response(response.json(), status=200)
+                else:
+                    return Response("Post not found", status=404)
 
     # create a new post
     def create(self, request, author_id):
@@ -71,7 +80,16 @@ class PostDetails(APIView):
             serializer = PostSerializerGet(post, context={'request':request})
             return Response(serializer.data, status=200)
         except Post.DoesNotExist:
-            return Response("Post not found", status = 404)
+            full_url = request.build_absolute_uri()
+            hostname = urlparse(full_url).hostname
+            if hostname == "localhost" or hostname == "127.0.0.1":
+                return Response("Post not found", status=404)
+            else:
+                response = requests.get(full_url)
+                if response.status_code == 200:
+                    return Response(response.json(), status=200)
+                else:
+                    return Response("Post not found", status=404)
         
     #TODO add authentication
     # edit post
