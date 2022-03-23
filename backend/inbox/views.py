@@ -13,7 +13,6 @@ from rest_framework.pagination import PageNumberPagination
 from .pagination import InboxPageNumberPagination
 from author.serializers import AuthorsSerializer
 from inbox.serializers import InboxSerializer
-from rest_framework import generics, permissions
 
 # Create your views here.
 
