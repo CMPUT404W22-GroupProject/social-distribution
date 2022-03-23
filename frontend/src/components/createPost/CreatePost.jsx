@@ -9,30 +9,42 @@ import { useRef } from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import UserContext from '../../context/userContext';
+import PopupSmall from '../popupSmall/PopupSmall'
 
 function CreatePost(){
     const postContent = useRef();
     const postDescription = useRef();
     const postTitle = useRef();
     const postTags = useRef();
+    const postContentType = useRef();
     const [file, setFile] = useState(null); //used for storing the image that is uploaded
     const [base64, setBase64] = useState("");
     const [isPublic, setIsPublic] = useState(false);
     const [isPrivate, setIsPrivate] = useState(false);
     const [isFriend, setIsFriend] = useState(false);
+    const [friend, setFriend] = useState({});
     const [isUnlisted, setIsUnlisted] = useState(false);
-    const [author, setAuthor] = useState([]);
+    const [author, setAuthor] = useState({});
     const {id, setId} = useState(UserContext);
-    const authorId = "a168a4c4-f76f-4c9d-bf0a-986c7c46b51a";
+    const authorId = "3db7243e-0822-45bb-b3ce-28ff9e378e16";
+    const [followers, setFollowers] = useState([]);// followers of authorID, initial is empty object
+    const [buttonPopup, setButtonPopup] = useState(false);
+    const [isPlain, setisPlain] = useState(false);
+    const [isMarkdown, setIsMarkdown] = useState(false);
     
     useEffect(() => {
       //fetches author when component is called
+      const fetchFollowers = async () => {
+        const result = await axios.get("/authors/" + authorId + "/followers/")
+        setFollowers(result.data["items"]);
+    }
       const fetchAuthor = async () => {
           //fetches auhor
           const result = await axios.get("/authors/" + authorId);
           setAuthor(result.data)
       }
       fetchAuthor();
+      fetchFollowers();
   },[])
 
     
@@ -67,7 +79,6 @@ function CreatePost(){
 
     const submitPost = async (e) =>{
         //Handles the submition of the post, sends post to server
-
         e.preventDefault() //prevents screen from refreshing when submit button is clicked
         
         var newPost = { //the json file that will be sent
@@ -80,7 +91,6 @@ function CreatePost(){
           "author": authorId,
           "content": postContent.current.value,
           "categories": postTags.current.value,
-          "count": 0,
           "published": "",
           "visibility": "",
           "unlisted": false
@@ -100,6 +110,14 @@ function CreatePost(){
           newPost["unlisted"] = true;
         }
 
+        if (isPlain === true){
+          newPost["contentType"] = "text/plain";
+        }
+
+        if (isMarkdown === true){
+          newPost["contentType"] = "text/markdown";
+        }
+
         console.log(newPost)
 
         //if image is selected and there is no content, so image only post
@@ -109,22 +127,74 @@ function CreatePost(){
           console.log("newPOST W BASE64: ", newPost)
         }
 
-        var status = null;
+        //sending CSRF token as header
+        axios.defaults.headers.post['X-CSRF-Token'] = "qaa2nlJZPsbuH7knWoZ1OqeJqQqz3eZIkgDK8uIuCqs7vMawMwDLveJgdvaQxoTO";
 
-        try {
+         //sending post to author's posts 
+         var status = null;
+         try {
          await axios.post("/authors/" + authorId + "/posts/", newPost)
          .then((response) => {
            status = response.status;
+           const postId = response.data.id;
+           newPost["id"] = postId;
          })
-        } catch (error) {
-          console.log(error)
+         } catch (error) {
+           console.log(error)
+         }
+         if (status === 201) {
+         alert("Shared! Check profile to see post!");
+         //window.location.href = window.location.href;
+         } else {
+           alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
+         } 
+
+
+        if (isFriend === true){ //is one specific friend selected
+          const friendUrl = new URL(friend.id);
+          const friendPath = friendUrl.pathname;
+          var status = null;
+          try {
+          await axios.post(friendPath + "/inbox/", newPost)
+          .then((response) => {
+            status = response.status;
+          })
+          } catch (error) {
+            console.log(error)
+          }
+          if (status === 201) {
+          alert("Shared! Check profile to see post!");
+          //window.location.href = window.location.href;
+          } else {
+            alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
+          }
+        } else {// if all friends i.e. not one specific friend
+            //sending post to each follower's inbox
+          /* for (var i in followers["items"]){
+            const follower = followers["items"][i]; */
+          for (var i in followers){
+            const follower = followers[i];
+            const followerUrl = new URL(follower.id);
+            const followerPath = followerUrl.pathname;
+            var status = null;
+            try {
+            await axios.post(followerPath + "/inbox/", newPost)
+            .then((response) => {
+              status = response.status;
+            })
+            } catch (error) {
+              console.log(error)
+            }
+            if (status === 201) {
+            alert("Shared! Check profile to see post!");
+            //window.location.href = window.location.href;
+            } else {
+              alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
+            }
+          }
         }
-        if (status === 201) {
-        alert("Shared! Check profile to see post!");
-        window.location.href = window.location.href;
-        } else {
-          alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
-        }
+
+        
 
         /*console.log("Body: ", postBody.current.value)
         console.log("file:", file, "base64:", base64)
@@ -169,7 +239,17 @@ function CreatePost(){
                 className="createPostInput"
                 ref={postDescription}
               />
-              <input
+              <label htmlFor="contentType">Choose contentType:</label>
+              <select name = "contentType">
+                <option value = "text/plain" onClick = {() => setisPlain(true)}>text/plain</option>
+                <option value = "text/markdown" onClick = { () => setIsMarkdown(true)}>text/markdown</option>
+                </select>
+              {/* <input
+                placeholder="What's in your mind?"
+                className="createPostInput"
+                ref={postContent}
+              /> */}
+              <textarea
                 placeholder="What's in your mind?"
                 className="createPostInput"
                 ref={postContent}
@@ -210,7 +290,7 @@ function CreatePost(){
                         <span className="createPostOptionText">Private?</span>
                     </div>
 
-                    <div className="createPostOption" onClick={chooseFriend}>
+                    <div className="createPostOption" onClick={() => setButtonPopup(true)}>
                         <PeopleIcon htmlColor="blue" className="createPostIcon" />
                         <span className="createPostOptionText">Choose friend</span>
                     </div>
@@ -226,15 +306,39 @@ function CreatePost(){
         
             </form>
           </div>
+              {/*popup with createPost component in it, called when button is clicked*/}
+           <PopupSmall 
+                trigger = {buttonPopup} 
+                setTrigger = {setButtonPopup}
+                > 
+              {(followers.length !== 0) && // Fetched data is being displayed here, if post array isnt empty
+                         
+                          followers.map((follower) => (
+                            <div className="createPostOption" onClick={() => chooseFriend(follower)}>
+                            { (friend === follower) && <PersonIcon htmlColor="red" className="createPostIcon" /> }
+              
+                            {(friend != follower ) &&  <PersonIcon htmlColor="blue" className="createPostIcon" />}
+                             
+                            
+                            <span className="createPostOptionText">{follower.displayName}</span>
+                        </div>
+                          ))
+              }
+            </PopupSmall>
+           
         </div>
+        
       );
 
   
-      function chooseFriend(){
+      function chooseFriend(follower){
         //if user chooses friend icon
 
-            console.log("I choose friend!");
+            //console.log("I choose friend!, and his name is: ", follower.displayName);
+            console.log("I choose friend!, and his name is: ", follower);
             setIsFriend(true);
+            setFriend(follower);
+
     }
       function choosePublic(){
         //if user chooses public icon

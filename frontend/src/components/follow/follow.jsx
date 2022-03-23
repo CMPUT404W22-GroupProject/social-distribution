@@ -6,7 +6,7 @@ import {useState, useEffect} from 'react'
 import axios from "axios"
 import {format} from "timeago.js"
 
-function Follow({}){
+function Follow({follow}){
     //This is the follow card displayed in the inbox to notify if a follow request has been recieved,
     //and handles accept and decline of requests
 
@@ -17,13 +17,13 @@ function Follow({}){
                     <div className="followTopLeft">
                     {/* <img className="postProfileImg" /> */}
                     <PersonIcon className="followProfileImg"/>
-                    <span className="followUsername">{}</span>
-                    <span className="followDate">{}</span>
+                    <span className="followUsername">{follow.displayName}</span>
+                    <span className="followDate">{format(follow.published)}</span>
                      </div> 
                 </Card.Header>
                 <Card.Body className="text-center">
                         <Card.Text>
-                            This person has requested to follow you!
+                            {follow.displayName} has requested to follow you!
                         </Card.Text>
                      
                 </Card.Body>
