@@ -16,7 +16,6 @@ from author.serializers import AuthorsSerializer
 from inbox.serializers import InboxSerializer
 from post.serializers import PostSerializerGet
 from follower.serializers import FollowRequestSerializer
-import uuid
 
 class InboxList(ListCreateAPIView):        
     serializer_class = InboxSerializer
@@ -48,7 +47,7 @@ class InboxList(ListCreateAPIView):
             paginated_items = self.paginate_queryset(items)
             result = {}
             result['type'] = "inbox"
-            result['author'] = str(request.build_absolute_uri().split('/inbox')[0])
+            result['author'] = request.build_absolute_uri().replace("/service", "").split('/inbox')[0]
             result['items'] = paginated_items
 
             return self.get_paginated_response(result)
