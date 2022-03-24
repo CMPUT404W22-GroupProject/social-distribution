@@ -16,7 +16,7 @@ class LikeSerializer(ModelSerializer):
         request = self.context.get('request')
         full_url = request.build_absolute_uri()
 
-        url_like = full_url.replace("/service", "").split('/likes')[0]
+        url_like = full_url.split('/likes')[0]
         new_like.id = url_like + '/likes/' + str(new_like._id)
 
         new_like.save()

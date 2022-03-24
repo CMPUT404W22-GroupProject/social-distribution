@@ -51,11 +51,7 @@ class InboxList(ListCreateAPIView):
             paginated_items = self.paginate_queryset(items)
             result = {}
             result['type'] = "inbox"
-
-            result['author'] = str(
-                request.build_absolute_uri().split('/inbox')[0])
-            result['author'] = request.build_absolute_uri().replace("/service", "").split('/inbox')[0]
-
+            result['author'] = request.build_absolute_uri().split('/inbox')[0]
             result['items'] = paginated_items
 
             return self.get_paginated_response(result)
@@ -100,10 +96,12 @@ class InboxList(ListCreateAPIView):
                 actor_data = request_data['actor']
                 if type(actor_data) is dict:
                     request_data['actor'] = actor_data['id']
+                    print(request_data)
 
                 object_data = request_data['object']
                 if type(object_data) is dict:
                     request_data['object'] = object_data['id']
+                    print(request_data)
 
                 print("request_data",request_data)
                 serializer = FollowRequestSerializer(data=request_data, context={'request':request})
@@ -115,6 +113,7 @@ class InboxList(ListCreateAPIView):
             
             return Response("Sent to inbox", status=201) 
         except Exception as e:
+            print(e)
             return Response("Error", status=400) 
 
     # Clear inbox

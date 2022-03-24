@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'author',
     'comment',
+    'node',
     'inbox',
     'like',
     'post',

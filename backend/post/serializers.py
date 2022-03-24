@@ -56,7 +56,7 @@ class PostSerializer(ModelSerializer):
 
         full_url = request.build_absolute_uri()
 
-        url_author = full_url.replace("/service", "").split('/posts/')[0]
+        url_author = full_url.split('/posts/')[0]
         new_post.id = url_author + '/posts/' + str(new_post.uuid)
         
         new_post.comments = new_post.id + '/comments'
