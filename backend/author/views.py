@@ -18,7 +18,7 @@ class AuthorList(ListCreateAPIView):
     pagination_class = AuthorPageNumberPagination
 
     def get_queryset(self):
-        return Author.objects.all()
+        return Author.objects.filter()
 
     # Get all Authors
     def list(self, request): 

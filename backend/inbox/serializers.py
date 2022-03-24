@@ -19,10 +19,19 @@ class InboxSerializer(ModelSerializer):
     class Meta:
         model = Inbox
         fields = ('type', 'author', 'items')
-    
-    def api_endpoint(self, url):
-        scheme, netloc, path, params, query, fragment = urlparse(url)
-        return '{}://{}/{}{}'.format(scheme, netloc, "service", path)
+
+    def make_request(self, url):
+        try:
+            response = requests.get(url).json()
+        except:
+            try:
+                scheme, netloc, path, params, query, fragment = urlparse(url)
+                url_service = '{}://{}/{}{}'.format(scheme, netloc, "service", path)
+                response = requests.get(url_service).json()
+            except:
+                response = {}
+        
+        return response
 
     #Inbox object stores the id of the original item
     def get_items(self, inbox):
@@ -45,8 +54,8 @@ class InboxSerializer(ModelSerializer):
                 response = {}
                 response['type'] = "follow"
                 response['summary'] = follow_request.summary
-                response['actor'] = requests.get(self.api_endpoint(follow_request.actor)).json()
-                response['object'] = requests.get(self.api_endpoint(follow_request.object)).json()
+                response['actor'] = self.make_request(follow_request.actor)
+                response['object'] = self.make_request(follow_request.object)
 
             return response
         except Exception as e:

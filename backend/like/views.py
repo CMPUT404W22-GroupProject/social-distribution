@@ -15,10 +15,6 @@ from urllib.parse import urlparse
 import uuid
 import collections
 
-def api_endpoint(url):
-    scheme, netloc, path, params, query, fragment = urlparse(url)
-    return '{}://{}/{}{}'.format(scheme, netloc, "service", path)
-
 # Create your views here.
 class LikeList(APIView):
     # Get all Likes, for all authors
@@ -41,8 +37,7 @@ class LikeList(APIView):
     def get(self, request, author_id, post_id, comment_id=""): 
         self.checkErors(author_id,post_id, comment_id)
         full_url = request.build_absolute_uri()
-        api_url = api_endpoint(full_url)
-        url = api_url.split('/like')[0]
+        url = full_url.split('/like')[0]
 
         all_likes = Like.objects.filter(object=url)
         if not all_likes:
@@ -109,8 +104,7 @@ class LikeDetails(APIView):
 
     def get(self, request, author_id, post_id, like_id, comment_id=""):
         self.checkErrors(author_id, post_id, like_id, comment_id)
-        full_url = request.build_absolute_uri()
-        url = api_endpoint(full_url)
+        url = request.build_absolute_uri()
 
         try:
             like = Like.objects.get(id=url)
