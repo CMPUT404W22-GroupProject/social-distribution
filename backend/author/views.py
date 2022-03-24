@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from author.serializers import AuthorsSerializer, RegisterSerializer, LoginSerializer
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import logout
 from rest_framework import status, generics, permissions
 from django.views.decorators.csrf import csrf_exempt
 from .pagination import AuthorPageNumberPagination
@@ -19,6 +20,7 @@ class AuthorList(ListCreateAPIView):
 
     def get_queryset(self):
         return Author.objects.filter()
+
 
     # Get all Authors
     def list(self, request): 
@@ -133,3 +135,15 @@ class LoginUser(APIView):
 
              }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutUser(APIView):
+    def post(self, request):
+        # Delete token if it's there
+        try:
+            request.user.auth_token.delete()
+        except:
+            pass 
+        
+        logout(request)
+
+        return HttpResponse("Successfully logged out.", status=201)
