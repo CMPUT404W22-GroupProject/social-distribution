@@ -4,6 +4,7 @@ from rest_framework.validators import UniqueValidator
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from django.contrib.auth import authenticate
 import os
+from urllib.parse import urlparse
 
 
 # Basic Author Serializer
@@ -18,16 +19,14 @@ class AuthorsSerializer(ModelSerializer):
 
     def get_id(self, author):
         try:    
-            request = self.context.get('request')
-            host = request.build_absolute_uri().split('/authors/')[0]
+            host = self.get_host(author)
             return host + '/authors/' + str(author.uuid)
         except:
             return {}
     
     def get_url(self, author):
-        try:    
-            request = self.context.get('request')
-            host = request.build_absolute_uri().split('/authors/')[0]
+        try:
+            host = self.get_host(author)
             return host + '/authors/' + str(author.uuid)
         except:
             return {}
@@ -35,7 +34,9 @@ class AuthorsSerializer(ModelSerializer):
     def get_host(self, author):
         try:    
             request = self.context.get('request')
-            host = request.build_absolute_uri().split('authors')[0]
+            full_url = request.build_absolute_uri()
+            parsed_uri = urlparse(full_url)
+            host = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
             return host
         except:
             return {}
@@ -43,6 +44,18 @@ class AuthorsSerializer(ModelSerializer):
     def create(self, validated_data):
         # Create author so we can get unique ID for URL + Host
         new_author = Author.objects.create(**validated_data)
+        request = self.context.get('request')
+
+        full_url = request.build_absolute_uri()
+        parsed_uri = urlparse(full_url)
+
+        host = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
+
+        new_author.host = host
+        new_author.id = host + '/authors/' + str(new_author.uuid)
+        new_author.url = host + '/authors/' + str(new_author.uuid)
+
+        new_author.save()
         return new_author
 
     def update(self, instance, validated_data):

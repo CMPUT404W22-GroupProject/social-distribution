@@ -1,0 +1,31 @@
+.inboxCommentCard {
+  width: 45%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  margin-top: 5%;
+  margin-left: 27.5%;
+  margin-right: 27.5%;
+  margin-bottom: 5%;
+}
+.inboxCommentTopLeft {
+  display: flex;
+  align-items: center;
+}
+
+.inboxCommentProfileImg {
+  /* width: 32px;
+  height: 32px; */
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.inboxCommentUsername {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 10px;
+}
+
+.inboxCommentDate {
+  font-size: 12px;
+}
