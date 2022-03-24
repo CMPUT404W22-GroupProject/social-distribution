@@ -5,7 +5,7 @@ import {useState, useEffect} from 'react'
 import axios from "axios"
 import {format} from "timeago.js"
 
-function Like({like}){
+function Like({like, team}){
     //this is how the like object will appear in the inbox
 
     return(
