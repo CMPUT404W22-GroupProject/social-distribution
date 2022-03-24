@@ -16,7 +16,7 @@ const CreateComment = ({handleSubmit, submitLabel, myAuthorId}) => {
         handleSubmit(text);
         setText("");
     }
-
+    
     return (
         <form onSubmit={onSubmit}>
             <textarea className="comment-form-textarea" value={text} onChange={(e) => setText(e.target.value)}></textarea>

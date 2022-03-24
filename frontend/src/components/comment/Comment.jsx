@@ -15,6 +15,8 @@ const Comment = ({comment, myAuthorId}) => {
         const [likeId, setLikeId] = useState(0);
         const commentUrl = new URL(comment.id);
         const commentPath = commentUrl.pathname;
+
+        console.log("COOMENT DISPAT NAMEL: ", author.displayName)
         
         const fetchAuthor = async () => {
             const result = await axios.get("/authors/" + myAuthorId);
@@ -69,7 +71,9 @@ const Comment = ({comment, myAuthorId}) => {
         <div className="comment">
             <PersonIcon className="comment-image-container"/>
             <div className="comment-right-part">
-                    <div className="comment-author">{author.displayName}</div>
+        
+                    <div className="comment-author">{comment.author.displayName}</div>
+                    
                     <div className="comment-date">{format(comment.published)}</div>
                 
             </div>
