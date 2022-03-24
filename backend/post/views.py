@@ -14,6 +14,7 @@ from rest_framework import generics, permissions
 import json
 from urllib.parse import urlparse
 import requests
+import uuid
 
 from post.serializers import PostSerializer, PostSerializerGet
 
@@ -53,7 +54,16 @@ class PostList(ListCreateAPIView):
         except Author.DoesNotExist:
             return Response("Author not found", status=404)
 
-        serializer = PostSerializer(data = request.data, context={'request':request})
+        request_data = request.data.copy()
+        sender_id = request_data['author']['id']
+        sender_uuid = uuid.UUID(sender_id.split('/authors/')[1].split('/')[0])
+
+        if author_id != sender_uuid:
+            return Response("Bad request", status=400)
+
+        request_data['author'] = sender_uuid
+
+        serializer = PostSerializer(data = request_data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = 201)

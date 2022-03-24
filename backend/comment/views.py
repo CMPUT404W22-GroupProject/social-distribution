@@ -9,7 +9,7 @@ from author.models import Author
 from comment.serializers import CommentSerializer, CommentSerializerGet
 from .pagination import CommentPageNumberPagination
 from urllib.parse import urlparse
-import requests
+import uuid
 
 
 class CommentList(ListCreateAPIView):
@@ -48,12 +48,22 @@ class CommentList(ListCreateAPIView):
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
         except Post.DoesNotExist:
             return Response("Post not found.", status=401)
-        serializer = CommentSerializer(data=request.data, context={'request':request, 'post':post})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        else:
-            return Response(serializer.errors, status=400)
+        
+        try:
+            request_data = request.data.copy()
+            sender_id = request_data['author']['id']
+            sender_uuid = uuid.UUID(sender_id.split('/authors/')[1].split('/')[0])
+            request_data['author'] = sender_uuid
+
+            serializer = CommentSerializer(data=request_data, context={'request':request, 'post':post})
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=201)
+            else:
+                return Response(serializer.errors, status=400)
+        except Exception as e:
+            return Response("Request data not in the right format", status=400)
 
 
 class CommentDetails(APIView):
