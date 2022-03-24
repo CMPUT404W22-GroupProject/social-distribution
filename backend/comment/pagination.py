@@ -12,8 +12,6 @@ class CommentPageNumberPagination(PageNumberPagination):
             'type': "comments",
             'page': self.page.number,
             'size': self.page.paginator.per_page,
-            'previous': self.get_previous_link(),
-            'next': self.get_next_link(),
             'post': post_uri,
             'id': comment_uri,
             'comments': data
