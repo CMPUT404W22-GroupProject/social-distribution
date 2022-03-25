@@ -15,8 +15,12 @@ function Follow({follow, team}){
         //sends POST request to ***/followers of logged in user (so my AuthorId), with follower object
         console.log("Follow Accepted!");
         alert("You have accepted the request!");
+        console.log("FOLLLOW REQUEST: ", follow)
+        const foreignAuthorIdUrl = new URL(follow.actor.id);
+        const foreignAuthorIdPathname = foreignAuthorIdUrl.pathname;
+        const foreignAuthorId = foreignAuthorIdPathname.replace("/service/authors/", " ")
 
-        await axios.post(follow.object.id + "/followers/")
+        await axios.put(follow.object.id + "/followers/" + foreignAuthorId, follow)
             .then((response) => {
                 if (response.status === 201){
                     alert("Succesfully accepted follow request!");
@@ -24,7 +28,35 @@ function Follow({follow, team}){
                     alert("Oops, something went wrong!");
                 }
             })
+           /* var followRe  =     {
+                "type": "Follow",      
+                "summary":"Greg wants to follow Lara",
+                "actor":{
+                    "type":"author",
+                    "id":"https://cmput-404-w22-group-10-backend.herokuapp.com/authors…b6d8-c8b9440a75c4/posts/02080038-62af-4db2-921f-cd283648fca6",
+                    "url":"https://cmput-404-w22-group-10-backend.herokuapp.com/authors…b6d8-c8b9440a75c4/posts/02080038-62af-4db2-921f-cd283648fca6",
+                    "host":"https://cmput-404-w22-group-10-backend.herokuapp.com",
+                    "displayName":"Greg Johnson",
+                    "github": "http://github.com/gjohnson",
+                    "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
+                },
+                "object": follow.actor
+            }
 
+        await axios.post(foreignAuthorIdUrl + '/inbox', followRe)
+            .then((response) => {
+                if (response.status === 201){
+                    alert("Succesfully accepted follow request!");
+                } else {
+                    alert("Oops, something went wrong!");
+                }
+            })
+ */
+
+
+
+       
+                
     
     }
 

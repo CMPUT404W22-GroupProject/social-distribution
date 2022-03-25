@@ -26,7 +26,8 @@ function CreatePost(){
     const [isUnlisted, setIsUnlisted] = useState(false);
     const [author, setAuthor] = useState({});
     const {id, setId} = useState(UserContext);
-    const authorId = "9230a258-b554-4d6d-b6d8-c8b9440a75c4";
+    //const authorId = "53f89145-c0bb-4a01-a26a-5a3332e47156"; //JACK SPARROW
+    const authorId = "f5b25009-007c-4611-83e1-3b508172a9f0" //MOE
     const [followers, setFollowers] = useState([]);// followers of authorID, initial is empty object
     const [buttonPopup, setButtonPopup] = useState(false);
     const [isPlain, setisPlain] = useState(false);
@@ -140,7 +141,7 @@ function CreatePost(){
            newPost["id"] = postId;
          })
          } catch (error) {
-           console.log(error)
+           //console.log(error)
          }
          if (status === 201) {
          alert("Shared! Check profile to see post!");
@@ -153,12 +154,12 @@ function CreatePost(){
         if (isFriend === true){ //is one specific friend selected
           var status = null;
           try {
-          await axios.post(friend.id + "/inbox/", newPost)
+          await axios.post(friend.id + "/inbox", newPost)
           .then((response) => {
             status = response.status;
           })
           } catch (error) {
-            console.log(error)
+            //console.log(error)
           }
           if (status === 201) {
           alert("Shared! Check profile to see post!");
@@ -174,12 +175,12 @@ function CreatePost(){
             const follower = followers[i];
             var status = null;
             try {
-            await axios.post(follower.id + "/inbox/", newPost)
+            await axios.post(follower.id + "/inbox", newPost)
             .then((response) => {
               status = response.status;
             })
             } catch (error) {
-              console.log(error)
+              //console.log(error)
             }
             if (status === 201) {
             alert("Shared! Check profile to see post!");

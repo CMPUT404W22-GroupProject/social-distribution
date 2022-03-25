@@ -6,7 +6,7 @@ import {useState, useEffect} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 
-const Comment = ({comment, myAuthor}) => {
+const Comment = ({comment, myAuthor, team}) => {
         // this is how the comment will appear in the CommentSection
         //user can like comments 
         const [like, setLike] = useState(0);
@@ -40,12 +40,6 @@ const Comment = ({comment, myAuthor}) => {
         
         useEffect(() => {
             // this is where we fetch data from the api
-
-
-
-            
-
-
             fetchLikeCount();
         }, []);
 
@@ -61,20 +55,20 @@ const Comment = ({comment, myAuthor}) => {
             if (!isLiked){
                 console.log("LIKE OBJECT: ",newLike);
                 try {
-                    await axios.post(comment.id + "/likes", newLike)
-                    .then((response) => {
-                        //console.log("THIS IS THE DATA",response.data);
-                        setLikeId(response.data.id);
-                    });
+                    await axios.post(comment.author.id + "/inbox/", newLike)
+                        .then((response) => {
+                            //console.log("THIS IS THE DATA",response.data);
+                            setLikeId(response.data.id);
+                        }); 
                 } catch (error) {
-                    console.log(error)
+                    //console.log(error)
                 }
             }  else {
                 console.log("DELETED LIKE");
                 try {
-                    await axios.delete( comment.id + "/likes/" + likeId)
+                    await axios.delete(likeId)
                 } catch (error) {
-                    console.log(error)
+                    //console.log(error)
                 }
             } 
     

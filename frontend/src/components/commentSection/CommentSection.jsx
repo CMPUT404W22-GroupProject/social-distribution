@@ -11,9 +11,8 @@ import { NewReleases } from "@mui/icons-material";
 const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}) => {
     //Handles the main comment events such as submitting comments, retrieving comments.
     const [backendComments, setBackendComments] = useState([]);
-    //const postAuthorUrl = new URL(postAuthorId);
-    //const postAuthorIdPath = postAuthorUrl.pathname;
     const [author, setAuthor] = useState([]);
+    const team9Authorization = btoa("Team10:abcdefg");
 
     //console.log("commentsID: ", myAuthor);
 
@@ -32,7 +31,11 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
         }
         if (team === "team9"){
             try {
-                const result = await axios.get(commentsId + "/comments");
+                const result = await axios.get(commentsId, {
+                    headers: {
+                      'authorization': 'Basic ' + team9Authorization
+                    }
+                  });
                 //puts posts in array + sorts from newest to oldest
                 setBackendComments(result.data.comments.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
@@ -72,7 +75,7 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
                         });
 
                     } catch (error) {
-                        console.log(error)
+                        //console.log(error)
                     }
                     //sending comment to inbox of post owner 
 
@@ -82,19 +85,38 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
                         });
 
                     } catch (error) {
-                        console.log(error)
+                        //console.log(error)
                     }
             }
 
             if (team === "team9"){
                 try {
-                    //console.log("POST AUTHOR ID: ", postAuthorId);
-                    await axios.post(postAuthorId + "/inbox", newComment)
+                    
+                    await axios.post(commentsId, newComment, {
+                        headers: {
+                          'authorization': 'Basic ' + team9Authorization
+                        }
+                      })
+                    .then((response) => {
+                        //console.log("COMMENTID: ", response)
+                        newComment["id"] = response.data.id;
+                    });
+
+                } catch (error) {
+                    //console.log(error)
+                }
+                try {
+                    console.log("POST AUTHOR ID: ", postAuthorId);
+                    await axios.post(postAuthorId + "/inbox", newComment, {
+                        headers: {
+                          'authorization': 'Basic ' + team9Authorization
+                        }
+                      })
                     .then((response) => {
                     });
 
                 } catch (error) {
-                    console.log(error)
+                    //console.log(error)
                 }
 
             }
@@ -117,7 +139,7 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
                 {/* //remember to send in key = {backendComment.id} when you have it */}
                 {backendComments.map((backendComment) => (
                     
-                    <Comment key = {backendComment.id} myAuthor = {myAuthor} comment = {backendComment} />
+                    <Comment key = {backendComment.id} myAuthor = {myAuthor} comment = {backendComment} team = {team}/>
                     //commentBody = {b.comment} commentAuthor = {b.author.displayName} commentDate = {b.published}
 
                 ))}
