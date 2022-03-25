@@ -65,21 +65,24 @@ class PostList(ListCreateAPIView):
             return Response("Author not found", status=404)
 
         request_data = request.data.copy()
-        sender_id = request_data['author']['id']
-        sender_uuid = uuid.UUID(sender_id.split('/authors/')[1].split('/')[0])
 
-        if author_id != sender_uuid:
+        try:
+            sender_id = request_data['author']['id']
+            sender_uuid = uuid.UUID(sender_id.split('/authors/')[1].split('/')[0])
+
+            if author_id != sender_uuid:
+                return Response("Bad request", status=400)
+
+            request_data['author'] = sender_uuid
+
+            serializer = PostSerializer(data = request_data, context={'request':request})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status = 201)
+            else:
+                return Response(serializer.errors, status = 400) # bad request
+        except:
             return Response("Bad request", status=400)
-
-        request_data['author'] = sender_uuid
-
-        serializer = PostSerializer(data = request_data, context={'request':request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status = 201)
-        else:
-            return Response(serializer.errors, status = 400) # bad request
-
 
 class PostDetails(APIView):
     # get post
