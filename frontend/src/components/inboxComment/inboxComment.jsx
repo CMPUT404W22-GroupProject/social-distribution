@@ -5,9 +5,9 @@ import {useState, useEffect} from 'react'
 import axios from "axios"
 import {format} from "timeago.js"
 
-function InboxComment({inboxComment, team}){
+function InboxComment({inboxComment}){
     //this is how the like object will appear in the inbox
-    //console.log("INBOXCOMMENT: ", inboxComment);
+    console.log("INBOXCOMMENT: ", inboxComment);
 
     return(
         <div className='inboxCommentCard'>

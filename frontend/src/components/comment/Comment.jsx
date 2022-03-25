@@ -6,69 +6,58 @@ import {useState, useEffect} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 
-const Comment = ({comment, myAuthor, team}) => {
+const Comment = ({comment, myAuthorId}) => {
         // this is how the comment will appear in the CommentSection
         //user can like comments 
         const [like, setLike] = useState(0);
         const [isLiked, setIsLiked] = useState(false);
         const [author, setAuthor] = useState({});
         const [likeId, setLikeId] = useState(0);
+        const commentUrl = new URL(comment.id);
+        const commentPath = commentUrl.pathname;
+
+        console.log("COOMENT DISPAT NAMEL: ", author.displayName)
         
+        const fetchAuthor = async () => {
+            const result = await axios.get("/authors/" + myAuthorId);
+            setAuthor(result.data)
+        }
         const fetchLikeCount = async () => {
-            const result = await axios.get(comment.id + "/likes");
+            const result = await axios.get(commentPath + "/likes");
 
             if (result.data.length !== undefined){
                 setLike(result.data.length);
-                const likeObjectRecieved = result.data;
-                hasAuthorAlreadyLiked(likeObjectRecieved);
             }
         }
-
-        const hasAuthorAlreadyLiked = (likeObjectRecieved) => {
-            likeObjectRecieved.forEach((like) => {
-                //chekcing to see if logged in user has already liked the post i.e. seeing if logged in user is already in like object list
-                // if so, then isLiked will be set to true. This is will avoid user liking the same object multiple times. 
-                if (like.author.id === myAuthor.id){
-                    //console.log("SET TO TRUE")
-                    setIsLiked(true);
-                    const likeIdUrl = new URL(like.id);
-                    const likeIdUrlPath = likeIdUrl.pathname;
-                    setLikeId(like.id);
-                }
-            })
-        } 
         
         useEffect(() => {
             // this is where we fetch data from the api
+            fetchAuthor();
             fetchLikeCount();
         }, []);
 
         const likeHandler = async () => {
             //handles like events
             var newLike = {
-                "@context": "https://www.w3.org/ns/activitystreams",
-                "summary": myAuthor.displayName + " likes your post",
-                "type" : "Like",
-                "author": myAuthor,
-                "object": comment.id
+                "author": myAuthorId, //just sending in ID
             }
             if (!isLiked){
                 console.log("LIKE OBJECT: ",newLike);
                 try {
-                    await axios.post(comment.author.id + "/inbox/", newLike)
-                        .then((response) => {
-                            //console.log("THIS IS THE DATA",response.data);
-                            setLikeId(response.data.id);
-                        }); 
+                    await axios.post(commentPath + "/likes", newLike)
+                    .then((response) => {
+                        //console.log("THIS IS THE DATA",response.data);
+                        setLikeId(response.data.id);
+                    });
                 } catch (error) {
-                    //console.log(error)
+                    console.log(error)
                 }
             }  else {
                 console.log("DELETED LIKE");
                 try {
-                    await axios.delete(likeId)
+                    await axios.delete( commentPath + "/likes/" + likeId)
                 } catch (error) {
-                    //console.log(error)
+                    console.log(error)
                 }
             } 
     

@@ -26,8 +26,7 @@ function CreatePost(){
     const [isUnlisted, setIsUnlisted] = useState(false);
     const [author, setAuthor] = useState({});
     const {id, setId} = useState(UserContext);
-    //const authorId = "53f89145-c0bb-4a01-a26a-5a3332e47156"; //JACK SPARROW
-    const authorId = "f5b25009-007c-4611-83e1-3b508172a9f0" //MOE
+    const authorId = "0611a7c9-2801-42d5-adb8-7df4a2079c17";
     const [followers, setFollowers] = useState([]);// followers of authorID, initial is empty object
     const [buttonPopup, setButtonPopup] = useState(false);
     const [isPlain, setisPlain] = useState(false);
@@ -36,12 +35,12 @@ function CreatePost(){
     useEffect(() => {
       //fetches author when component is called
       const fetchFollowers = async () => {
-        const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/followers/")
+        const result = await axios.get("/authors/" + authorId + "/followers/")
         setFollowers(result.data["items"]);
     }
       const fetchAuthor = async () => {
           //fetches auhor
-          const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId);
+          const result = await axios.get("/authors/" + authorId);
           setAuthor(result.data)
       }
       fetchAuthor();
@@ -89,7 +88,7 @@ function CreatePost(){
           "origin": "",
           "description": postDescription.current.value,
           "contentType": "text/plain",
-          "author": author,
+          "author": authorId,
           "content": postContent.current.value,
           "categories": postTags.current.value,
           "published": "",
@@ -129,19 +128,19 @@ function CreatePost(){
         }
 
         //sending CSRF token as header
-        //axios.defaults.headers.post['X-CSRF-Token'] = "qaa2nlJZPsbuH7knWoZ1OqeJqQqz3eZIkgDK8uIuCqs7vMawMwDLveJgdvaQxoTO";
+        axios.defaults.headers.post['X-CSRF-Token'] = "qaa2nlJZPsbuH7knWoZ1OqeJqQqz3eZIkgDK8uIuCqs7vMawMwDLveJgdvaQxoTO";
 
          //sending post to author's posts 
          var status = null;
          try {
-         await axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/posts/", newPost)
+         await axios.post("/authors/" + authorId + "/posts/", newPost)
          .then((response) => {
            status = response.status;
            const postId = response.data.id;
            newPost["id"] = postId;
          })
          } catch (error) {
-           //console.log(error)
+           console.log(error)
          }
          if (status === 201) {
          alert("Shared! Check profile to see post!");
@@ -152,14 +151,16 @@ function CreatePost(){
 
 
         if (isFriend === true){ //is one specific friend selected
+          const friendUrl = new URL(friend.id);
+          const friendPath = friendUrl.pathname;
           var status = null;
           try {
-          await axios.post(friend.id + "/inbox", newPost)
+          await axios.post(friendPath + "/inbox/", newPost)
           .then((response) => {
             status = response.status;
           })
           } catch (error) {
-            //console.log(error)
+            console.log(error)
           }
           if (status === 201) {
           alert("Shared! Check profile to see post!");
@@ -173,14 +174,16 @@ function CreatePost(){
             const follower = followers["items"][i]; */
           for (var i in followers){
             const follower = followers[i];
+            const followerUrl = new URL(follower.id);
+            const followerPath = followerUrl.pathname;
             var status = null;
             try {
-            await axios.post(follower.id + "/inbox", newPost)
+            await axios.post(followerPath + "/inbox/", newPost)
             .then((response) => {
               status = response.status;
             })
             } catch (error) {
-              //console.log(error)
+              console.log(error)
             }
             if (status === 201) {
             alert("Shared! Check profile to see post!");
