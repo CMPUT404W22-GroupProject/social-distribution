@@ -5,6 +5,7 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from author.serializers import AuthorsSerializer
 from author.models import Author
 import requests
+from node.authentication import BasicAuthentication
 
 class FollowerSerializer(ModelSerializer):
 
@@ -15,9 +16,11 @@ class FollowerSerializer(ModelSerializer):
 class FollowerSerializerGet(FollowerSerializer):
     object = SerializerMethodField()
     author = AuthorsSerializer(many=False, read_only=True)
+    basic_auth = BasicAuthentication()
 
     def get_object(self, follower):
-        response = requests.get(follower.object)
+        response = self.basic_auth.get_request(follower.object)
+        print(response.status_code)
         if response.status_code == 404:
             follower_object =Follower.objects.get(pk=follower.id)
             follower_object.delete()

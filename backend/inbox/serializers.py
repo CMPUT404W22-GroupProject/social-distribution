@@ -13,6 +13,7 @@ from comment.serializers import CommentSerializerGet
 from like.serializers import LikeSerializerGet
 from post.serializers import PostSerializerGet
 from urllib.parse import urlparse
+from requests.auth import HTTPBasicAuth
 
 class InboxSerializer(ModelSerializer):
     author = AuthorsSerializer(many=False, read_only=True)
@@ -23,7 +24,7 @@ class InboxSerializer(ModelSerializer):
         fields = ('type', 'author', 'items')
 
     def make_request(self, url):
-        response = requests.get(url)
+        response = requests.get(url, auth=HTTPBasicAuth('admin', 'gwbRqv8ZLtM3TFRW'))
         if response.status_code != 200:
             return url
         

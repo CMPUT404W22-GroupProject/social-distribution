@@ -2,6 +2,9 @@ from django.http import HttpResponse
 from node.models import Node
 from rest_framework.response import Response
 import base64
+import requests
+from urllib.parse import urlparse
+from requests.auth import HTTPBasicAuth
 # https://djangosnippets.org/snippets/2468/
 class BasicAuthentication:
 
@@ -66,3 +69,20 @@ class BasicAuthentication:
             except Node.DoesNotExist:
                 return self.unauthed()
         
+    def get_request(self, url):
+        host = urlparse(url).hostname
+
+        if host == "localhost" or host == "127.0.0.1" or host == "cmput-404-w22-group-10-backend.herokuapp.com":
+            username = 'admin'
+            password = 'gwbRqv8ZLtM3TFRW'
+        elif host == "backend-404.herokuapp.com":
+            username = 'Team10'
+            password = 'abcdefg'
+        elif host == "cmput-404-w22-project-group09.herokuapp.com":
+            username = 'group10'
+            password = 'pwd1010'
+        else:
+            username = ''
+            password = ''
+        
+        return requests.get(url, auth=HTTPBasicAuth(username, password))

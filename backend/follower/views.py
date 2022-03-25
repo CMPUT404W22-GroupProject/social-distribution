@@ -12,6 +12,7 @@ import os
 from urllib.parse import urlparse
 import requests
 from node.authentication import BasicAuthentication
+from requests.auth import HTTPBasicAuth
 
 # Create your views here.
 class FollowerList(APIView):
@@ -91,7 +92,7 @@ class FollowerDetails(APIView, LoginRequiredMixin):
             if follower_uuid != str(foreign_author_id):
                 return Response("Bad request", status=400)
 
-            follower_response = requests.get(follower_id)
+            follower_response = self.basic_auth.get_request(follower_id)
             if follower_response.status_code == 404:
                 return Response("Follower not found", status=404)
 

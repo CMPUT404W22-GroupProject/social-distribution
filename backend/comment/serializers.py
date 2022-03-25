@@ -8,6 +8,7 @@ import uuid
 from author.models import Author
 from inbox.models import Inbox
 import requests
+from node.authentication import BasicAuthentication
 
 class CommentSerializer(ModelSerializer):
 
@@ -40,9 +41,10 @@ class CommentSerializer(ModelSerializer):
 
 class CommentSerializerGet(CommentSerializer):
     author = SerializerMethodField()
+    basic_auth = BasicAuthentication()
 
     def get_author(self, comment):
-        response = requests.get(comment.author)
+        response = self.basic_auth.get_request(comment.author)
         if response.status_code == 404:
             return "Author Not Found"
         elif response.status_code != 200:
