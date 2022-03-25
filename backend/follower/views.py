@@ -9,8 +9,6 @@ from follower.serializers import FollowerSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.mixins import LoginRequiredMixin
 import os
-from urllib.parse import urlparse
-import requests
 
 # Create your views here.
 class FollowerList(APIView):
@@ -20,9 +18,8 @@ class FollowerList(APIView):
             follower = Follower.objects.get(author=author_id)
             serializer = FollowerSerializer(follower, context={'request':request})
             return Response(serializer.data, status=200)
-
         except Follower.DoesNotExist:
-            return Response("Follower not found", status=404)
+            return Response("This user doesn't have followers yet", status=400)
 
 class FollowerDetails(APIView, LoginRequiredMixin):
 
@@ -32,8 +29,8 @@ class FollowerDetails(APIView, LoginRequiredMixin):
             item = follower.items.get(pk=foreign_author_id)
             serializer = AuthorsSerializer(item, context={'request':request})
             return Response(serializer.data, status=200)
-        except:
-            return Response("Follower not found", status=404)
+        except Author.DoesNotExist and Follower.DoesNotExist:
+            return Response("You are not following this user", status=404)
 
     
     def put(self, request, author_id, foreign_author_id):

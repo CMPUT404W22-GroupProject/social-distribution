@@ -9,5 +9,5 @@ urlpatterns = [
     path('<uuid:post_id>/', views0.PostDetails.as_view()),
     path('<uuid:post_id>/likes', views1.LikeList.as_view()),
     path('<uuid:post_id>/comments/', include('comment.urls')),
-    path('<uuid:post_id>/likes/<int:like_id>', views1.LikeDetails.as_view()),
+    path('<uuid:post_id>/likes/<int:like_id>', views1.LikedDetails.as_view()),
 ]

@@ -1,87 +1,52 @@
-from django.test import TestCase
-from author.models import Author
-from like.models import Like
-from post.models import Post
-from author.serializers import AuthorsSerializer
-from comment.models import Comment
-
+# from django.test import TestCase
+# from author.models import Author
+# from like.models import Like
+# from author.serializers import AuthorsSerializer
     
-class LikeModelTest(TestCase):
-    """Test the Like Model"""
+# class LikeModelTest(TestCase):
+#     """Test the Like Model"""
 
-    def setUp(self):
+#     def setUp(self):
         
-        self.author = Author.objects.create(
-            email="test@example.com",
-            displayName="APITest", 
-            github="https://github.com/CMPUT404W22-GroupProject/social-distribution"
-        )
+#         #Creating Author First
+#         self.test_dict_author = {
+#              "host" : 'http://127.0.0.1:8000/',
+#              "displayName" : "testAuthor",
+#              "github" : "https://github.com/CMPUT404W22-GroupProject/social-distribution",
+#             }
 
-        self.post_data = {
-            "title": "Test title for Post",
-            "description": "This is a description",
-            "contentType": "text/plain",
-            "content": "This is a test content",
-            "author": self.author,
-            "categories": "Category1,Category2",
-            "visibility": "FRIENDS",
-            "unlisted": False,
-        }
-        self.post = Post.objects.create(**self.post_data)
-
-        self.comment_data = {
-            "author": self.author,
-            "comment": "Test comment",
-            "contentType": "commonMark",
-            "post": self.post,
-        }
-        self.comment  = Comment.objects.create(**self.comment_data)
+#         self.author = Author.objects.create(**self.test_dict_author)
+#         self.url = "http://127.0.0.1:8000/{0}".format(self.author.id)
+#         self.author.url = self.url
 
 
-        #Liking a post
-        self.like_data_post = {
-            "context":"https://www.w3.org/ns/activitystreams",
-            "summary": "APITest likes your post", 
-            "type":"Like",
-            "author":self.author,
-            "object":self.post
-        }
-        self.like_post  = Like.objects.create(**self.like_data_post)
 
+#         #Like
+#         '''
+#         WHEN POSTING THROUGH REST, USE {author: id} ONLY
+#         AUTHOR OBJECT AND SUMMARY IS HANDLED THROUGH VIEWS
+#         e.g {
+#          "author" : 1
+#          }
+#         '''
 
-        #Liking a comment
-        self.like_data_comment = {
-            "context":"https://www.w3.org/ns/activitystreams",
-            "summary": "APITest likes your post", 
-            "type":"Like",
-            "author":self.author,
-            "object":self.post,
-            "object1":self.comment
-        }
-        self.like_comment  = Like.objects.create(**self.like_data_comment)
+#         self.test_dict_like = {
+#              "author": self.author,
+#              "summary": self.author.displayName + " likes your post"
+#             }
 
+#         self.like = Like.objects.create(**self.test_dict_like)
+#         self.summary = self.author.displayName + " likes your post"
+#         self.like_author = self.author.toString()
+#         self.type = "Like"
+#         self.context = "https://www.w3.org/ns/activitystreams"
 
-    def testLikeModel(self):
-        """Test all Like fields"""
-
-        #For posts
-        self.assertEqual(self.like_post.context, self.like_data_post["context"])
-        self.assertEqual(self.like_post.summary, self.like_data_post["summary"])
-        self.assertEqual(self.like_post.type, self.like_data_post["type"])
-        self.assertEqual(self.like_post.author, self.like_data_post["author"])
-        self.assertEqual(self.like_post.object, self.like_data_post["object"])
-        self.assertEqual(self.like_post.object1, None)
-
-        #For comments
-        self.assertEqual(self.like_comment.context, self.like_data_comment["context"])
-        self.assertEqual(self.like_comment.summary, self.like_data_comment["summary"])
-        self.assertEqual(self.like_comment.type, self.like_data_comment["type"])
-        self.assertEqual(self.like_comment.author, self.like_data_comment["author"])
-        self.assertEqual(self.like_comment.object, self.like_data_comment["object"])
-        self.assertEqual(self.like_comment.object1, self.like_data_comment["object1"])
-
-
-    def tearDown(self):
-        self.author.delete()
-        self.like_post.delete()
-        self.like_comment.delete()
+#     def testLikeModel(self):
+#         self.assertEqual(self.like.type, self.type)
+#         self.assertEqual(self.like.context, self.context)
+#         self.assertEqual(self.like.summary, self.summary)
+#         self.assertEqual(self.like.author, self.author)
+       
+#     def tearDown(self):
+#         self.author.delete()
+#         self.like.delete()
