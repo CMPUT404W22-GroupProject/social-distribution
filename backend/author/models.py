@@ -25,7 +25,7 @@ class Author(AbstractBaseUser, PermissionsMixin):
 
     #The following are used in Like app
     def __str__(self):
-        return str(self.uuid)
+        return self.displayName
 
     def toString(self):
         return {"type: ":self.type,

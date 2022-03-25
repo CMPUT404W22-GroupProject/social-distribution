@@ -11,8 +11,8 @@ class InboxPageNumberPagination(PageNumberPagination):
         return Response({
             'type': "inbox",
             'author': data['author'],
-            # 'page': self.page.number,
-            # 'size': self.page.paginator.per_page,
-            # 'count': self.page.paginator.count,
+            'page': self.page.number,
+            'size': self.page.paginator.per_page,
+            'count': self.page.paginator.count,
             'items': data['items']
         })
