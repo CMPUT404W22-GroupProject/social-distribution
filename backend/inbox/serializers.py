@@ -38,16 +38,13 @@ class InboxSerializer(ModelSerializer):
         #Get original item through their id
         try:
             if inbox.like_object:
-                url = self.api_endpoint(inbox.like_object.id)
-                response = requests.get(url).json()
+                response = self.make_request(inbox.like_object.id)
 
             elif inbox.post_object:
-                url = self.api_endpoint(inbox.post_object.id)
-                response = requests.get(url).json()
+                response = self.make_request(inbox.post_object.id)
 
             elif inbox.comment_object:
-                url = self.api_endpoint(inbox.comment_object.id)
-                response = requests.get(url).json()
+                response = self.make_request(inbox.comment_object.id)
 
             elif inbox.follow_request_object:
                 follow_request = inbox.follow_request_object
