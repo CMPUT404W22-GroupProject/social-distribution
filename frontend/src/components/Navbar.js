@@ -16,19 +16,20 @@ function NavBar() {
 
 
   let {loggedIn, setLoggedIn} = useContext(UserContext)
-
-  const {id} = useContext(UserContext)
+  const {token, setToken} = useContext(UserContext)
+  const {id, setId} = useContext(UserContext)
   const navigate = useNavigate();
-  console.log(loggedIn)
 
 
   useEffect(() => {
-    console.log(loggedIn)
+    
   })
 
   const handleLogout = (e) => {
     e.preventDefault();
     setLoggedIn(false)
+    setToken('')
+    setId('')
     navigate('/login')
 }
 
