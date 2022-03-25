@@ -27,6 +27,14 @@ class LikeListTest(APITestCase):
             unlisted=True,
         )
 
+        self.comment = Comment.objects.create(
+            author = self.author,
+            comment= "Test comment",
+            contentType = "commonMark",
+            post = self.post
+        )
+
+
         self.like_data_post = {
         "context":"https://www.w3.org/ns/activitystreams",
         "summary": "APITest likes your post", 
@@ -42,14 +50,15 @@ class LikeListTest(APITestCase):
         # Populate list
         new_like = Like.objects.create(
             context = "https://www.w3.org/ns/activitystreams",
-            summary = "APITest likes your post", 
+            summary = "APITest likes your comment", 
             type = "Like",
             author = self.author,
-            object = self.post
+            object = self.post,
+            object1 = self.comment
         )
      
         # Check status is ok
-        response = self.client.get("/authors/" + str(self.author.uuid) + "/posts/" + str(self.post.uuid) + "/likes")
+        response = self.client.get("/authors/" + str(self.author.uuid) + "/posts/" + str(self.post.uuid) + "/comments/" + str(self.comment.uuid) +"/likes")
         self.assertEqual(response.status_code, 200)
         
         # Check response has data
@@ -60,18 +69,20 @@ class LikeListTest(APITestCase):
         """Test POST request to create like for post objects"""
         
         # Ensure proper status code
-        response = self.client.post("/authors/" + str(self.author.uuid) + "/posts/" + str(self.post.uuid) + "/likes", self.like_data_post)
+        response = self.client.post("/authors/" + str(self.author.uuid) + "/posts/" + str(self.post.uuid) + "/comments/" + str(self.comment.uuid) + "/likes", self.like_data_post)
         self.assertEqual(response.status_code, 201)
         
         # Ensure it was actually posted
-        response = self.client.get("/authors/" + str(self.author.uuid) + "/posts/" + str(self.post.uuid) + "/likes")
-        self.assertTrue(any(d["summary"] == "APITest likes your post" for d in response.data))
+        response = self.client.get("/authors/" + str(self.author.uuid) + "/posts/" + str(self.post.uuid) + "/comments/" + str(self.comment.uuid) + "/likes")
+        self.assertTrue(any(d["summary"] == "APITest likes your comment" for d in response.data))
    
     def tearDown(self):
         authors = Author.objects.all()
         authors.delete()
         posts = Post.objects.all()
         posts.delete()
+        comments = Comment.objects.all()
+        comments.delete()
         like = Like.objects.all()
         like.delete()
 
@@ -100,12 +111,22 @@ class LikeDetailsTest(APITestCase):
         }
         self.post  = Post.objects.create(**self.post_data)
 
+
+        self.comment_data = {
+            "author": self.author,
+            "comment": "Test comment",
+            "contentType": "commonMark",
+            "post": self.post,
+        }
+        self.comment = Comment.objects.create(**self.comment_data)
+
         self.like_data = {
             "context":"https://www.w3.org/ns/activitystreams",
-            "summary": "APITest likes your post", 
+            "summary": "APITest likes your comment", 
             "type":"Like",
             "author":self.author,
-            "object":self.post
+            "object":self.post,
+            "object1":self.comment
         }
         self.like  = Like.objects.create(**self.like_data)
 
@@ -114,7 +135,7 @@ class LikeDetailsTest(APITestCase):
         """Test GET request for like's details"""
         
         # Check status code
-        response = self.client.get("/authors/" + str(self.author.uuid) +"/posts/"+str(self.post.uuid)+"/likes/"+str(self.like.id))
+        response = self.client.get("/authors/" + str(self.author.uuid) +"/posts/"+str(self.post.uuid)+ "/comments/" + str(self.comment.uuid) + "/likes/"+str(self.like.id))
         # check if the status code is 200
         self.assertEqual(response.status_code, 200)
         # Check response has data
@@ -125,22 +146,22 @@ class LikeDetailsTest(APITestCase):
         self.assertEqual(response.data["summary"], self.like_data["summary"])
         self.assertEqual(response.data["type"], "Like")
         self.assertEqual(response.data["author"]["displayName"], self.author_data["displayName"])
-        self.assertEqual(response.data["object"].split('/posts/')[1], str(self.post.uuid))
+        self.assertEqual(response.data["object"].split('/comments/')[1], str(self.comment.uuid))
 
 
     def testLikeDetailsDelete(self):
         """Test DELETE request to delete a like"""
 
         # Ensure object is present before deletion
-        response = self.client.get("/authors/" + str(self.author.uuid) +"/posts/"+str(self.post.uuid)+"/likes/"+str(self.like.id))
+        response = self.client.get("/authors/" + str(self.author.uuid) +"/posts/"+str(self.post.uuid)+ "/comments/" + str(self.comment.uuid) + "/likes/"+ str(self.like.id))
         self.assertEqual(response.status_code, 200)
 
         # Remove object
-        response = self.client.delete("/authors/" + str(self.author.uuid) +"/posts/"+str(self.post.uuid)+"/likes/"+str(self.like.id))
+        response = self.client.delete("/authors/" + str(self.author.uuid) +"/posts/"+str(self.post.uuid)+ "/comments/" + str(self.comment.uuid) + "/likes/" + str(self.like.id))
         self.assertEqual(response.status_code, 204)
 
         # Ensure object was removed
-        response = self.client.get("/authors/" + str(self.author.uuid) +"/posts/"+str(self.post.uuid)+"/likes")
+        response = self.client.get("/authors/" + str(self.author.uuid) +"/posts/"+str(self.post.uuid) + "/comments/" + str(self.comment.uuid) + "/likes")
         self.assertEqual(len(response.data), 0)
     
 
@@ -149,5 +170,7 @@ class LikeDetailsTest(APITestCase):
         authors.delete()
         posts = Post.objects.all()
         posts.delete()
+        comments = Comment.objects.all()
+        comments.delete()
         like = Like.objects.all()
         like.delete()

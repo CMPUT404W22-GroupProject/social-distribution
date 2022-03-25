@@ -12,33 +12,31 @@ import {format} from "timeago.js"
 import ReactMarkdown from "react-markdown";
 import PopupSmall from './popupSmall/PopupSmall'
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import { PsychologyTwoTone } from '@mui/icons-material'
 
-function Post({post, team}){
+function Post({post}){
     //This is the main post card that handles post events, and houses the like, comment and share events too
     const [buttonPopup, setButtonPopup] = useState(false);
     const [like, setLike] = useState(0); //initial like value obtained from server and set in useEffect bellow
     const [likeObjects, setLikeObjects] = useState([]);
     const [isLiked, setIsLiked] = useState(false);
+    const postUrl = new URL(post.id); //this is full url that includes http://localhost:8000/ stuff
+    const postPath = postUrl.pathname; //this is path of post e.g. authors/{authorid}/posts/{postid}
     const hasImage = false;
     const postAuthor = post.author; //entire author object derived from post
     const postAuthorId = postAuthor.id; //this is just the ID of POST author, NOT entire object,
     const commentCount = post.count; //comment counter obtained from server
-    //const myAuthorId = "53f89145-c0bb-4a01-a26a-5a3332e47156"; // this is my user author id, get from Context // JACK SPARROW
-    //const myAuthorIdUrl = "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/53f89145-c0bb-4a01-a26a-5a3332e47156"; //this is my user author id path, ideally retrieved from Context// JACK SPARROW
-    const myAuthorId = "f5b25009-007c-4611-83e1-3b508172a9f0" // MOE
-    const myAuthorIdUrl = "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/f5b25009-007c-4611-83e1-3b508172a9f0" //MOE
+    const myAuthorId = "0611a7c9-2801-42d5-adb8-7df4a2079c17"; // this is my user author id, get from Context
+    const myAuthorIdPath = "/authors/0611a7c9-2801-42d5-adb8-7df4a2079c17"; //this is my user author id path, ideally retrieved from Context
     const [author, setAuthor] = useState({});
     const commentsSrc = post.commentsSrc;
     const [likeId, setLikeId] = useState(0);
     const [buttonSmallPopupForLike, setButtonSmallPopupForLike] = useState(false);
     const [buttonSmallPopupForShare, setButtonSmallPopupForShare] = useState(false);
-    const team9Authorization = btoa("Team10:abcdefg");
-
-    //console.log("POST DATA: ", post)
+    
     /* NOTES FOR MYSELF
 
     right now author info is being fetched, not needed in the future as author info will come in post object
+
 
     */
 
@@ -46,55 +44,26 @@ function Post({post, team}){
      useEffect(() => {
          //fetches data from the server
        
-        const fetchAuthor = async () => {
-            const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + myAuthorId + "/");
+        /* const fetchAuthor = async () => {
+            const result = await axios.get("authors/" + postAuthorId + "/");
             setAuthor(result.data);
-        } 
-
+        } */
         const fetchLikeCount = async () => {
+            await axios.get(postPath + "/likes")
+            .then((response) => {
+                const result = response;
+                const likeObjectRecieved = response.data;
+                hasAuthorAlreadyLiked(likeObjectRecieved);
 
-            if (team === "team10") {
-                try {
-                        const postUrl = new URL(post.id); //this is full url that includes http://localhost:8000/ stuff
-                        const postPath = postUrl.pathname; //this is path of post e.g. authors/{authorid}/posts/{postid}
-                        await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com" + postPath + "/likes")
-                        .then((response) => {
-                        const result = response;
-                        const likeObjectRecieved = response.data;
-                        hasAuthorAlreadyLiked(likeObjectRecieved);
-
-                        if (result.data.length !== undefined){
-                            setLike(result.data.length);
-                            setLikeObjects(result.data);
-                        }
-                    });
-                } catch (error) {
-                    //console.log(error)
+                if (result.data.length !== undefined){
+                    setLike(result.data.length);
+                    setLikeObjects(result.data);
+    
                 }
-            }
+            });
+            console.log("POSTAUJTHORID: ", postAuthorId);
 
-            if (team === "team9"){
-                try {
-                        await axios.get(post.id + "/likes", {
-                            headers: {
-                            'authorization': 'Basic ' + team9Authorization
-                            }
-                        })
-                        .then((response) => {
-                        const result = response;
-                        //console.log("RECIEVED LIKE: ", response)
-                        const likeObjectRecieved = response.data.items;
-                        hasAuthorAlreadyLiked(likeObjectRecieved);
-                        if (result.data.items.length !== undefined){
-                            setLike(result.data.items.length);
-                            setLikeObjects(result.data.items);
-                        }
-                    });
-                } catch (error) {
-                    //console.log(error)
-                }
-            }
-
+            
             /* if (result.data.length !== undefined ){
                 if (result.data.some(i => i.id.includes(likeId))){
                     console.log("IT INCLUDES")
@@ -106,124 +75,68 @@ function Post({post, team}){
                 }
             } */
         }
+
         const hasAuthorAlreadyLiked = (likeObjectRecieved) => {
             likeObjectRecieved.forEach((like) => {
                 //chekcing to see if logged in user has already liked the post i.e. seeing if logged in user is already in like object list
                 // if so, then isLiked will be set to true. This is will avoid user liking the same object multiple times. 
-                if (like.author.id === myAuthorIdUrl){
-                    //console.log("SET TO TRUE")
+                const likeAuthorUrl = new URL(like.author.id);
+                const likeAuthorPath = likeAuthorUrl.pathname;
+                console.log("likeAuthorPAth: ", likeAuthorPath)
+                if (likeAuthorPath === myAuthorIdPath){
+                    console.log("SET TO TRUE")
                     setIsLiked(true);
-                    //const likeIdUrl = new URL(like.id);
-                    //const likeIdUrlPath = likeIdUrl.pathname;
-                    console.log("LIKE OBJECT: ", like)
-                    setLikeId(like.id);
+                    const likeIdUrl = new URL(like.id);
+                    const likeIdUrlPath = likeIdUrl.pathname;
+                    setLikeId(likeIdUrlPath);
                 }
             })
         } 
         fetchLikeCount();
-        fetchAuthor();
+        //fetchAuthor();
     },[])
-
  
     const likeHandler = async () => {
         //handles how a like is sent, and manages likes/dislikes
         var newLike = {
-            "author": myAuthorIdUrl, //just sending in ID
+            "author": myAuthorId, //just sending in ID
         }
-
-        /* {
-            "@context": "https://www.w3.org/ns/activitystreams",
-            "summary": "Lara Croft Likes your post",         
-            "type": "Like",
-            "author":{
-                "type":"author",
-                "id":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-                "host":"http://127.0.0.1:5454/",
-                "displayName":"Lara Croft",
-                "url":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-                "github":"http://github.com/laracroft",
-                "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
-            },
-            "object":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e"
-       } */
-        var remoteNewLike = {
-            "@context": "https://www.w3.org/ns/activitystreams",
-            "summary": author.displayName + " likes your post",
-            "type" : "Like",
-            "author": author,
-            "object": post.id
-        }
-       // console.log("REMOTENEWLIKE: ", remoteNewLike)
-       
-        if (team === "team10"){
         if (!isLiked){
-            //console.log("LIKE OBJECT: ",newLike);
-                //sending POST req with like object to post object
-              /*  try {
-                    //THIS WILL BE REMOVED LATER, CANT POST TO THIS LINK ONLY GET
-                    const postUrl = new URL(post.id); //this is full url that includes http://localhost:8000/ stuff
-                    const postPath = postUrl.pathname; //this is path of post e.g. authors/{authorid}/posts/{postid}
-                    await axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com" + postPath + "/likes", remoteNewLike)
-                    .then((response) => {
-                        //console.log("THIS IS THE DATA",response.data);
-                        setLikeId(response.data.id);
-                        delete newLike["author"];
-                        newLike["type"] = "Like";
-                        newLike["id"] = response.data.id;
-                    });
-                } catch (error) {
-                    //console.log(error)
-                }  */
-
-                //sending POST req with like object to inbox of post author
-                try {
-                    await axios.post(postAuthorId + "/inbox/", remoteNewLike)
-                    .then((response) => {
-                        //console.log("THIS IS THE DATA",response.data);
-                        setLikeId(response.data.id);
-                    });
-                } catch (error) {
-                    //console.log(error)
-                }
-                }  else {
-                    console.log("DELETED LIKE");
-                    try {
-                        //await axios.delete( postPath + "/likes/" + likeId)
-                        //likeId is already full path
-                        console.log("LIKEID: ", likeId)
-                        await axios.delete(likeId)
-                    } catch (error) {
-                        //console.log(error)
-                    }
-                }
+            console.log("LIKE OBJECT: ",newLike);
+            //sending POST req with like object to post object
+            try {
+                //THIS WILL BE REMOVED LATER, CANT POST TO THIS LINK ONLY GET
+                await axios.post(postPath + "/likes", newLike)
+                .then((response) => {
+                    //console.log("THIS IS THE DATA",response.data);
+                    setLikeId(response.data.id);
+                });
+            } catch (error) {
+                console.log(error)
             }
-            if (team === "team9"){
-                if (!isLiked){
 
-                    try {
-                        await axios.post(post.author.id + "/inbox", remoteNewLike, {
-                            headers: {
-                              'authorization': 'Basic ' + team9Authorization
-                            }
-                          })
-                        .then((response) => {
-                            //console.log("THIS IS THE DATA",response.data);
-                            //setLikeId(response.data.id);
-                        });
-                    } catch (error) {
-                        ////console.log(error)
-                    }
-                } else {
-                    console.log("DELETED LIKE");
-                    try {
-                        //await axios.delete( postPath + "/likes/" + likeId)
-                        //likeId is already full path
-                        //await axios.delete(likeId)
-                    } catch (error) {
-                        ////console.log(error)
-                    }
-                }
+            //sending POST req with like object to inbox of post author
+            try {
+                await axios.post(postAuthorId + "/inbox/", newLike)
+                .then((response) => {
+                    //console.log("THIS IS THE DATA",response.data);
+                    //setLikeId(response.data.id);
+                });
+            } catch (error) {
+                console.log(error)
             }
+
+
+        }  else {
+            console.log("DELETED LIKE");
+            try {
+                //await axios.delete( postPath + "/likes/" + likeId)
+                //likeId is already full path
+                await axios.delete(likeId)
+            } catch (error) {
+                console.log(error)
+            }
+        } 
 
         //if user has already liked it and called, will decrement. if user hasnt liked, will increment. 
         setLike(isLiked ? like - 1: like + 1); 
@@ -233,37 +146,11 @@ function Post({post, team}){
         console.log("like changed!: ", like, isLiked);
     }
 
-    const shareHandler = async () => {
-       
-        console.log("ORIGINAL POST", post)
-        var sharedPost = post;
+    const shareHandler = () => {
         
-        sharedPost["author"] = author;
-        var origTitle = sharedPost["title"];
-        sharedPost["title"] = author.displayName + " shared " + post.author.displayName + "'s post: " + origTitle;
-        if (sharedPost["origin"] !== ""){
-            sharedPost["source"] = post.id;
-        } else {
-            sharedPost["origin"] = post.id;
-            sharedPost["source"] = post.id;
-        }
-        sharedPost["id"] = "";
-        var date = new Date();
-        var formattedDate = date.toISOString();
-        sharedPost["published"] = formattedDate;
-        console.log("POST TO BE SHARED: ", sharedPost)
-        
-        try {
-            await axios.post(myAuthorIdUrl + "/posts/", sharedPost)
-            .then((response) => {
-                if (response.status === 201){
-                    alert("Shared Successfully!")
-                    window.location.href = window.location.href
-                }
-            });
-        } catch (error) {
-            ////console.log(error)
-        }
+
+
+
         
     }
 
@@ -306,6 +193,9 @@ function Post({post, team}){
                         <ReactMarkdown children= {post.content} ></ReactMarkdown>
                     }
 
+
+                    
+                     
                 </Card.Body>
                 <Card.Subtitle className='postTags'>
                     Tags: {post.categories}
@@ -357,26 +247,11 @@ function Post({post, team}){
 
                 <Popup trigger = {buttonPopup} setTrigger = {setButtonPopup}>
                     {/* passing in current user id and  sending in post link */}
-                    { (team === "team10") &&
-                        <CommentSection
-                            team = {team}
-                            //myAuthorId = {myAuthorId}
-                            myAuthor = {author}
-                            commentsId = {post.comments}
-                            commentCount = {commentCount}
-                            postAuthorId = {postAuthor.id}/>
-                    }
-                    { (team === "team9") &&
-                        <CommentSection 
-                            team = {team}
-                            //myAuthorId = {myAuthorId}
-                            myAuthor = {author}
-                            commentsId = {post.comments}
-                            commentCount = {commentCount}
-                            postAuthorId = {postAuthor.id}/>
-                    }
-
-                    
+                    <CommentSection 
+                        myAuthorId = {myAuthorId} 
+                        commentsId = {post.comments}
+                        commentCount = {commentCount}
+                        postAuthorId = {postAuthor.id}/>
                 </Popup>
 
                 <PopupSmall trigger = {buttonSmallPopupForLike} setTrigger = {setButtonSmallPopupForLike}>
@@ -405,14 +280,13 @@ function Post({post, team}){
                    
                 </PopupSmall>
 
-                <PopupSmall style = {{height: "20px !important"}} trigger = {buttonSmallPopupForShare} setTrigger = {setButtonSmallPopupForShare}>
+                <PopupSmall trigger = {buttonSmallPopupForShare} setTrigger = {setButtonSmallPopupForShare}>
                     
                 
-                     <div style = {{display: "flex"}}>
+                     <div>
                      <span>
-                         Share this post?
+                         SHARE
                      </span>
-                     <Button onClick={()=>{shareHandler()}}>Share</Button>
                     </div>
                     
                     

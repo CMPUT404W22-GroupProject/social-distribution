@@ -5,9 +5,8 @@ import {useState, useEffect} from 'react'
 import axios from "axios"
 import {format} from "timeago.js"
 
-function Like({like, team}){
+function Like({like}){
     //this is how the like object will appear in the inbox
-    //console.log("LIKEINBOX: ", like);
 
     return(
         <div className='likeCard'>
@@ -16,16 +15,16 @@ function Like({like, team}){
                     <div className="likeTopLeft">
                     {/* <img className="postProfileImg" /> */}
                     <PersonIcon className="likeProfileImg"/>
-                    <span className="likeUsername">{like.author.displayName}</span>
+                    <span className="likeUsername">{like.displayName}</span>
                     <span className="likeDate">{like.published}</span>
                      </div> 
                 </Card.Header>
-                <Card.Title className="text-center">
+                <Card.Body className="text-center">
                         <Card.Text>
-                            {like.author.displayName} likes your post!
+                            {like.displayName} likes your post!
                         </Card.Text>
                      
-                </Card.Title>
+                </Card.Body>
 
             </Card>
 
