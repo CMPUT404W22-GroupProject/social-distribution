@@ -12,6 +12,7 @@ class CommentPageNumberPagination(PageNumberPagination):
             'type': "comments",
             'page': self.page.number,
             'size': self.page.paginator.per_page,
+            'count': self.page.paginator.count,
             'post': post_uri,
             'id': comment_uri,
             'comments': data
