@@ -6,59 +6,9 @@ import {useState, useEffect} from 'react'
 import axios from "axios"
 import {format} from "timeago.js"
 
-function Follow({follow, team}){
+function Follow({follow}){
     //This is the follow card displayed in the inbox to notify if a follow request has been recieved,
     //and handles accept and decline of requests
-
-    const acceptFollow = async () => {
-        //if user chooses accept
-        //sends POST request to ***/followers of logged in user (so my AuthorId), with follower object
-        console.log("Follow Accepted!");
-        alert("You have accepted the request!");
-        console.log("FOLLLOW REQUEST: ", follow)
-        const foreignAuthorIdUrl = new URL(follow.actor.id);
-        const foreignAuthorIdPathname = foreignAuthorIdUrl.pathname;
-        const foreignAuthorId = foreignAuthorIdPathname.replace("/service/authors/", " ")
-
-        await axios.put(follow.object.id + "/followers/" + foreignAuthorId, follow)
-            .then((response) => {
-                if (response.status === 201){
-                    alert("Succesfully accepted follow request!");
-                } else {
-                    alert("Oops, something went wrong!");
-                }
-            })
-           /* var followRe  =     {
-                "type": "Follow",      
-                "summary":"Greg wants to follow Lara",
-                "actor":{
-                    "type":"author",
-                    "id":"https://cmput-404-w22-group-10-backend.herokuapp.com/authors…b6d8-c8b9440a75c4/posts/02080038-62af-4db2-921f-cd283648fca6",
-                    "url":"https://cmput-404-w22-group-10-backend.herokuapp.com/authors…b6d8-c8b9440a75c4/posts/02080038-62af-4db2-921f-cd283648fca6",
-                    "host":"https://cmput-404-w22-group-10-backend.herokuapp.com",
-                    "displayName":"Greg Johnson",
-                    "github": "http://github.com/gjohnson",
-                    "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
-                },
-                "object": follow.actor
-            }
-
-        await axios.post(foreignAuthorIdUrl + '/inbox', followRe)
-            .then((response) => {
-                if (response.status === 201){
-                    alert("Succesfully accepted follow request!");
-                } else {
-                    alert("Oops, something went wrong!");
-                }
-            })
- */
-
-
-
-       
-                
-    
-    }
 
     return(
         <div className='followCard'>
@@ -67,13 +17,13 @@ function Follow({follow, team}){
                     <div className="followTopLeft">
                     {/* <img className="postProfileImg" /> */}
                     <PersonIcon className="followProfileImg"/>
-                    <span className="followUsername">{follow.actor.displayName}</span>
-                    <span className="followDate">{}</span>
+                    <span className="followUsername">{follow.displayName}</span>
+                    <span className="followDate">{format(follow.published)}</span>
                      </div> 
                 </Card.Header>
                 <Card.Body className="text-center">
                         <Card.Text>
-                            {follow.summary}
+                            {follow.displayName} has requested to follow you!
                         </Card.Text>
                      
                 </Card.Body>
@@ -87,7 +37,14 @@ function Follow({follow, team}){
         </div>
     )
 
-   
+    function acceptFollow () {
+        //if user chooses accept
+        //sends POST request to ***/followers of logged in user (so my AuthorId), with follower object
+        console.log("Follow Accepted!");
+        alert("You have accepted the request!");
+
+        
+    };
 
     function declineFollow () {
         //if a user chooses decline

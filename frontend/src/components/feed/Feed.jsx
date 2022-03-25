@@ -24,6 +24,7 @@ function Feed({id, feedType}){
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
     const [inbox, setInbox] = useState([]);
+
     //const userId = "53f89145-c0bb-4a01-a26a-5a3332e47156"; // JACK SPARROW AUTHOR
     const userId = "9170ef2f-501c-47c7-a8b2-99480fb49216"; //MOE AUTHOR
     const [buttonPopup, setButtonPopup] = useState(false);
@@ -40,7 +41,6 @@ function Feed({id, feedType}){
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
 
-   
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
 
     useEffect(() => {
@@ -119,7 +119,7 @@ function Feed({id, feedType}){
         }
         //get data from inbox here
         //if type is post, then put to post, if type is like then add to like and so on
-        const fetchPosts = async (team) => {
+        const fetchPosts = async () => {
             //fetch posts from user/author id, these are posts created by the user/author
             if (page === 1){
                 var result;
@@ -148,9 +148,8 @@ function Feed({id, feedType}){
                 console.log("FUJFVSUFSPUVFBVF: ", result.data)
                 
                  //puts posts in array + sorts from newest to oldest
-                setPosts(result.data.items.sort((p1, p2) => {
+                setPosts(result.data.results.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
-                //return new Date(p1.published) - new Date(p2.published)
             }));
             } else {
                 var result;
@@ -178,13 +177,12 @@ function Feed({id, feedType}){
                 
                 setRecievedData(result);
                 //puts posts in array + sorts from newest to oldest
-                setPosts(result.data.items.sort((p1, p2) => {
+                setPosts(result.data.results.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
-                //return new Date(p1.published) - new Date(p2.published)
             }));
             }
+            
         }
-
             const fetchInbox = async () => {
                 //fetch inbox from user/author id
                 if (page === 1){
@@ -194,8 +192,7 @@ function Feed({id, feedType}){
                         }
                       });
                     setRecievedData(result);
-                    //console.log("RESULT: ", result)
-                    setCount(result.data.items.length);
+                    setCount(result.data.count);
                      //puts objects in array + sorts from newest to oldest
                     setInbox(result.data.items.sort((p1, p2) => {
                     return new Date(p2.published) - new Date(p1.published)
@@ -209,7 +206,7 @@ function Feed({id, feedType}){
                     setCount(result.data.count);
                     setRecievedData(result);
                     //puts objects in array + sorts from newest to oldest
-                    setInbox(result.data.items.sort((p1, p2) => {
+                    setInbox(result.data.results.sort((p1, p2) => {
                     return new Date(p2.published) - new Date(p1.published)
                 }));
                 }
@@ -237,7 +234,7 @@ function Feed({id, feedType}){
                 }
             }
         }
-        getAuthorServer();
+        fetchAuthor();
         
     },[page])
 
@@ -252,31 +249,26 @@ function Feed({id, feedType}){
         setPage(childData);
     }
 
-    const inboxBuilder = (object, team) => {
-        
+    const inboxBuilder = (object) => {
         if (object.type === "post") {
             return <Post
                     key = {object.id}
-                    post = {object}
-                    team = {team}/>
+                    post = {object}/>
 
-        } else if (object.type === "like" || object.type === "Like"){
+        } else if (object.type === "like"){
             return <Like
                     key = {object.id}
-                    like = {object}
-                    team = {team}/>
+                    like = {object}/>
             
         } else if (object.type === "comment"){
             return <InboxComment
                     key = {object.id}
-                    inboxComment = {object}
-                    team = {team}/>
+                    inboxComment = {object}/>
 
-        } else if (object.type === "follower" || object.type === "follow" ){
+        } else if (object.type === "follower"){
                 return <Follow
                     key = {object.id}
-                    follow = {object}
-                    team = {team}/>
+                    follow = {object}/>
         } 
     }
 
@@ -301,6 +293,8 @@ function Feed({id, feedType}){
             </div>
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
+
+            <div><Follow follow = {emptyObject}/></div>
 
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
@@ -341,14 +335,14 @@ function Feed({id, feedType}){
             {
                 (inbox.length !== 0) && 
                     inbox.map((object) => (
-                        inboxBuilder(object, "team10")
+                        inboxBuilder(object)
                     )
                     ) 
             }
             {//TEMPORARY 
                 (posts.length !== 0) && 
                     posts.map((object) => (
-                        inboxBuilder(object, teamServer)
+                        inboxBuilder(object)
                     )
                     )
             }

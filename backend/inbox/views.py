@@ -16,57 +16,89 @@ from author.serializers import AuthorsSerializer
 from inbox.serializers import InboxSerializer
 from post.serializers import PostSerializerGet
 from follower.serializers import FollowRequestSerializer
+from node.authentication import BasicAuthentication
+from like.serializers import LikeSerializer
 
 
 class InboxList(ListCreateAPIView):
     serializer_class = InboxSerializer
     pagination_class = InboxPageNumberPagination
     author_id = None
+    basic_auth = BasicAuthentication()
 
     def get_queryset(self):
         return Inbox.objects.filter(author_id=self.author_id).order_by('-created_date')
 
+    def create_like(self, request):
+        request_data = request.data.copy()
+        try:
+            request_id = request_data['object']
+            Post.objects.get(id=request_id)
+        except Post.DoesNotExist:
+            try:
+                Comment.objects.get(id=request_id)
+            except:
+                return Response("Object doesn't exist", status=404)
+        
+        try:
+            author_data = request_data['author']
+            author_url = author_data['id']
+            request_data['author'] = author_url
+        except:
+            return Response("Author info not found", status=404)
+
+        serializer = LikeSerializer(data = request_data, context={'request': request})
+        if serializer.is_valid():
+            like = serializer.save()
+            return (like, serializer.data)
+        else:
+            return Response(serializer.errors, status = 400)
+
     # Get inbox
     def list(self, request, author_id):
+        response = self.basic_auth.local_request(request)
+        if response:
+            return response
+            
         try:
-            Author.objects.get(pk=author_id)
-        except Author.DoesNotExist:
-            return HttpResponse("Author does not exist", status=404)
+            try:
+                Author.objects.get(pk=author_id)
+            except Author.DoesNotExist:
+                return Response("Author does not exist", status=404)
 
-        self.author_id = author_id
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        author5 = Author.objects.get(pk=author_id)
-        author = AuthorsSerializer(author5, context={'request': request})
-        items = []
-        if page is not None:
+            self.author_id = author_id
+            queryset = self.filter_queryset(self.get_queryset())
+            page = self.paginate_queryset(queryset)
+            author5 = Author.objects.get(pk=author_id)
+            author = AuthorsSerializer(author5, context={'request': request})
+            items = []
+            if page is not None:
+
+                serializer = InboxSerializer(queryset, many=True, context={'request': request})
+                for each_object in serializer.data:
+                    each_object['author'] = author.data['id']
+                    items.append(each_object["items"])
+
+                paginated_items = self.paginate_queryset(items)
+                result = {}
+                result['type'] = "inbox"
+                result['author'] = request.build_absolute_uri().split('/inbox')[0]
+                result['items'] = paginated_items
+
+                return self.get_paginated_response(result)
 
             serializer = InboxSerializer(queryset, many=True, context={
-                                         'listRequest': request})
-            print(serializer)
-            for each_object in serializer.data:
-                each_object['author'] = author.data['id']
-                items.append(each_object["items"])
-
-            paginated_items = self.paginate_queryset(items)
-            result = {}
-            result['type'] = "inbox"
-            result['author'] = request.build_absolute_uri().split('/inbox')[0]
-            result['items'] = paginated_items
-
-            return self.get_paginated_response(result)
-
-        serializer = InboxSerializer(queryset, many=True, context={
-                                     'listRequest': request})
-        return Response(serializer.data, status=200)
+                                        'request': request})
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response( status=400)
 
     def post(self, request, author_id):
-        request_data = request.data.copy()
+        response = self.basic_auth.remote_request(request)
+        if response:
+            return response
 
-        print(request_data)
-        # An inbox object is created whenever a post, like, comment, follow is sent.
-
-        # An inbox object is created whenever a post, like, comment, follow is sent. 
+        request_data = request.data.copy() 
 
         # This object refers to the original item sent through their id.
         try:
@@ -85,25 +117,22 @@ class InboxList(ListCreateAPIView):
 
             # If the request type is a like
             elif request_data["type"].lower() == "like":
-                like_id = request_data["id"]
 
-                new_like = Like.objects.get(id = like_id)
+                new_like, new_like_data = self.create_like(request)
                 Inbox.create_object_from_like(new_like, author_id)
 
+                return Response(new_like_data, status=201)
             
             #If the request type is a follow
             elif request_data["type"].lower() == "follow":
                 actor_data = request_data['actor']
                 if type(actor_data) is dict:
                     request_data['actor'] = actor_data['id']
-                    print(request_data)
 
                 object_data = request_data['object']
                 if type(object_data) is dict:
                     request_data['object'] = object_data['id']
-                    print(request_data)
 
-                print("request_data",request_data)
                 serializer = FollowRequestSerializer(data=request_data, context={'request':request})
                 if serializer.is_valid():
                     new_follow_request = serializer.save()
@@ -113,11 +142,13 @@ class InboxList(ListCreateAPIView):
             
             return Response("Sent to inbox", status=201) 
         except Exception as e:
-            print(e)
             return Response("Error", status=400) 
 
     # Clear inbox
     def delete(self, request, author_id):
+        response = self.basic_auth.local_request(request)
+        if response:
+            return response
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
         author11 = Author.objects.get(pk=author_id)
         try:

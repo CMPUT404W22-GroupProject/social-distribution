@@ -10,18 +10,23 @@ from comment.serializers import CommentSerializer, CommentSerializerGet
 from .pagination import CommentPageNumberPagination
 from urllib.parse import urlparse
 import uuid
-
+from node.authentication import BasicAuthentication
 
 class CommentList(ListCreateAPIView):
     serializer_class = CommentSerializer
     pagination_class = CommentPageNumberPagination
     post_id = None
+    basic_auth = BasicAuthentication()
 
     def get_queryset(self):
         return Comment.objects.filter(post=self.post_id).order_by('published')
 
     # get recent posts of author
     def list(self, request, author_id, post_id):
+        response = self.basic_auth.remote_request(request)
+        if response:
+            return response
+
         try: 
             Post.objects.filter(author_id=author_id).get(pk=post_id)
             self.post_id = post_id
@@ -44,6 +49,10 @@ class CommentList(ListCreateAPIView):
 
 
     def create(self, request, author_id, post_id):
+        response = self.basic_auth.remote_request(request)
+        if response:
+            return response
+
         try:
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
         except Post.DoesNotExist:
@@ -52,8 +61,9 @@ class CommentList(ListCreateAPIView):
         try:
             request_data = request.data.copy()
             sender_id = request_data['author']['id']
-            sender_uuid = uuid.UUID(sender_id.split('/authors/')[1].split('/')[0])
-            request_data['author'] = sender_uuid
+            # sender_uuid = uuid.UUID(sender_id.split('/authors/')[1].split('/')[0])
+            # request_data['author'] = sender_uuid
+            request_data['author'] = sender_id
 
             serializer = CommentSerializer(data=request_data, context={'request':request, 'post':post})
 
@@ -67,8 +77,12 @@ class CommentList(ListCreateAPIView):
 
 
 class CommentDetails(APIView):
+    basic_auth = BasicAuthentication()
     # get comment
     def get(self, request, author_id, post_id, comment_id):
+        response = self.basic_auth.remote_request(request)
+        if response:
+            return response
         try:
             comment = Comment.objects.filter(post=post_id).get(pk=comment_id)
             serializer = CommentSerializerGet(comment, context={'request':request})

@@ -10,6 +10,7 @@ import NavBar from './components/Navbar';
 
 import { UserContextProvider } from './context/userContext'
 import PrivateRoute from './routes/PrivateRoute';
+import Register from './pages/register/Register';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
             <NavBar/>
             <Routes>
               <Route exact path='/login' element={<Login/>}/>
+              <Route exact path='/register' element={<Register/>}/>
               {/* <Route element={<PrivateRoute/>}> */}
                 <Route exact path='/profile/:id' element={<Profile/>}/>
                { /*<Route exact path='/home' element={<Home/>}/>*/}

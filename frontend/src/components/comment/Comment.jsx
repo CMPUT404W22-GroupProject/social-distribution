@@ -6,7 +6,7 @@ import {useState, useEffect} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 
-const Comment = ({comment, myAuthor, team}) => {
+const Comment = ({comment, myAuthorId}) => {
         // this is how the comment will appear in the CommentSection
         //user can like comments 
         const [like, setLike] = useState(0);
@@ -18,6 +18,10 @@ const Comment = ({comment, myAuthor, team}) => {
         const team9Authorization = btoa("group10:pwd1010");
         const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
         
+        const fetchAuthor = async () => {
+            const result = await axios.get("/authors/" + myAuthorId);
+            setAuthor(result.data)
+        }
         const fetchLikeCount = async () => {
             
             var result;
@@ -38,38 +42,19 @@ const Comment = ({comment, myAuthor, team}) => {
 
             if (result.data.length !== undefined){
                 setLike(result.data.length);
-                const likeObjectRecieved = result.data;
-                hasAuthorAlreadyLiked(likeObjectRecieved);
             }
         }
-
-        const hasAuthorAlreadyLiked = (likeObjectRecieved) => {
-            likeObjectRecieved.forEach((like) => {
-                //chekcing to see if logged in user has already liked the post i.e. seeing if logged in user is already in like object list
-                // if so, then isLiked will be set to true. This is will avoid user liking the same object multiple times. 
-                if (like.author.id === myAuthor.id){
-                    //console.log("SET TO TRUE")
-                    setIsLiked(true);
-                    const likeIdUrl = new URL(like.id);
-                    const likeIdUrlPath = likeIdUrl.pathname;
-                    setLikeId(like.id);
-                }
-            })
-        } 
         
         useEffect(() => {
             // this is where we fetch data from the api
+            fetchAuthor();
             fetchLikeCount();
         }, []);
 
         const likeHandler = async () => {
             //handles like events
             var newLike = {
-                "@context": "https://www.w3.org/ns/activitystreams",
-                "summary": myAuthor.displayName + " likes your post",
-                "type" : "Like",
-                "author": myAuthor,
-                "object": comment.id
+                "author": myAuthorId, //just sending in ID
             }
             if (commentHostname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                 if (!isLiked){

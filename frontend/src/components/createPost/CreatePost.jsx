@@ -45,6 +45,7 @@ function CreatePost(){
           }
         })
         console.log("FOLLOWER GET: ", result.data)
+
         setFollowers(result.data["items"]);
     }
       const fetchAuthor = async () => {
@@ -54,6 +55,7 @@ function CreatePost(){
               'Authorization': 'Basic ' + team10Authorization
             }
           });
+
           setAuthor(result.data)
       }
       fetchAuthor();
@@ -101,7 +103,7 @@ function CreatePost(){
           "origin": "",
           "description": postDescription.current.value,
           "contentType": "text/plain",
-          "author": author,
+          "author": authorId,
           "content": postContent.current.value,
           "categories": postTags.current.value,
           "published": "",
@@ -141,7 +143,7 @@ function CreatePost(){
         }
 
         //sending CSRF token as header
-        //axios.defaults.headers.post['X-CSRF-Token'] = "qaa2nlJZPsbuH7knWoZ1OqeJqQqz3eZIkgDK8uIuCqs7vMawMwDLveJgdvaQxoTO";
+        axios.defaults.headers.post['X-CSRF-Token'] = "qaa2nlJZPsbuH7knWoZ1OqeJqQqz3eZIkgDK8uIuCqs7vMawMwDLveJgdvaQxoTO";
 
          //sending post to author's posts 
          //only being sent to team10
@@ -158,7 +160,7 @@ function CreatePost(){
            newPost["id"] = postId;
          })
          } catch (error) {
-           //console.log(error)
+           console.log(error)
          }
          if (status === 201) {
          alert("Shared! Check profile to see post!");
@@ -166,7 +168,6 @@ function CreatePost(){
          } else {
            alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
          } 
-
          //sending post to followers
         if (isFriend === true){ //is one specific follower selected
           var status = null;
@@ -205,7 +206,7 @@ function CreatePost(){
               }
               
           } catch (error) {
-            //console.log(error)
+            console.log(error)
           }
               if (status === 201) {
               alert("Shared! Check profile to see post!");
@@ -219,6 +220,8 @@ function CreatePost(){
             const follower = followers["items"][i]; */
           for (var i in followers){
             const follower = followers[i];
+            const followerUrl = new URL(follower.id);
+            const followerPath = followerUrl.pathname;
             var status = null;
             try {
               const followerPathname = new URL(follower.id).hostname;
@@ -251,7 +254,7 @@ function CreatePost(){
                     })
               }
             } catch (error) {
-              //console.log(error)
+              console.log(error)
             }
             if (status === 201) {
             alert("Shared! Check profile to see post!");

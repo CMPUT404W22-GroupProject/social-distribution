@@ -7,7 +7,7 @@ from author.models import Author
 
 class Comment(models.Model):
     type = models.CharField(default="comment", max_length=10)
-    author = models.ForeignKey(Author, related_name="comment_author", on_delete=models.CASCADE)
+    author = models.URLField()
     comment = models.CharField(max_length=255)
     contentType = models.CharField(max_length=255)
     published = models.DateTimeField(default=timezone.now)

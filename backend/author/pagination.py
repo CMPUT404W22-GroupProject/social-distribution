@@ -10,5 +10,6 @@ class AuthorPageNumberPagination(PageNumberPagination):
             'type': "authors",
             'page': self.page.number,
             'size': self.page.paginator.per_page,
+            'count': self.page.paginator.count,
             'items': data
         })

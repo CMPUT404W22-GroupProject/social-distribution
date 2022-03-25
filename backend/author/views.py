@@ -12,23 +12,28 @@ from rest_framework.generics import ListCreateAPIView
 import os
 from urllib.parse import urlparse
 import requests
+from node.authentication import BasicAuthentication
 
 class AuthorList(ListCreateAPIView):
     # permission_classes = (permissions.IsAuthenticated,)
     serializer_class = AuthorsSerializer
     pagination_class = AuthorPageNumberPagination
+    basic_auth = BasicAuthentication()
 
     def get_queryset(self):
-        return Author.objects.filter()
+        return Author.objects.all().order_by('displayName')
 
 
     # Get all Authors
     def list(self, request): 
+        response = self.basic_auth.remote_request(request)
+        if response:
+            return response
         try:
             queryset = self.filter_queryset(self.get_queryset())
             page = self.paginate_queryset(queryset)
             if page is not None:
-                serializer = AuthorsSerializer(queryset, many = True, context={'request':request})
+                serializer = AuthorsSerializer(page, many = True, context={'request':request})
                 return self.get_paginated_response(serializer.data)
             serializer = AuthorsSerializer(queryset, many=True, context={'request':request})
             return Response(serializer.data, status=200)
@@ -38,7 +43,9 @@ class AuthorList(ListCreateAPIView):
 
     # Add an Author
     def post(self, request):
-        
+        response = self.basic_auth.local_request(request)
+        if response:
+            return response
         # Mutable copy
         request_data = request.data.copy()
 
@@ -53,9 +60,14 @@ class AuthorList(ListCreateAPIView):
 class AuthorDetails(APIView):
     # We require a author_id to be passed with the request (in the url) to get a user
     # permission_classes = (permissions.IsAuthenticated,)
+    basic_auth = BasicAuthentication()
+
     # Get a specific author
     def get(self, request, author_id):
         
+        response = self.basic_auth.remote_request(request)
+        if response:
+            return response
         # if not request.user.is_authenticated:
         #     return HttpResponse("You must be registered to access this function.", status = 401)
         try:
@@ -69,6 +81,9 @@ class AuthorDetails(APIView):
     # Update an author
     def post(self, request, author_id):
 
+        response = self.basic_auth.local_request(request)
+        if response:
+            return response
         # if not request.user.is_authenticated:
         #     return HttpResponse("You must be registered to access this function.", status = 401)
 
@@ -89,7 +104,9 @@ class AuthorDetails(APIView):
 
     # Delete an author
     def delete(self, request, author_id):
-
+        response = self.basic_auth.local_request(request)
+        if response:
+            return response
         # if not request.user.is_authenticated:
         #     return HttpResponse("You must be registered to access this function.", status = 401)
 

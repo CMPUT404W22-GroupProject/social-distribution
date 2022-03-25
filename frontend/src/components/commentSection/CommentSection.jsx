@@ -8,9 +8,13 @@ import axios from "axios"
 import { badgeUnstyledClasses } from "@mui/base";
 import { NewReleases } from "@mui/icons-material";
 
-const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}) => {
+const CommentSection = ({myAuthorId, commentsId, commentCount, postAuthorId}) => {
     //Handles the main comment events such as submitting comments, retrieving comments.
     const [backendComments, setBackendComments] = useState([]);
+    const commentsUrl = new URL(commentsId);
+    const commentsPath = commentsUrl.pathname;
+    const postAuthorUrl = new URL(postAuthorId);
+    const postAuthorIdPath = postAuthorUrl.pathname;
     const [author, setAuthor] = useState([]);
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
@@ -18,6 +22,7 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
     const postHostName = new URL(postAuthorId).hostname;
 
     //console.log("commentsID: ", myAuthor);
+
 
     //console.log("COMMENTSPATH: ", commentsPath);
     
@@ -49,29 +54,58 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
                 }))
             } catch(error){
             }
+
         }
-        
     }
 
     useEffect(() => {
         // this is where we fetch comments from the api
+        fetchAuthor();
         fetchComments();
         
     }, []);
 
-    const addComment  = async (text) => {
-        //formats comment and handles the submition 
+const addComment  = async (text) => {
+    //formats comment and handles the submition 
 
-        var date = new Date();
-        var formattedDate = date.toISOString();
+    var date = new Date();
+    var formattedDate = date.toISOString();
 
-        var newComment = {
-            "type": "comment",
-            "author": myAuthor,
-            "comment": text,
-            "contentType": "text/plain",
-            "published": formattedDate.charAt,
-        }
+    var newComment = {
+        "type": "comment",
+        "author": myAuthorId,
+        "comment": text,
+        "contentType": "text/plain",
+        "published": formattedDate
+    }
+    var newInternalComment = {
+        "type": "comment",
+        "author": myAuthorId,
+        "comment": text,
+        "published": formattedDate,
+    }
+    //sending comment to post first, waiting for id
+    try {
+        await axios.post(commentsPath + '/', newComment)
+        .then((response) => {
+            newInternalComment["id"] = response.data.id;
+            newComment["id"] = response.data.id;
+            console.log("NEW COMMENT FOR INBOX: ", newComment);
+        });
+
+       } catch (error) {
+         console.log(error)
+       }
+    //sending comment to inbox of post owner 
+
+    try {
+        await axios.post(postAuthorIdPath + '/inbox/', newComment)
+        .then((response) => {
+        });
+
+       } catch (error) {
+         console.log(error)
+       }
 
             if (postHostName === "cmput-404-w22-group-10-backend.herokuapp.com"){
                     //sending comment to post first, waiting for id
@@ -148,13 +182,14 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
         <div className="comments">
             <h3 className="comments-title"> Comments</h3>
             <div className="comment-form-title">Post a comment!</div>
-            <CreateComment submitLabel = "Post" handleSubmit={addComment} myAuthor ={myAuthor} />
+            <CreateComment submitLabel = "Post" handleSubmit={addComment} myAuthorId ={myAuthorId} />
             
             <div className="comments-container">
                 {/* //remember to send in key = {backendComment.id} when you have it */}
+                {console.log("COMMENTS", backendComments)}
                 {backendComments.map((backendComment) => (
                     
-                    <Comment key = {backendComment.id} myAuthor = {myAuthor} comment = {backendComment} team = {team}/>
+                    <Comment key = {backendComment.id} myAuthorId = {myAuthorId} comment = {backendComment} />
                     //commentBody = {b.comment} commentAuthor = {b.author.displayName} commentDate = {b.published}
 
                 ))}

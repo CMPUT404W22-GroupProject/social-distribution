@@ -12,14 +12,15 @@ import {format} from "timeago.js"
 import ReactMarkdown from "react-markdown";
 import PopupSmall from './popupSmall/PopupSmall'
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import { PsychologyTwoTone } from '@mui/icons-material'
 
-function Post({post, team}){
+function Post({post}){
     //This is the main post card that handles post events, and houses the like, comment and share events too
     const [buttonPopup, setButtonPopup] = useState(false);
     const [like, setLike] = useState(0); //initial like value obtained from server and set in useEffect bellow
     const [likeObjects, setLikeObjects] = useState([]);
     const [isLiked, setIsLiked] = useState(false);
+    const postUrl = new URL(post.id); //this is full url that includes http://localhost:8000/ stuff
+    const postPath = postUrl.pathname; //this is path of post e.g. authors/{authorid}/posts/{postid}
     const hasImage = false;
     const postAuthor = post.author; //entire author object derived from post
     const postAuthorId = postAuthor.id; //this is just the ID of POST author, NOT entire object,
@@ -43,6 +44,7 @@ function Post({post, team}){
 
     right now author info is being fetched, not needed in the future as author info will come in post object
 
+
     */
 
 
@@ -56,11 +58,13 @@ function Post({post, team}){
                 }
               });
             setAuthor(result.data);
-        } 
-
+        } */
         const fetchLikeCount = async () => {
-
-            
+            await axios.get(postPath + "/likes")
+            .then((response) => {
+                const result = response;
+                const likeObjectRecieved = response.data;
+                hasAuthorAlreadyLiked(likeObjectRecieved);
 
             if (postHostName === "cmput-404-w22-group-10-backend.herokuapp.com") {
                 try {
@@ -106,8 +110,10 @@ function Post({post, team}){
                 } catch (error) {
                     //console.log(error)
                 }
-            }
+            });
+            console.log("POSTAUJTHORID: ", postAuthorId);
 
+            
             /* if (result.data.length !== undefined ){
                 if (result.data.some(i => i.id.includes(likeId))){
                     console.log("IT INCLUDES")
@@ -119,6 +125,7 @@ function Post({post, team}){
                 }
             } */
         }
+
         const hasAuthorAlreadyLiked = (likeObjectRecieved) => {
             likeObjectRecieved.forEach((like) => {
                 //chekcing to see if logged in user has already liked the post i.e. seeing if logged in user is already in like object list
@@ -128,45 +135,20 @@ function Post({post, team}){
                 if (like.author.id === myAuthorIdUrl){
                     //console.log("SET TO TRUE")
                     setIsLiked(true);
-                    //const likeIdUrl = new URL(like.id);
-                    //const likeIdUrlPath = likeIdUrl.pathname;
-                    console.log("LIKE OBJECT: ", like)
-                    setLikeId(like.id);
+                    const likeIdUrl = new URL(like.id);
+                    const likeIdUrlPath = likeIdUrl.pathname;
+                    setLikeId(likeIdUrlPath);
                 }
             })
         } 
         fetchLikeCount();
-        fetchAuthor();
+        //fetchAuthor();
     },[])
-
  
     const likeHandler = async () => {
         //handles how a like is sent, and manages likes/dislikes
         var newLike = {
-            "author": myAuthorIdUrl, //just sending in ID
-        }
-
-        /* {
-            "@context": "https://www.w3.org/ns/activitystreams",
-            "summary": "Lara Croft Likes your post",         
-            "type": "Like",
-            "author":{
-                "type":"author",
-                "id":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-                "host":"http://127.0.0.1:5454/",
-                "displayName":"Lara Croft",
-                "url":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-                "github":"http://github.com/laracroft",
-                "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
-            },
-            "object":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e"
-       } */
-        var remoteNewLike = {
-            "@context": "https://www.w3.org/ns/activitystreams",
-            "summary": author.displayName + " likes your post",
-            "type" : "Like",
-            "author": author,
-            "object": post.id
+            "author": myAuthorId, //just sending in ID
         }
        // console.log("REMOTENEWLIKE: ", remoteNewLike)
        
@@ -246,7 +228,9 @@ function Post({post, team}){
                         ////console.log(error)
                     }
                 }
+
             }
+        } 
 
         //if user has already liked it and called, will decrement. if user hasnt liked, will increment. 
         setLike(isLiked ? like - 1: like + 1); 
@@ -256,10 +240,7 @@ function Post({post, team}){
         console.log("like changed!: ", like, isLiked);
     }
 
-    const shareHandler = async () => {
-       
-        console.log("ORIGINAL POST", post)
-        var sharedPost = post;
+    const shareHandler = () => {
         
         sharedPost["author"] = author;
         var origTitle = sharedPost["title"];
@@ -386,6 +367,9 @@ function Post({post, team}){
                         <ReactMarkdown children= {post.content} ></ReactMarkdown>
                     }
 
+
+                    
+                     
                 </Card.Body>
                 <Card.Subtitle className='postTags'>
                     Tags: {post.categories}
@@ -456,7 +440,7 @@ function Post({post, team}){
                             postAuthorId = {postAuthor.id}/>
                     }
 
-                    
+         
                 </Popup>
 
                 <PopupSmall trigger = {buttonSmallPopupForLike} setTrigger = {setButtonSmallPopupForLike}>
@@ -485,14 +469,13 @@ function Post({post, team}){
                    
                 </PopupSmall>
 
-                <PopupSmall style = {{height: "20px !important"}} trigger = {buttonSmallPopupForShare} setTrigger = {setButtonSmallPopupForShare}>
+                <PopupSmall trigger = {buttonSmallPopupForShare} setTrigger = {setButtonSmallPopupForShare}>
                     
                 
-                     <div style = {{display: "flex"}}>
+                     <div>
                      <span>
-                         Share this post?
+                         SHARE
                      </span>
-                     <Button onClick={()=>{shareHandler()}}>Share</Button>
                     </div>
                     
                     

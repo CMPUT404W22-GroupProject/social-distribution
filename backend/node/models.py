@@ -5,3 +5,4 @@ class Node(models.Model):
     username = models.CharField(max_length=150)
     password = models.CharField(max_length=150)
     host = models.CharField(max_length=150)
+    is_local = models.BooleanField(default=False)

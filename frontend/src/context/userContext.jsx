@@ -14,9 +14,29 @@ export const UserContextProvider = ({children}) => {
         return localData ? localData : ''
     })
 
+    const [displayName, setDisplayName] = useState( () => {
+        const localData = localStorage.getItem('displayName')
+        return localData ? localData : ''
+    })
+
+    const [token, setToken] = useState( () => {
+        const localData = localStorage.getItem('token')
+        return localData ? localData : ''
+    })
+
+
+
     useEffect( () => {
         localStorage.setItem('id', id)
     }, [id])
+
+    useEffect( () => {
+        localStorage.setItem('displayName', displayName)
+    }, [displayName])
+
+    useEffect( () => {
+        localStorage.setItem('token', token)
+    }, [token])
 
     useEffect( () => {
         localStorage.setItem('loggedIn', loggedIn)
@@ -24,7 +44,7 @@ export const UserContextProvider = ({children}) => {
 
     return(
         <UserContext.Provider value={{
-            loggedIn, setLoggedIn, id, setId
+            loggedIn, setLoggedIn, id, setId, displayName, setDisplayName
         }}>
             {children}
         </UserContext.Provider>
