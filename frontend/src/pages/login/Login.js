@@ -21,7 +21,6 @@ const Login = () => {
         setLoggedIn(true)
         setId(id)
         console.log(id)
-        navigate('/home')
     }
 
     return (
