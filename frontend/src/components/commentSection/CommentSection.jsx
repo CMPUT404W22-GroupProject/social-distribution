@@ -12,16 +12,23 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
     //Handles the main comment events such as submitting comments, retrieving comments.
     const [backendComments, setBackendComments] = useState([]);
     const [author, setAuthor] = useState([]);
-    const team9Authorization = btoa("Team10:abcdefg");
+    const team4Authorization = btoa("Team10:abcdefg");
+    const team9Authorization = btoa("group10:pwd1010");
+    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const postHostName = new URL(postAuthorId).hostname;
 
     //console.log("commentsID: ", myAuthor);
 
     //console.log("COMMENTSPATH: ", commentsPath);
     
     const fetchComments = async () => {
-        if (team === "team10"){
+        if (postHostName === "cmput-404-w22-group-10-backend.herokuapp.com"){
             try {
-                const result = await axios.get(commentsId);
+                const result = await axios.get(commentsId, {
+                    headers: {
+                      'Authorization': 'Basic ' + team10Authorization
+                    }
+                  });
                 //puts posts in array + sorts from newest to oldest
                 setBackendComments(result.data.comments.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
@@ -29,11 +36,11 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
             } catch(error){
             }
         }
-        if (team === "team9"){
+        if (postHostName === "cmput-404-w22-project-group09.herokuapp.com"){
             try {
                 const result = await axios.get(commentsId, {
                     headers: {
-                      'authorization': 'Basic ' + team9Authorization
+                      'Authorization': 'Basic ' + team9Authorization
                     }
                   });
                 //puts posts in array + sorts from newest to oldest
@@ -66,10 +73,14 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
             "published": formattedDate.charAt,
         }
 
-            if (team === "team10"){
+            if (postHostName === "cmput-404-w22-group-10-backend.herokuapp.com"){
                     //sending comment to post first, waiting for id
                     try {
-                        await axios.post(commentsId + '/', newComment)
+                        await axios.post(commentsId + '/', newComment, {
+                            headers: {
+                              'Authorization': 'Basic ' + team10Authorization
+                            }
+                          })
                         .then((response) => {
                             newComment["id"] = response.data.id;
                         });
@@ -80,7 +91,11 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
                     //sending comment to inbox of post owner 
 
                     try {
-                        await axios.post(postAuthorId + '/inbox/', newComment)
+                        await axios.post(postAuthorId + '/inbox/', newComment, {
+                            headers: {
+                              'Authorization': 'Basic ' + team10Authorization
+                            }
+                          })
                         .then((response) => {
                         });
 
@@ -89,12 +104,12 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
                     }
             }
 
-            if (team === "team9"){
+            if (postHostName === "cmput-404-w22-project-group09.herokuapp.com"){
                 try {
                     
                     await axios.post(commentsId, newComment, {
                         headers: {
-                          'authorization': 'Basic ' + team9Authorization
+                          'Authorization': 'Basic ' + team9Authorization
                         }
                       })
                     .then((response) => {
@@ -109,7 +124,7 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
                     console.log("POST AUTHOR ID: ", postAuthorId);
                     await axios.post(postAuthorId + "/inbox", newComment, {
                         headers: {
-                          'authorization': 'Basic ' + team9Authorization
+                          'Authorization': 'Basic ' + team9Authorization
                         }
                       })
                     .then((response) => {

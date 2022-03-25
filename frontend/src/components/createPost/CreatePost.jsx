@@ -27,21 +27,33 @@ function CreatePost(){
     const [author, setAuthor] = useState({});
     const {id, setId} = useState(UserContext);
     //const authorId = "53f89145-c0bb-4a01-a26a-5a3332e47156"; //JACK SPARROW
-    const authorId = "f5b25009-007c-4611-83e1-3b508172a9f0" //MOE
+    const authorId = "9170ef2f-501c-47c7-a8b2-99480fb49216" //MOE
     const [followers, setFollowers] = useState([]);// followers of authorID, initial is empty object
     const [buttonPopup, setButtonPopup] = useState(false);
     const [isPlain, setisPlain] = useState(false);
     const [isMarkdown, setIsMarkdown] = useState(false);
+    const team4Authorization = btoa("Team10:abcdefg");
+    const team9Authorization = btoa("group10:pwd1010");
+    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
     
     useEffect(() => {
       //fetches author when component is called
       const fetchFollowers = async () => {
-        const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/followers/")
+        const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/followers/", {
+          headers: {
+            'Authorization': 'Basic ' + team10Authorization
+          }
+        })
+        console.log("FOLLOWER GET: ", result.data)
         setFollowers(result.data["items"]);
     }
       const fetchAuthor = async () => {
           //fetches auhor
-          const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId);
+          const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId, {
+            headers: {
+              'Authorization': 'Basic ' + team10Authorization
+            }
+          });
           setAuthor(result.data)
       }
       fetchAuthor();
@@ -132,9 +144,14 @@ function CreatePost(){
         //axios.defaults.headers.post['X-CSRF-Token'] = "qaa2nlJZPsbuH7knWoZ1OqeJqQqz3eZIkgDK8uIuCqs7vMawMwDLveJgdvaQxoTO";
 
          //sending post to author's posts 
+         //only being sent to team10
          var status = null;
          try {
-         await axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/posts/", newPost)
+         await axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/posts/", newPost, {
+          headers: {
+            'Authorization': 'Basic ' + team10Authorization
+          }
+        })
          .then((response) => {
            status = response.status;
            const postId = response.data.id;
@@ -150,23 +167,52 @@ function CreatePost(){
            alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
          } 
 
-
-        if (isFriend === true){ //is one specific friend selected
+         //sending post to followers
+        if (isFriend === true){ //is one specific follower selected
           var status = null;
           try {
-          await axios.post(friend.id + "/inbox", newPost)
-          .then((response) => {
-            status = response.status;
-          })
+              const friendPathname = new URL(friend.id).hostname;
+              console.log("SELECTED FRIEND PATHNAME: ", friendPathname)
+              //REMEBER TEAM10 HAS TRAILING / AFTER INBOX
+              if (friendPathname === "cmput-404-w22-group-10-backend.herokuapp.com"){
+                  await axios.post(friend.id + "/inbox/", newPost, {
+                    headers: {
+                      'Authorization': 'Basic ' + team10Authorization
+                    }
+                  })
+                  .then((response) => {
+                  status = response.status;
+                  })
+              } else if (friendPathname === "cmput-404-w22-project-group09.herokuapp.com"){
+                ////REMEBER TEAM9 DOES NOT HAVE TRAILING / AFTER INBOX
+                await axios.post(friend.id + "/inbox", newPost, {
+                  headers: {
+                    'Authorization': 'Basic ' + team9Authorization
+                  }
+                })
+                  .then((response) => {
+                  status = response.status;
+                  })
+              } else if (friendPathname === "backend-404.herokuapp.com"){
+                await axios.post(friend.id + "/inbox", newPost, {
+                  headers: {
+                    'authorization': 'Basic ' + team4Authorization
+                  }
+                })
+                  .then((response) => {
+                  status = response.status;
+                  })
+              }
+              
           } catch (error) {
             //console.log(error)
           }
-          if (status === 201) {
-          alert("Shared! Check profile to see post!");
-          //window.location.href = window.location.href;
-          } else {
-            alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
-          }
+              if (status === 201) {
+              alert("Shared! Check profile to see post!");
+              //window.location.href = window.location.href;
+              } else {
+                alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
+              }
         } else {// if all friends i.e. not one specific friend
             //sending post to each follower's inbox
           /* for (var i in followers["items"]){
@@ -175,10 +221,35 @@ function CreatePost(){
             const follower = followers[i];
             var status = null;
             try {
-            await axios.post(follower.id + "/inbox", newPost)
-            .then((response) => {
-              status = response.status;
-            })
+              const followerPathname = new URL(follower.id).hostname;
+              if (followerPathname === "cmput-404-w22-group-10-backend.herokuapp.com"){
+                  await axios.post(follower.id + "/inbox", newPost, {
+                    headers: {
+                      'Authorization': 'Basic ' + team10Authorization
+                    }
+                  })
+                  .then((response) => {
+                  status = response.status;
+                  })
+              } else if (followerPathname === "cmput-404-w22-project-group09.herokuapp.com"){
+                  await axios.post(follower.id + "/inbox", newPost, {
+                    headers: {
+                      'Authorization': 'Basic ' + team9Authorization
+                    }
+                  })
+                    .then((response) => {
+                    status = response.status;
+                    })
+              } else if (followerPathname === "backend-404.herokuapp.com"){
+                  await axios.post(follower.id + "/inbox", newPost, {
+                    headers: {
+                      'authorization': 'Basic ' + team4Authorization
+                    }
+                  })
+                    .then((response) => {
+                    status = response.status;
+                    })
+              }
             } catch (error) {
               //console.log(error)
             }

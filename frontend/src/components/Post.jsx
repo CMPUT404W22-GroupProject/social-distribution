@@ -26,14 +26,17 @@ function Post({post, team}){
     const commentCount = post.count; //comment counter obtained from server
     //const myAuthorId = "53f89145-c0bb-4a01-a26a-5a3332e47156"; // this is my user author id, get from Context // JACK SPARROW
     //const myAuthorIdUrl = "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/53f89145-c0bb-4a01-a26a-5a3332e47156"; //this is my user author id path, ideally retrieved from Context// JACK SPARROW
-    const myAuthorId = "f5b25009-007c-4611-83e1-3b508172a9f0" // MOE
-    const myAuthorIdUrl = "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/f5b25009-007c-4611-83e1-3b508172a9f0" //MOE
+    const myAuthorId = "9170ef2f-501c-47c7-a8b2-99480fb49216" // MOE
+    const myAuthorIdUrl = "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/9170ef2f-501c-47c7-a8b2-99480fb49216" //MOE
     const [author, setAuthor] = useState({});
     const commentsSrc = post.commentsSrc;
     const [likeId, setLikeId] = useState(0);
     const [buttonSmallPopupForLike, setButtonSmallPopupForLike] = useState(false);
     const [buttonSmallPopupForShare, setButtonSmallPopupForShare] = useState(false);
-    const team9Authorization = btoa("Team10:abcdefg");
+    const team4Authorization = btoa("Team10:abcdefg");
+    const team9Authorization = btoa("group10:pwd1010");
+    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");;
+    const postHostName = new URL(post.id).hostname;
 
     //console.log("POST DATA: ", post)
     /* NOTES FOR MYSELF
@@ -47,17 +50,27 @@ function Post({post, team}){
          //fetches data from the server
        
         const fetchAuthor = async () => {
-            const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + myAuthorId + "/");
+            const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + myAuthorId + "/", {
+                headers: {
+                  'Authorization': 'Basic ' + team10Authorization
+                }
+              });
             setAuthor(result.data);
         } 
 
         const fetchLikeCount = async () => {
 
-            if (team === "team10") {
+            
+
+            if (postHostName === "cmput-404-w22-group-10-backend.herokuapp.com") {
                 try {
                         const postUrl = new URL(post.id); //this is full url that includes http://localhost:8000/ stuff
                         const postPath = postUrl.pathname; //this is path of post e.g. authors/{authorid}/posts/{postid}
-                        await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com" + postPath + "/likes")
+                        await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com" + postPath + "/likes", {
+                            headers: {
+                              'Authorization': 'Basic ' + team10Authorization
+                            }
+                          })
                         .then((response) => {
                         const result = response;
                         const likeObjectRecieved = response.data;
@@ -73,7 +86,7 @@ function Post({post, team}){
                 }
             }
 
-            if (team === "team9"){
+            if ( postHostName === "cmput-404-w22-project-group09.herokuapp.com"){
                 try {
                         await axios.get(post.id + "/likes", {
                             headers: {
@@ -110,6 +123,8 @@ function Post({post, team}){
             likeObjectRecieved.forEach((like) => {
                 //chekcing to see if logged in user has already liked the post i.e. seeing if logged in user is already in like object list
                 // if so, then isLiked will be set to true. This is will avoid user liking the same object multiple times. 
+                console.log("like.author.id: ", like)
+                    console.log("myAuthorIdUrl: ", myAuthorIdUrl)
                 if (like.author.id === myAuthorIdUrl){
                     //console.log("SET TO TRUE")
                     setIsLiked(true);
@@ -155,7 +170,7 @@ function Post({post, team}){
         }
        // console.log("REMOTENEWLIKE: ", remoteNewLike)
        
-        if (team === "team10"){
+        if (postHostName === "cmput-404-w22-group-10-backend.herokuapp.com"){
         if (!isLiked){
             //console.log("LIKE OBJECT: ",newLike);
                 //sending POST req with like object to post object
@@ -177,7 +192,11 @@ function Post({post, team}){
 
                 //sending POST req with like object to inbox of post author
                 try {
-                    await axios.post(postAuthorId + "/inbox/", remoteNewLike)
+                    await axios.post(postAuthorId + "/inbox/", remoteNewLike, {
+                        headers: {
+                          'Authorization': 'Basic ' + team10Authorization
+                        }
+                      })
                     .then((response) => {
                         //console.log("THIS IS THE DATA",response.data);
                         setLikeId(response.data.id);
@@ -191,13 +210,17 @@ function Post({post, team}){
                         //await axios.delete( postPath + "/likes/" + likeId)
                         //likeId is already full path
                         console.log("LIKEID: ", likeId)
-                        await axios.delete(likeId)
+                        await axios.delete(likeId, {
+                            headers: {
+                              'Authorization': 'Basic ' + team10Authorization
+                            }
+                          })
                     } catch (error) {
                         //console.log(error)
                     }
                 }
             }
-            if (team === "team9"){
+            if (postHostName === "cmput-404-w22-project-group09.herokuapp.com"){
                 if (!isLiked){
 
                     try {
@@ -254,17 +277,74 @@ function Post({post, team}){
         console.log("POST TO BE SHARED: ", sharedPost)
         
         try {
-            await axios.post(myAuthorIdUrl + "/posts/", sharedPost)
+            await axios.post(myAuthorIdUrl + "/posts/", sharedPost, {
+                headers: {
+                  'Authorization': 'Basic ' + team10Authorization
+                }
+              })
             .then((response) => {
                 if (response.status === 201){
                     alert("Shared Successfully!")
-                    window.location.href = window.location.href
+                    
                 }
             });
-        } catch (error) {
+
+            var followers;
+            await axios.get(myAuthorIdUrl + "/followers/", {
+                headers: {
+            'Authorization': 'Basic ' + team10Authorization
+                }
+                }).then((response) => {followers = response.data["items"]});
+
+                for (var i in followers){
+                    const follower = followers[i];
+                    var status = null;
+                    try {
+                      const followerPathname = new URL(follower.id).hostname;
+                      if (followerPathname === "cmput-404-w22-group-10-backend.herokuapp.com"){
+                          await axios.post(follower.id + "/inbox/", sharedPost, {
+                            headers: {
+                              'Authorization': 'Basic ' + team10Authorization
+                            }
+                          })
+                          .then((response) => {
+                          status = response.status;
+                          })
+                      } else if (followerPathname === "cmput-404-w22-project-group09.herokuapp.com"){
+                          console.log("follower.id",follower.id)
+                          await axios.post(follower.id + "/inbox", sharedPost, {
+                            headers: {
+                              'Authorization': 'Basic ' + team9Authorization
+                            }
+                          })
+                            .then((response) => {
+                            status = response.status;
+                            })
+                      } else if (followerPathname === "backend-404.herokuapp.com"){
+                          await axios.post(follower.id + "/inbox", sharedPost, {
+                            headers: {
+                              'authorization': 'Basic ' + team4Authorization
+                            }
+                          })
+                            .then((response) => {
+                            status = response.status;
+                            }) 
+                        }
+                    } catch (error) {
+                    ////console.log(error)
+                    }
+                }
+
+            } catch (error) {
             ////console.log(error)
-        }
-        
+            }
+                if (status === 201) {
+                    alert("Shared! Check profile to see post!");
+                    //window.location.href = window.location.href;
+                    } else {
+                      alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
+                    }
+
     }
 
     return(
@@ -357,7 +437,7 @@ function Post({post, team}){
 
                 <Popup trigger = {buttonPopup} setTrigger = {setButtonPopup}>
                     {/* passing in current user id and  sending in post link */}
-                    { (team === "team10") &&
+                    { (postHostName === "cmput-404-w22-group-10-backend.herokuapp.com") &&
                         <CommentSection
                             team = {team}
                             //myAuthorId = {myAuthorId}
@@ -366,7 +446,7 @@ function Post({post, team}){
                             commentCount = {commentCount}
                             postAuthorId = {postAuthor.id}/>
                     }
-                    { (team === "team9") &&
+                    { (postHostName === "cmput-404-w22-project-group09.herokuapp.com") &&
                         <CommentSection 
                             team = {team}
                             //myAuthorId = {myAuthorId}
