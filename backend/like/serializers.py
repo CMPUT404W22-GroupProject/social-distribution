@@ -1,11 +1,13 @@
-from rest_framework.serializers import ModelSerializer, CharField
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from author.serializers import AuthorsSerializer
 from inbox.models import Inbox
 from like.models import Like
 import json
+import requests
+from requests.auth import HTTPBasicAuth
+from node.authentication import BasicAuthentication
 
 class LikeSerializer(ModelSerializer):
-    author = AuthorsSerializer(many=False, read_only=True)
 
     class Meta:
         model = Like
@@ -13,12 +15,21 @@ class LikeSerializer(ModelSerializer):
 
     def create(self, validated_data):
         new_like = Like.objects.create(**validated_data)
-        request = self.context.get('request')
-        full_url = request.build_absolute_uri()
-
-        url_like = full_url.split('/likes')[0]
-        new_like.id = url_like + '/likes/' + str(new_like._id)
+        new_like.id = new_like.object + '/likes/' + str(new_like._id)
 
         new_like.save()
-        # Inbox.create_object_from_like(new_like)
         return new_like
+
+class LikeSerializerGet(LikeSerializer):
+    author = SerializerMethodField()
+    basic_auth = BasicAuthentication()
+
+    def get_author(self, like):
+        response = self.basic_auth.get_request(like.author)
+
+        if response.status_code == 404:
+            return "Author Not Found"
+        elif response.status_code != 200:
+            return like.author
+        else:
+            return response.json()

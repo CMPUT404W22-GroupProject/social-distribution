@@ -2,10 +2,13 @@
 from comment.models import Comment
 from rest_framework.serializers import ModelSerializer
 from author.serializers import AuthorsSerializer
+from rest_framework.serializers import SerializerMethodField
 from post import serializers
 import uuid
 from author.models import Author
 from inbox.models import Inbox
+import requests
+from node.authentication import BasicAuthentication
 
 class CommentSerializer(ModelSerializer):
 
@@ -37,4 +40,14 @@ class CommentSerializer(ModelSerializer):
         return new_comment
 
 class CommentSerializerGet(CommentSerializer):
-    author = AuthorsSerializer(many=False, read_only=True)
+    author = SerializerMethodField()
+    basic_auth = BasicAuthentication()
+
+    def get_author(self, comment):
+        response = self.basic_auth.get_request(comment.author)
+        if response.status_code == 404:
+            return "Author Not Found"
+        elif response.status_code != 200:
+            return comment.author
+        else:
+            return response.json()
