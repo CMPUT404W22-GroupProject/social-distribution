@@ -8,7 +8,7 @@ import axios from "axios"
 import { badgeUnstyledClasses } from "@mui/base";
 import { NewReleases } from "@mui/icons-material";
 
-const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}) => {
+const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId, team}) => {
     //Handles the main comment events such as submitting comments, retrieving comments.
     const [backendComments, setBackendComments] = useState([]);
     const [author, setAuthor] = useState([]);
@@ -17,7 +17,7 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
     const postHostName = new URL(postAuthorId).hostname;
 
-    //console.log("commentsID: ", myAuthor);
+    //console.log("commentsID: ", loggedInAuthor);
 
     //console.log("COMMENTSPATH: ", commentsPath);
     
@@ -67,7 +67,7 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
 
         var newComment = {
             "type": "comment",
-            "author": myAuthor,
+            "author": loggedInAuthor,
             "comment": text,
             "contentType": "text/plain",
             "published": formattedDate.charAt,
@@ -148,13 +148,13 @@ const CommentSection = ({myAuthor, commentsId, commentCount, postAuthorId, team}
         <div className="comments">
             <h3 className="comments-title"> Comments</h3>
             <div className="comment-form-title">Post a comment!</div>
-            <CreateComment submitLabel = "Post" handleSubmit={addComment} myAuthor ={myAuthor} />
+            <CreateComment submitLabel = "Post" handleSubmit={addComment} loggedInAuthor ={loggedInAuthor} />
             
             <div className="comments-container">
                 {/* //remember to send in key = {backendComment.id} when you have it */}
                 {backendComments.map((backendComment) => (
                     
-                    <Comment key = {backendComment.id} myAuthor = {myAuthor} comment = {backendComment} team = {team}/>
+                    <Comment key = {backendComment.id} loggedInAuthor = {loggedInAuthor} comment = {backendComment} team = {team}/>
                     //commentBody = {b.comment} commentAuthor = {b.author.displayName} commentDate = {b.published}
 
                 ))}

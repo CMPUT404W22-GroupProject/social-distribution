@@ -6,7 +6,7 @@ import {useState, useEffect} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 
-const Comment = ({comment, myAuthorId}) => {
+const Comment = ({comment, loggedInAuthor, team}) => {
         // this is how the comment will appear in the CommentSection
         //user can like comments 
         const [like, setLike] = useState(0);
@@ -18,10 +18,6 @@ const Comment = ({comment, myAuthorId}) => {
         const team9Authorization = btoa("group10:pwd1010");
         const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
         
-        const fetchAuthor = async () => {
-            const result = await axios.get("/authors/" + myAuthorId);
-            setAuthor(result.data)
-        }
         const fetchLikeCount = async () => {
             
             var result;
@@ -47,7 +43,6 @@ const Comment = ({comment, myAuthorId}) => {
         
         useEffect(() => {
             // this is where we fetch data from the api
-            fetchAuthor();
             fetchLikeCount();
         }, []);
 
@@ -55,9 +50,9 @@ const Comment = ({comment, myAuthorId}) => {
             //handles like events
             var newLike = {
                 "@context": "https://www.w3.org/ns/activitystreams",
-                "summary": myAuthorId + " likes your comment",
+                "summary": loggedInAuthor.id + " likes your comment",
                 "type" : "Like",
-                "author": myAuthorId,
+                "author": loggedInAuthor,
                 "object": comment.id
             }
             if (commentHostname === "cmput-404-w22-group-10-backend.herokuapp.com"){
