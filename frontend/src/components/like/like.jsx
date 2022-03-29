@@ -8,6 +8,8 @@ import {format} from "timeago.js"
 function Like({like}){
     //this is how the like object will appear in the inbox
 
+   
+
     return(
         <div className='likeCard'>
             <Card >
@@ -15,13 +17,13 @@ function Like({like}){
                     <div className="likeTopLeft">
                     {/* <img className="postProfileImg" /> */}
                     <PersonIcon className="likeProfileImg"/>
-                    <span className="likeUsername">{like.displayName}</span>
+                    <span className="likeUsername">{like.author.displayName}</span>
                     <span className="likeDate">{like.published}</span>
                      </div> 
                 </Card.Header>
                 <Card.Body className="text-center">
                         <Card.Text>
-                            {like.displayName} likes your post!
+                            {like.summary}
                         </Card.Text>
                      
                 </Card.Body>
