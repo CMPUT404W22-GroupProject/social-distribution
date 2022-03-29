@@ -71,10 +71,8 @@ class BasicAuthentication:
         
     def get_request(self, url):
         host = urlparse(url).hostname
-
-        if host == "localhost" or host == "127.0.0.1" or host == "cmput-404-w22-group-10-backend.herokuapp.com":
-            username = 'admin'
-            password = 'gwbRqv8ZLtM3TFRW'
+        if host == 'localhost' or host == '127.0.0.1' or host == 'cmput-404-w22-group-10-backend.herokuapp.com/':
+            return None
         elif host == "backend-404.herokuapp.com":
             username = 'Team10'
             password = 'abcdefg'

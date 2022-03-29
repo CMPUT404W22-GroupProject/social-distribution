@@ -92,8 +92,9 @@ class FollowerDetails(APIView, LoginRequiredMixin):
             if follower_uuid != str(foreign_author_id):
                 return Response("Bad request", status=400)
 
-            follower_response = self.basic_auth.get_request(follower_id)
-            if follower_response.status_code == 404:
+            try:
+                author = Author.objects.get(id=follower_id)
+            except:
                 return Response("Follower not found", status=404)
 
             request_data['object'] = follower_id
