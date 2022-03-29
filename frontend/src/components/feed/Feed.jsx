@@ -47,6 +47,7 @@ function Feed({id, feedType}){
    
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
 
+    
     useEffect(() => {
         const getAuthorServer = async () => {
             
@@ -59,8 +60,8 @@ function Feed({id, feedType}){
               })
             .then((response) => {
                 //console.log("TEAM 10 RESPONSE: ", response.data);
-                setTeam10Authors(response.data); //authors in response.data.result
-                const team10data = response.data.items; // set to response.data.results when using heroku
+                //setTeam10Authors(response.data); 
+                const team10data = response.data.items; 
                 team10data.forEach((foreignAuthor) => {
                     const foreignAuthorURL = new URL(foreignAuthor.id);
                     const foreignAuthorPath = foreignAuthorURL.pathname;
@@ -72,6 +73,13 @@ function Feed({id, feedType}){
                         setUrlAuthor(foreignAuthor);
                     }
                 })
+                //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                const authorPages = Math.ceil(response.data.count/5)
+                if (authorPages > 1){
+                    for (let i = 2; i<= authorPages; i++){
+                        getAuthorsPagination(i, "team10")
+                    }
+                }
             });
             
             //getting authors from team 9, and storing
@@ -82,7 +90,7 @@ function Feed({id, feedType}){
               })
             .then((response) => {
                 //console.log("TEAM 9 RESPONSE: ", response);
-                setTeam9Authors(response.data); //authors in response.data.result
+                //setTeam9Authors(response.data); //authors in response.data.result
                 const team9data = response.data.items;
                 team9data.forEach((foreignAuthor) => {
                     const foreignAuthorURL = new URL(foreignAuthor.id);
@@ -106,7 +114,7 @@ function Feed({id, feedType}){
               })
             .then((response) => {
                 //console.log("TEAM 4 RESPONSE: ", response);
-                setTeam9Authors(response.data); //authors in response.data.result
+                //setTeam9Authors(response.data); //authors in response.data.result
                 const team4data = response.data.items;
                 team4data.forEach((foreignAuthor) => {
                     const foreignAuthorURL = new URL(foreignAuthor.id);
@@ -123,6 +131,81 @@ function Feed({id, feedType}){
             });
             //checking if author ID from url is in team10 or team9
             //declaring what server to use then 
+        }
+
+        const getAuthorsPagination = async (page, team) => {
+            if (team === "team10"){
+                await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/?page=" + page, {
+                    headers: {
+                      'Authorization': 'Basic ' + team10Authorization
+                    }
+                  })
+                .then((response) => {
+                    //console.log("TEAM 10 RESPONSE: ", response.data);
+                    //setTeam10Authors(response.data);
+                    const team10data = response.data.items; 
+                    team10data.forEach((foreignAuthor) => {
+                        const foreignAuthorURL = new URL(foreignAuthor.id);
+                        const foreignAuthorPath = foreignAuthorURL.pathname;
+                        if ("/authors/"+ urlAuthorId === foreignAuthorPath) {
+                            //console.log("TEM10 AUTHOR")
+                            setTeamServer("team10");
+                            feedLoader("team10");
+                            //fetchUrlAuthorFollowers("team10");
+                            setUrlAuthor(foreignAuthor);
+                        }
+                    })
+                });
+            } else if (team === "team9"){
+                await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/?page=" + page, {
+                    headers: {
+                      'Authorization': 'Basic ' + team9Authorization
+                    }
+                  })
+                .then((response) => {
+                    //console.log("TEAM 9 RESPONSE: ", response);
+                    //setTeam9Authors(response.data); //authors in response.data.result
+                    const team9data = response.data.items;
+                    team9data.forEach((foreignAuthor) => {
+                        const foreignAuthorURL = new URL(foreignAuthor.id);
+                        const foreignAuthorPath = foreignAuthorURL.pathname;
+                        if ("/service/authors/"+ urlAuthorId === foreignAuthorPath) {
+                           setTeamServer("team9");
+                           feedLoader("team9");
+                           //fetchUrlAuthorFollowers("team9");
+                           setUrlAuthor(foreignAuthor);
+                            
+                        }
+                    })
+                });
+    
+    
+            } else if (team === "team4"){
+                await axios.get("https://backend-404.herokuapp.com/authors/?page=" + page, {
+                    headers: {
+                      'authorization': 'Basic ' + team4Authorization
+                    }
+                  })
+                .then((response) => {
+                    //console.log("TEAM 4 RESPONSE: ", response);
+                    //setTeam9Authors(response.data); //authors in response.data.result
+                    const team4data = response.data.items;
+                    team4data.forEach((foreignAuthor) => {
+                        const foreignAuthorURL = new URL(foreignAuthor.id);
+                        const foreignAuthorPath = foreignAuthorURL.pathname;
+                        if ("/authors/"+ urlAuthorId === foreignAuthorPath) {
+                            //console.log("TEAM 4 AUTHOR FOUND")
+                           setTeamServer("team4");
+                           feedLoader("team4");
+                           //fetchUrlAuthorFollowers("team4");
+                           setUrlAuthor(foreignAuthor);
+                            
+                        }
+                    })
+                });
+    
+            }
+    
         }
         
         //get data from inbox here
