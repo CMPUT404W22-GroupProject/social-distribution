@@ -54,7 +54,11 @@ const Comment = ({comment, myAuthorId}) => {
         const likeHandler = async () => {
             //handles like events
             var newLike = {
-                "author": myAuthorId, //just sending in ID
+                "@context": "https://www.w3.org/ns/activitystreams",
+                "summary": myAuthorId + " likes your comment",
+                "type" : "Like",
+                "author": myAuthorId,
+                "object": comment.id
             }
             if (commentHostname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                 if (!isLiked){
