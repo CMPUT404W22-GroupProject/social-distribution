@@ -16,25 +16,45 @@ const CommentSection = ({myAuthorId, commentsId, commentCount, postAuthorId}) =>
     const postAuthorUrl = new URL(postAuthorId);
     const postAuthorIdPath = postAuthorUrl.pathname;
     const [author, setAuthor] = useState([]);
+    const team4Authorization = btoa("Team10:abcdefg");
+    const team9Authorization = btoa("group10:pwd1010");
+    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const postHostName = new URL(postAuthorId).hostname;
+
+    //console.log("commentsID: ", myAuthor);
+
 
     //console.log("COMMENTSPATH: ", commentsPath);
     
     const fetchComments = async () => {
-        try {
-            const result = await axios.get(commentsPath);
-            //puts posts in array + sorts from newest to oldest
-            setBackendComments(result.data.comments.sort((p1, p2) => {
-            return new Date(p2.published) - new Date(p1.published)
-            }))
-        } catch(error){
+        if (postHostName === "cmput-404-w22-group-10-backend.herokuapp.com"){
+            try {
+                const result = await axios.get(commentsId, {
+                    headers: {
+                      'Authorization': 'Basic ' + team10Authorization
+                    }
+                  });
+                //puts posts in array + sorts from newest to oldest
+                setBackendComments(result.data.comments.sort((p1, p2) => {
+                return new Date(p2.published) - new Date(p1.published)
+                }))
+            } catch(error){
+            }
         }
-    }
+        if (postHostName === "cmput-404-w22-project-group09.herokuapp.com"){
+            try {
+                const result = await axios.get(commentsId, {
+                    headers: {
+                      'Authorization': 'Basic ' + team9Authorization
+                    }
+                  });
+                //puts posts in array + sorts from newest to oldest
+                setBackendComments(result.data.comments.sort((p1, p2) => {
+                return new Date(p2.published) - new Date(p1.published)
+                }))
+            } catch(error){
+            }
 
-    const fetchAuthor = async () => {
-        try {
-        const result = await axios.get("/authors/" + myAuthorId);
-        setAuthor(result.data)
-        } catch(error){
         }
     }
 
@@ -87,12 +107,69 @@ const addComment  = async (text) => {
          console.log(error)
        }
 
+            if (postHostName === "cmput-404-w22-group-10-backend.herokuapp.com"){
+                    //sending comment to post first, waiting for id
+                    try {
+                        await axios.post(commentsId + '/', newComment, {
+                            headers: {
+                              'Authorization': 'Basic ' + team10Authorization
+                            }
+                          })
+                        .then((response) => {
+                            newComment["id"] = response.data.id;
+                        });
 
+                    } catch (error) {
+                        //console.log(error)
+                    }
+                    //sending comment to inbox of post owner 
 
+                    try {
+                        await axios.post(postAuthorId + '/inbox/', newComment, {
+                            headers: {
+                              'Authorization': 'Basic ' + team10Authorization
+                            }
+                          })
+                        .then((response) => {
+                        });
 
+                    } catch (error) {
+                        //console.log(error)
+                    }
+            }
 
+            if (postHostName === "cmput-404-w22-project-group09.herokuapp.com"){
+                try {
+                    
+                    await axios.post(commentsId, newComment, {
+                        headers: {
+                          'Authorization': 'Basic ' + team9Authorization
+                        }
+                      })
+                    .then((response) => {
+                        //console.log("COMMENTID: ", response)
+                        newComment["id"] = response.data.id;
+                    });
 
+                } catch (error) {
+                    //console.log(error)
+                }
+                try {
+                    console.log("POST AUTHOR ID: ", postAuthorId);
+                    await axios.post(postAuthorId + "/inbox", newComment, {
+                        headers: {
+                          'Authorization': 'Basic ' + team9Authorization
+                        }
+                      })
+                    .then((response) => {
+                    });
 
+                } catch (error) {
+                    //console.log(error)
+                }
+
+            }
+        
 
        //fetch from server again if comment is uploaded, ideally new one should show as well or display is internally
        //setBackendComments([newInternalComment, ...backendComments])

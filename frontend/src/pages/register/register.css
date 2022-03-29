@@ -1,87 +1,44 @@
 .login {
-    background-color: #f0f2f5;
-  }
-  
-  form {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    flex-grow: 1;
-    padding-bottom: 1rem;
+    justify-content: center;
+    height: 100vh;
+    align-items: center;
+    font-family: 'inter';
+
 }
 
-a, a:visited {
-    color: #fff;
+.login_form {
+    display: flex;
+    flex-direction: column;
 }
 
-input[type="text"],
-input[type="password"],
-button,
-textarea {
-  font-family: 'Nunito', sans-serif;
-  font-size: 22px;
-  padding: 0.25rem;
-  border-radius: 0.5rem;
+.login_form > h1 {
+    font-size: 35px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    letter-spacing: -1px;
 }
 
-label,
-button {
-  margin-top: 1rem;
-}
-
-button {
-  padding: 0.5rem;
-}
-
-.instructions {
-    font-size: 0.75rem;
-    border-radius: 0.5rem;
-    background: #000;
-    color: #fff;
-    padding: 0.25rem;
-    position: relative;
-    bottom: -10px;
-}
-
-.instructions > svg {
-    margin-right: 0.25rem;
-}
-
-.offscreen {
-    position: absolute;
-    left: -9999px;
-}
-
-.hide {
-    display: none;
-}
-
-.valid {
-    color: limegreen;
-    margin-left: 0.25rem;
-}
-
-.invalid {
-    color: red;
-    margin-left: 0.25rem;
-}
-
-.errmsg {
-    background-color: lightpink;
-    color: firebrick;
-    font-weight: bold;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.line {
-    display: inline-block;
-}
-.loginLogo {
-    font-size: 50px;
-    font-weight: 800;
-    align-self: center;
-    color: #27292b;
+.login_form > input {
+    min-width: 380px;
+    padding: 20px 0;
+    padding-left: 15px;
     margin-bottom: 10px;
-  }
-  
+    outline: none;
+    border: 1px solid rgba(0,0,0,0.24);
+    font-family: 'inter';
+    border-radius: 2px;
+    font-size: 15px;
+}
+
+.submit_btn{
+    padding: 17px 30px;
+    margin-top: 10px;
+    background: black;
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-family: "Inter";
+    border-radius: 3px;
+}

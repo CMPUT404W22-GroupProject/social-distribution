@@ -23,6 +23,7 @@ from rest_framework.parsers import JSONParser
 from django.urls import reverse
 from inbox.models import Inbox
 from urllib.parse import urlparse
+from node.authentication import BasicAuthentication
 
 
 # Basic Post Serializer
@@ -30,6 +31,7 @@ class PostSerializer(ModelSerializer):
 
     commentsSrc = SerializerMethodField()
     count = SerializerMethodField()
+    basic_auth = BasicAuthentication()
 
     class Meta:
         model = Post
@@ -38,9 +40,8 @@ class PostSerializer(ModelSerializer):
     
     def get_commentsSrc(self, post):
         try:
-            request = self.context.get('request')
             factory = APIRequestFactory()
-            temp_get_request = factory.get(post.comments, content_type='application/json')
+            temp_get_request = factory.get(post.comments, HTTP_AUTHORIZATION="Basic YWRtaW46Z3diUnF2OFpMdE0zVEZSVw==", content_type='application/json')
             converted_request = Request(temp_get_request, parsers=[JSONParser()])
             response = CommentList.as_view()(request=converted_request._request, author_id=post.author.uuid, post_id=post.uuid).data
             return response
@@ -63,10 +64,6 @@ class PostSerializer(ModelSerializer):
 
         new_post.save()
 
-        # if new_post.visibility == "FRIENDS":
-        #     followers = Follower.objects.get(author=new_post.author.uuid)
-        #     for follower in followers.items.all():
-        #         Inbox.create_object_from_post(new_post, follower.uuid)
         return new_post
 
     def update(self, instance, validated_data):
