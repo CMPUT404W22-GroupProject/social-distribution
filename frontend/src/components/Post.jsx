@@ -264,7 +264,7 @@ function Post({post, team, loggedInAuthor}){
             sharedPost["origin"] = post.id;
             sharedPost["source"] = post.id;
         }
-        sharedPost["id"] = "";
+        delete sharedPost["id"];
         var date = new Date();
         var formattedDate = date.toISOString();
         sharedPost["published"] = formattedDate;
@@ -488,7 +488,7 @@ function Post({post, team, loggedInAuthor}){
                         <CommentSection
                             team = {team}
                             //myAuthorId = {myAuthorId}
-                            myAuthor = {loggedInAuthor}
+                            loggedInAuthor = {loggedInAuthor}
                             commentsId = {post.comments}
                             commentCount = {commentCount}
                             postAuthorId = {postAuthor.id}/>
@@ -497,7 +497,7 @@ function Post({post, team, loggedInAuthor}){
                         <CommentSection 
                             team = {team}
                             //myAuthorId = {myAuthorId}
-                            myAuthor = {loggedInAuthor}
+                            loggedInAuthor = {loggedInAuthor}
                             commentsId = {post.comments}
                             commentCount = {commentCount}
                             postAuthorId = {postAuthor.id}/>
