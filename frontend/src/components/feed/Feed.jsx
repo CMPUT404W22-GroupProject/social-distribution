@@ -11,8 +11,9 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import UserContext from '../../context/userContext';
-import { useContext } from "react"
-import PaginationControlled from "../paginationFeed"
+import { useContext } from "react";
+import PaginationControlled from "../paginationFeed";
+import ClearIcon from '@mui/icons-material/Clear';
 
 
 function Feed({id, feedType}){
@@ -24,14 +25,16 @@ function Feed({id, feedType}){
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
     const [inbox, setInbox] = useState([]);
-
-    //const userId = "53f89145-c0bb-4a01-a26a-5a3332e47156"; // JACK SPARROW AUTHOR
-    const userId = "9170ef2f-501c-47c7-a8b2-99480fb49216"; //MOE AUTHOR
+    const loggedInAuthorId = "9170ef2f-501c-47c7-a8b2-99480fb49216"; //MOE AUTHOR
+    //const loggedInAuthorId = "fe231d46-a216-4208-b806-8a064d9e7323"; //GOJO AUTHOR
+    const [loggedInAuthor, setLoggedInAuthor] = useState([]);
+    const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
     const [buttonPopup, setButtonPopup] = useState(false);
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(1);
-    const [authorId, setAuthorId] = useState(JSON.parse(id)["id"]); //authorId from URL
-    const [urlAuthor, setUrlAuthor] = useState({});
+    const [urlAuthorId, setUrlAuthorId] = useState(JSON.parse(id)["id"]); //authorId from URL
+    const [urlAuthor, setUrlAuthor] = useState([]);
+    const [urlAuthorFollowers, setUrlAuthorFollowers] = useState([]);
     const emptyObject = {}// temporary for Follow
     const [teamServer, setTeamServer] = useState("");
     const [team10Authors, setTeam10Authors] = useState([]);
@@ -41,6 +44,7 @@ function Feed({id, feedType}){
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
 
+   
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
 
     useEffect(() => {
@@ -60,10 +64,11 @@ function Feed({id, feedType}){
                 team10data.forEach((foreignAuthor) => {
                     const foreignAuthorURL = new URL(foreignAuthor.id);
                     const foreignAuthorPath = foreignAuthorURL.pathname;
-                    if ("/authors/"+ authorId === foreignAuthorPath) {
-                        console.log("TEM10 AUTHOR")
+                    if ("/authors/"+ urlAuthorId === foreignAuthorPath) {
+                        //console.log("TEM10 AUTHOR")
                         setTeamServer("team10");
                         feedLoader("team10");
+                        //fetchUrlAuthorFollowers("team10");
                         setUrlAuthor(foreignAuthor);
                     }
                 })
@@ -82,9 +87,10 @@ function Feed({id, feedType}){
                 team9data.forEach((foreignAuthor) => {
                     const foreignAuthorURL = new URL(foreignAuthor.id);
                     const foreignAuthorPath = foreignAuthorURL.pathname;
-                    if ("/service/authors/"+ authorId === foreignAuthorPath) {
+                    if ("/service/authors/"+ urlAuthorId === foreignAuthorPath) {
                        setTeamServer("team9");
                        feedLoader("team9");
+                       //fetchUrlAuthorFollowers("team9");
                        setUrlAuthor(foreignAuthor);
                         
                     }
@@ -105,10 +111,11 @@ function Feed({id, feedType}){
                 team4data.forEach((foreignAuthor) => {
                     const foreignAuthorURL = new URL(foreignAuthor.id);
                     const foreignAuthorPath = foreignAuthorURL.pathname;
-                    if ("/authors/"+ authorId === foreignAuthorPath) {
-                        console.log("TEAM 4 AUTHOR FOUND")
+                    if ("/authors/"+ urlAuthorId === foreignAuthorPath) {
+                        //console.log("TEAM 4 AUTHOR FOUND")
                        setTeamServer("team4");
                        feedLoader("team4");
+                       //fetchUrlAuthorFollowers("team4");
                        setUrlAuthor(foreignAuthor);
                         
                     }
@@ -117,58 +124,60 @@ function Feed({id, feedType}){
             //checking if author ID from url is in team10 or team9
             //declaring what server to use then 
         }
+        
         //get data from inbox here
         //if type is post, then put to post, if type is like then add to like and so on
-        const fetchPosts = async () => {
+        const fetchPosts = async (team) => {
             //fetch posts from user/author id, these are posts created by the user/author
             if (page === 1){
                 var result;
                 if (team === "team10"){
-                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/posts", {
+                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/posts", {
                         headers: {
                           'Authorization': 'Basic ' + team10Authorization
                         }
                       });
                     setCount(result.data.count);
                 } else if (team === "team9"){
-                    result = await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/" + authorId + "/posts", {
+                    result = await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/" + urlAuthorId + "/posts", {
                         headers: {
                           'authorization': 'Basic ' + team9Authorization
                         }
                       });
                     setCount(result.data.items.length);
                 } else if (team === "team4"){
-                    result = await axios.get("https://backend-404.herokuapp.com/authors/" + authorId + "/posts", {
+                    result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts", {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
                         }
                       });
                 } 
                 setRecievedData(result);
-                console.log("FUJFVSUFSPUVFBVF: ", result.data)
+                //console.log("FUJFVSUFSPUVFBVF: ", result.data)
                 
                  //puts posts in array + sorts from newest to oldest
-                setPosts(result.data.results.sort((p1, p2) => {
+                setPosts(result.data.items.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
+                //return new Date(p1.published) - new Date(p2.published)
             }));
             } else {
                 var result;
                 if (team === "team10"){
-                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/posts?page=" + page, {
+                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
                           'Authorization': 'Basic ' + team10Authorization
                         }
                       });
                       setCount(result.data.count);
                 } else if (team === "team9"){
-                    result = await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/" + authorId + "/posts?page=" + page, {
+                    result = await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
                           'authorization': 'Basic ' + team9Authorization
                         }
                       });
                     setCount(result.data.items.length);
                 } else if (team === "team4"){
-                    result = await axios.get("https://backend-404.herokuapp.com/authors/" + authorId + "/posts?page=" + page, {
+                    result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
                         }
@@ -177,28 +186,31 @@ function Feed({id, feedType}){
                 
                 setRecievedData(result);
                 //puts posts in array + sorts from newest to oldest
-                setPosts(result.data.results.sort((p1, p2) => {
+                setPosts(result.data.items.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
+                //return new Date(p1.published) - new Date(p2.published)
             }));
             }
-            
         }
+
             const fetchInbox = async () => {
+                //ONLY FOR TEAM 10
                 //fetch inbox from user/author id
                 if (page === 1){
-                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/inbox/", {
+                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox/", {
                         headers: {
                           'Authorization': 'Basic ' + team10Authorization
                         }
                       });
                     setRecievedData(result);
-                    setCount(result.data.count);
+                    //console.log("RESULT: ", result)
+                    setCount(result.data.items.length);
                      //puts objects in array + sorts from newest to oldest
                     setInbox(result.data.items.sort((p1, p2) => {
                     return new Date(p2.published) - new Date(p1.published)
                 }));
                 } else {
-                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + authorId + "/inbox?page=" + page, {
+                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox?page=" + page, {
                         headers: {
                           'Authorization': 'Basic ' + team10Authorization
                         }
@@ -206,36 +218,94 @@ function Feed({id, feedType}){
                     setCount(result.data.count);
                     setRecievedData(result);
                     //puts objects in array + sorts from newest to oldest
-                    setInbox(result.data.results.sort((p1, p2) => {
+                    setInbox(result.data.items.sort((p1, p2) => {
                     return new Date(p2.published) - new Date(p1.published)
                 }));
                 }
-        }
+        }   
 
-        const feedLoader = (team) => {
-            if (feedType === "posts"){
-                if  (team === "team9"){
-                    fetchPosts(team);
-                    //fetchAuthor("team9")
-                } 
+            const fetchUrlAuthorFollowers = async (team) => {
+                var result;
+
                 if (team === "team10"){
-                    fetchPosts(team);
-                    //fetchAuthor("team10")
+                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/followers/", {
+                  headers: {
+                    'Authorization': 'Basic ' + team10Authorization
+                    }
+                    })
+                } else if (team === "team9"){
+                    result = await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/" + urlAuthorId + "/followers", {
+                  headers: {
+                    'Authorization': 'Basic ' + team9Authorization
+                    }
+                    })
+                } else if (team === "team4"){
+                    result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/followers/", {
+                  headers: {
+                    'authorization': 'Basic ' + team4Authorization
+                    }
+                    })
                 }
-                if (team === "team4"){
-                    fetchPosts(team);
-                    //fetchAuthor("team4")
+
+                setUrlAuthorFollowers(result.data.items)
+
+            }
+
+            const feedLoader = (team) => {
+                if (feedType === "posts"){
+                    if  (team === "team9"){
+                        fetchPosts(team);
+                        fetchUrlAuthorFollowers(team);
+                        //fetchAuthor("team9")
+                    } 
+                    if (team === "team10"){
+                        fetchPosts(team);
+                        //fetchAuthor("team10")
+                        if (loggedInAuthor.id === urlAuthor.id){
+                            setUrlAuthorFollowers(loggedInAuthorFollowers)
+                        } else {
+                            fetchUrlAuthorFollowers(team);
+                        }
+                        
+                    }
+                    if (team === "team4"){
+                        fetchPosts(team);
+                        //fetchAuthor("team4")
+                        fetchUrlAuthorFollowers(team);
+                    }
+                }
+                if (feedType === "inbox"){
+                    if  (team === "team10"){
+                        fetchInbox();
+                        //fetchAuthor("team10")
+                        fetchUrlAuthorFollowers("team10");
+                    }
                 }
             }
-            if (feedType === "inbox"){
-                if  (team === "team10"){
-                    fetchInbox();
-                    //fetchAuthor("team10")
-                }
+
+            const fetchLoggedInAuthor = async () => {
+                const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + loggedInAuthorId + "/", {
+                    headers: {
+                      'Authorization': 'Basic ' + team10Authorization
+                    }
+                  });
+                  console.log(result.data)
+                setLoggedInAuthor(result.data);
             }
-        }
-        fetchAuthor();
-        
+         
+            const fetchLoggedInAuthorFollowers = async () => {
+                const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + loggedInAuthorId + "/followers/", {
+                  headers: {
+                    'Authorization': 'Basic ' + team10Authorization
+                  }
+                })
+                console.log("FOLLOWER GET: ", result.data)
+                setLoggedInAuthorFollowers(result.data["items"]);
+            }
+        fetchLoggedInAuthor();
+        fetchLoggedInAuthorFollowers();    
+        getAuthorServer();
+          
     },[page])
 
     function refreshPage(){
@@ -249,37 +319,42 @@ function Feed({id, feedType}){
         setPage(childData);
     }
 
-    const inboxBuilder = (object) => {
+    const inboxBuilder = (object, team) => {
+        
         if (object.type === "post") {
             return <Post
                     key = {object.id}
-                    post = {object}/>
+                    post = {object}
+                    team = {team}
+                    loggedInAuthor = {loggedInAuthor}/>
 
-        } else if (object.type === "like"){
+        } else if (object.type === "like" || object.type === "Like"){
             return <Like
                     key = {object.id}
-                    like = {object}/>
+                    like = {object}
+                    team = {team}
+                    loggedInAuthor = {loggedInAuthor}/>
             
         } else if (object.type === "comment"){
             return <InboxComment
                     key = {object.id}
-                    inboxComment = {object}/>
+                    inboxComment = {object}
+                    team = {team}
+                    loggedInAuthor = {loggedInAuthor}/>
 
-        } else if (object.type === "follower"){
+        } else if (object.type === "follower" || object.type === "follow" ){
                 return <Follow
                     key = {object.id}
-                    follow = {object}/>
+                    follow = {object}
+                    team = {team}
+                    loggedInAuthor = {loggedInAuthor}/>
         } 
     }
 
     return (
         //returning feed that will have createPost + other appropriate components shown to user form their inbox
-
         <div>
             {/*createPost button here, when clicked popup will popup*/}
-            <div>USER ID: {userId}</div>
-            <div>URL ID: {authorId}</div>
-            <div>URL Author Name: {urlAuthor.displayName}</div>
             <div className="feedCreatePost" >
                 <AddCircleOutlineIcon 
                     htmlColor="blue" 
@@ -293,8 +368,6 @@ function Feed({id, feedType}){
             </div>
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-
-            <div><Follow follow = {emptyObject}/></div>
 
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
@@ -335,14 +408,14 @@ function Feed({id, feedType}){
             {
                 (inbox.length !== 0) && 
                     inbox.map((object) => (
-                        inboxBuilder(object)
+                        inboxBuilder(object, "team10")
                     )
                     ) 
             }
             {//TEMPORARY 
                 (posts.length !== 0) && 
                     posts.map((object) => (
-                        inboxBuilder(object)
+                        inboxBuilder(object, teamServer)
                     )
                     )
             }
@@ -352,7 +425,7 @@ function Feed({id, feedType}){
                 trigger = {buttonPopup} 
                 setTrigger = {setButtonPopup}
                 >
-                    <CreatePost/>
+                    <CreatePost loggedInAuthor = {loggedInAuthor} loggedInAuthorId = {loggedInAuthorId} loggedInAuthorFollowers = {loggedInAuthorFollowers}/>
             </Popup>
         </div>
     )
