@@ -75,7 +75,7 @@ function Profile({user}){
     
     return (
         <div>
-            <AvatarPhoto/>
+            <AvatarPhoto id={profileId}/>
             <h2>{authorData.displayName}</h2>
            
 

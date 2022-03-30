@@ -25,7 +25,7 @@ function Feed({id, feedType}){
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
     const [inbox, setInbox] = useState([]);
-    const loggedInAuthorId = "9170ef2f-501c-47c7-a8b2-99480fb49216"; //MOE AUTHOR
+    const loggedInAuthorId = "ad35500f-14e6-42c4-af9e-6eec0b8a29a5"; //MOE AUTHOR
     //const loggedInAuthorId = "fe231d46-a216-4208-b806-8a064d9e7323"; //GOJO AUTHOR
     const [loggedInAuthor, setLoggedInAuthor] = useState([]);
     const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
