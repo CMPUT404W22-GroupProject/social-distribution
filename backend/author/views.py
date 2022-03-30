@@ -121,7 +121,9 @@ class AuthorDetails(APIView):
 class RegisterUser(APIView):
     #Register a new users
     def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
+        serializer = RegisterSerializer(data=request.data, context={'request': request})
+        if Author.objects.filter(email__iexact=request.data['email']).exists():
+            return Response({"Status 0": "User with this email already exist"}, status=status.HTTP_409_CONFLICT)
         
         if serializer.is_valid():
             author = serializer.save()
@@ -130,9 +132,8 @@ class RegisterUser(APIView):
                 "token": Token.objects.create(user=author).key
 
              }, status=status.HTTP_201_CREATED)
-        if Author.objects.filter(email__iexact=request.data['email']).exists():
-            return Response({"Status 0": "User with this email already exist"}, status=status.HTTP_409_CONFLICT)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginUser(APIView):
     #allows users created to login.
@@ -145,12 +146,19 @@ class LoginUser(APIView):
             serialized_data["uuid"] = author.uuid
             serialized_data["displayName"] = author.displayName
             serialized_data.pop("password")
-            
-            return Response({
-                "user" : serialized_data,
-                "token": Token.objects.create(user=author).key
 
-             }, status=status.HTTP_201_CREATED)
+            try:
+                token = Token.objects.get(user=author)
+                return Response({
+                    "user" : serialized_data,
+                    "token": Token.objects.get(user=author).key
+                }, status=status.HTTP_200_OK)
+            except:
+                return Response({
+                    "user" : serialized_data,
+                    "token": Token.objects.create(user=author).key
+
+                }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutUser(APIView):
