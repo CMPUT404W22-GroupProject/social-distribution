@@ -6,7 +6,13 @@ import { useLocation } from 'react-router-dom';
 import {useParams} from 'react-router-dom';
 import PaginationControlled from '../../components/paginationFeed'
 import CreatePost from '../../components/createPost/CreatePost';
+
+
+//Components
 import AvatarPhoto from '../../components/avatar/avatar'
+import FollowerList from '../../components/followerList/followerList';
+
+
 
 function Profile({user}){
     
@@ -19,10 +25,12 @@ function Profile({user}){
     const [count, setCount] = useState(1);
     const [recievedData, setRecievedData] = useState([]);
 
+
+    const [showFollowers, setShowFollowers] = useState(false)
+
+
     const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
-
-
     const [loggedInAuthor, setLoggedInAuthor] = useState([]);
     const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
 
@@ -56,7 +64,7 @@ function Profile({user}){
             }));
             }}
         fetchPosts()
-    }, [page])
+    }, [page, profileId, showFollowers])
 
 
 
@@ -77,16 +85,25 @@ function Profile({user}){
         <div>
             <AvatarPhoto id={profileId}/>
             <h2>{authorData.displayName}</h2>
-           
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
 
-            {posts && 
-                <ul>
-                    {posts.map(post => (<li><Post post={post} team="cmput-404-w22-group-10" loggedInAuthor={profileId}/></li>))}
-                </ul>
+            {!showFollowers && 
+                <div>
+                    <button onClick={(e) => setShowFollowers(true)}>Followers</button>
+                    <ul>
+                        {posts.map(post => (<li><Post post={post} team="cmput-404-w22-group-10" loggedInAuthor={profileId}/></li>))}
+                    </ul>
+
+                </div>
+                }
+            {showFollowers && 
+
+            <div>
+                <button onClick={(e) => setShowFollowers(false)}>Posts</button>
+                <FollowerList profileId={profileId}/>
+            </div>
             }
-        
         </div>
     )
 }

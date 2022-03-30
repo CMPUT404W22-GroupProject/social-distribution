@@ -27,7 +27,7 @@ function AvatarPhoto({id}) {
           }).then(res => {
             const base64 = res.data.profileImage
             setFile(base64)
-    }) },[])
+    }) },[id])
 
 
     const handleChange = async (event)  => {
