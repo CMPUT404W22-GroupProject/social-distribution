@@ -10,6 +10,8 @@ function Follow({follow}){
     //This is the follow card displayed in the inbox to notify if a follow request has been recieved,
     //and handles accept and decline of requests
 
+    console.log("WHO HAS FOLLOWED: ", follow)
+
     const acceptFollow = async () => {
         //if user chooses accept
         //sends POST request to ***/followers of logged in user (so my AuthorId), with follower object
@@ -63,13 +65,13 @@ function Follow({follow}){
                     <div className="followTopLeft">
                     {/* <img className="postProfileImg" /> */}
                     <PersonIcon className="followProfileImg"/>
-                    <span className="followUsername">{follow.displayName}</span>
+                    <span className="followUsername">{follow.actor.displayName}</span>
                     <span className="followDate">{format(follow.published)}</span>
                      </div> 
                 </Card.Header>
                 <Card.Body className="text-center">
                         <Card.Text>
-                            {follow.displayName} has requested to follow you!
+                            {follow.summary}
                         </Card.Text>
                      
                 </Card.Body>

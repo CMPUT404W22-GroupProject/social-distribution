@@ -17,7 +17,8 @@ function NavBar() {
 
   let {loggedIn, setLoggedIn} = useContext(UserContext)
   const {token, setToken} = useContext(UserContext)
-  const {id, setId} = useContext(UserContext)
+  //const {id, setId} = useContext(UserContext)
+  const id =  'ad35500f-14e6-42c4-af9e-6eec0b8a29a5'
   const navigate = useNavigate();
 
 
@@ -29,7 +30,7 @@ function NavBar() {
     e.preventDefault();
     setLoggedIn(false)
     setToken('')
-    setId('')
+    //setId('')
     navigate('/login')
 }
 

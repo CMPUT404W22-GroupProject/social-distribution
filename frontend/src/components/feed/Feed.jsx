@@ -25,7 +25,7 @@ function Feed({id, feedType}){
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
     const [inbox, setInbox] = useState([]);
-    const loggedInAuthorId = "9170ef2f-501c-47c7-a8b2-99480fb49216"; //MOE AUTHOR
+    const loggedInAuthorId = "ad35500f-14e6-42c4-af9e-6eec0b8a29a5"; //MOE AUTHOR
     //const loggedInAuthorId = "fe231d46-a216-4208-b806-8a064d9e7323"; //GOJO AUTHOR
     const [loggedInAuthor, setLoggedInAuthor] = useState([]);
     const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
@@ -66,7 +66,7 @@ function Feed({id, feedType}){
                     const foreignAuthorURL = new URL(foreignAuthor.id);
                     const foreignAuthorPath = foreignAuthorURL.pathname;
                     if ("/authors/"+ urlAuthorId === foreignAuthorPath) {
-                        //console.log("TEM10 AUTHOR")
+                        console.log("TEM10 AUTHOR")
                         setTeamServer("team10");
                         feedLoader("team10");
                         //fetchUrlAuthorFollowers("team10");
@@ -338,30 +338,30 @@ function Feed({id, feedType}){
                 if (feedType === "posts"){
                     if  (team === "team9"){
                         fetchPosts(team);
-                        fetchUrlAuthorFollowers(team);
+                        //fetchUrlAuthorFollowers(team);
                         //fetchAuthor("team9")
                     } 
                     if (team === "team10"){
                         fetchPosts(team);
                         //fetchAuthor("team10")
-                        if (loggedInAuthor.id === urlAuthor.id){
+                        /* if (loggedInAuthor.id === urlAuthor.id){
                             setUrlAuthorFollowers(loggedInAuthorFollowers)
                         } else {
                             fetchUrlAuthorFollowers(team);
-                        }
+                        } */
                         
                     }
                     if (team === "team4"){
                         fetchPosts(team);
                         //fetchAuthor("team4")
-                        fetchUrlAuthorFollowers(team);
+                        //fetchUrlAuthorFollowers(team);
                     }
                 }
                 if (feedType === "inbox"){
                     if  (team === "team10"){
                         fetchInbox();
                         //fetchAuthor("team10")
-                        fetchUrlAuthorFollowers("team10");
+                        //fetchUrlAuthorFollowers("team10");
                     }
                 }
             }
@@ -386,7 +386,7 @@ function Feed({id, feedType}){
                 setLoggedInAuthorFollowers(result.data["items"]);
             }
         fetchLoggedInAuthor();
-        fetchLoggedInAuthorFollowers();    
+        //fetchLoggedInAuthorFollowers();    
         getAuthorServer();
           
     },[page])
