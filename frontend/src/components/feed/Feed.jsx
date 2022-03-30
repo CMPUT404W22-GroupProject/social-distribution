@@ -453,8 +453,8 @@ function Feed({id, feedType}){
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
 
-            {/* <Github githubURL={"https://api.github.com/users/gurjogsingh"}/>
-            <Github githubURL={"https://github.com/moenuma"}/> */}
+            <Github githubURL={"https://api.github.com/gurjogsingh"}/>
+            <Github githubURL={"https://github.com/moenuma"}/> 
 
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
