@@ -265,6 +265,10 @@ function Post({post, team, loggedInAuthor}){
             sharedPost["source"] = post.id;
         }
         delete sharedPost["id"];
+        delete sharedPost["count"];
+        delete sharedPost["commentsSrc"];
+        delete sharedPost["comments"];
+
         var date = new Date();
         var formattedDate = date.toISOString();
         sharedPost["published"] = formattedDate;
@@ -279,9 +283,11 @@ function Post({post, team, loggedInAuthor}){
             .then((response) => {
                 if (response.status === 201){
                     alert("Shared Successfully!")
-                    
+                    sharedPost["id"] = response.data.id;
                 }
             });
+
+           
 
             var followers;
             await axios.get(loggedInAuthor.id + "/followers/", {
