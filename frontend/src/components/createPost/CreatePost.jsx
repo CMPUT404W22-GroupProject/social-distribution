@@ -110,7 +110,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
         //if image is selected and there is no content, so image only post
         if ((base64 !== "") && (postContent.current.value === "")){
           newPost["content"] = base64;
-          newPost["contentType"] = "image/base64";
+          var fileType = file.type;
+          newPost["contentType"] = fileType + ";base64";
           console.log("newPOST W BASE64: ", newPost)
         }
 

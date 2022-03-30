@@ -1,0 +1,38 @@
+.githubBox {
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  width: 200px;
+  height: 300px;
+  border-radius: 10px;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+}
+.githubAvatar {
+  border-radius: 40px;
+  width: 30px;
+  height: 30px;
+  margin-left: 5%;
+  margin-top: 5%;
+}
+.githubDisplayname {
+  font-size: 15px;
+  margin-left: 5%;
+  margin-top: 5%;
+}
+.githubUserDisplay {
+  display: flex;
+}
+.githubEvent {
+  margin-top: 5%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 2%;
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  border-radius: 10px;
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.githubPushevent {
+  font-weight: bold;
+}

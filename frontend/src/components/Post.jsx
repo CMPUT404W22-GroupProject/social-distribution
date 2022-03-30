@@ -85,7 +85,105 @@ function Post({post}){
         //changes isliked state of user
         setIsLiked(!isLiked) 
 
-        console.log("like changed!: ", like, isLiked);
+        //console.log("like changed!: ", like, isLiked);
+    }
+
+    const shareHandler = async () => {
+       
+        console.log("ORIGINAL POST", post)
+        var sharedPost = post;
+        
+        sharedPost["author"] = loggedInAuthor;
+        var origTitle = sharedPost["title"];
+        sharedPost["title"] = loggedInAuthor.displayName + " shared " + post.author.displayName + "'s post: " + origTitle;
+        if (sharedPost["origin"] !== ""){
+            sharedPost["source"] = post.id;
+        } else {
+            sharedPost["origin"] = post.id;
+            sharedPost["source"] = post.id;
+        }
+        delete sharedPost["id"];
+        delete sharedPost["count"];
+        delete sharedPost["commentsSrc"];
+        delete sharedPost["comments"];
+
+        var date = new Date();
+        var formattedDate = date.toISOString();
+        sharedPost["published"] = formattedDate;
+        console.log("POST TO BE SHARED: ", sharedPost)
+        
+        try {
+            await axios.post(loggedInAuthor.id + "/posts/", sharedPost, {
+                headers: {
+                  'Authorization': 'Basic ' + team10Authorization
+                }
+              })
+            .then((response) => {
+                if (response.status === 201){
+                    alert("Shared Successfully!")
+                    sharedPost["id"] = response.data.id;
+                }
+            });
+
+           
+
+            var followers;
+            await axios.get(loggedInAuthor.id + "/followers/", {
+                headers: {
+            'Authorization': 'Basic ' + team10Authorization
+                }
+                }).then((response) => {followers = response.data["items"]});
+
+                for (var i in followers){
+                    const follower = followers[i];
+                    var status = null;
+                    try {
+                      const followerPathname = new URL(follower.id).hostname;
+                      if (followerPathname === "cmput-404-w22-group-10-backend.herokuapp.com"){
+                          await axios.post(follower.id + "/inbox/", sharedPost, {
+                            headers: {
+                              'Authorization': 'Basic ' + team10Authorization
+                            }
+                          })
+                          .then((response) => {
+                          status = response.status;
+                          })
+                      } else if (followerPathname === "cmput-404-w22-project-group09.herokuapp.com"){
+                          console.log("follower.id",follower.id)
+                          await axios.post(follower.id + "/inbox", sharedPost, {
+                            headers: {
+                              'Authorization': 'Basic ' + team9Authorization
+                            }
+                          })
+                            .then((response) => {
+                            status = response.status;
+                            })
+                      } else if (followerPathname === "backend-404.herokuapp.com"){
+                          await axios.post(follower.id + "/inbox", sharedPost, {
+                            headers: {
+                              'authorization': 'Basic ' + team4Authorization
+                            }
+                          })
+                            .then((response) => {
+                            status = response.status;
+                            }) 
+                        }
+                    } catch (error) {
+                    ////console.log(error)
+                    }
+                }
+
+            } catch (error) {
+            ////console.log(error)
+            }
+                if (status === 201) {
+                    alert("Shared! Check profile to see post!");
+                    //window.location.href = window.location.href;
+                    } else {
+                      alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
+                    }
+
+
     }
 
     const shareHandler = () => {

@@ -14,6 +14,7 @@ import UserContext from '../../context/userContext';
 import { useContext } from "react";
 import PaginationControlled from "../paginationFeed";
 import ClearIcon from '@mui/icons-material/Clear';
+import Github from "../github/Github"
 
 
 function Feed({id, feedType}){
@@ -69,7 +70,7 @@ function Feed({id, feedType}){
                         console.log("TEM10 AUTHOR")
                         setTeamServer("team10");
                         feedLoader("team10");
-                        //fetchUrlAuthorFollowers("team10");
+                        fetchUrlAuthorFollowers("team10");
                         setUrlAuthor(foreignAuthor);
                     }
                 })
@@ -98,7 +99,7 @@ function Feed({id, feedType}){
                     if ("/service/authors/"+ urlAuthorId === foreignAuthorPath) {
                        setTeamServer("team9");
                        feedLoader("team9");
-                       //fetchUrlAuthorFollowers("team9");
+                       fetchUrlAuthorFollowers("team9");
                        setUrlAuthor(foreignAuthor);
                         
                     }
@@ -123,7 +124,7 @@ function Feed({id, feedType}){
                         //console.log("TEAM 4 AUTHOR FOUND")
                        setTeamServer("team4");
                        feedLoader("team4");
-                       //fetchUrlAuthorFollowers("team4");
+                       fetchUrlAuthorFollowers("team4");
                        setUrlAuthor(foreignAuthor);
                         
                     }
@@ -151,7 +152,7 @@ function Feed({id, feedType}){
                             //console.log("TEM10 AUTHOR")
                             setTeamServer("team10");
                             feedLoader("team10");
-                            //fetchUrlAuthorFollowers("team10");
+                            fetchUrlAuthorFollowers("team10");
                             setUrlAuthor(foreignAuthor);
                         }
                     })
@@ -172,7 +173,7 @@ function Feed({id, feedType}){
                         if ("/service/authors/"+ urlAuthorId === foreignAuthorPath) {
                            setTeamServer("team9");
                            feedLoader("team9");
-                           //fetchUrlAuthorFollowers("team9");
+                           fetchUrlAuthorFollowers("team9");
                            setUrlAuthor(foreignAuthor);
                             
                         }
@@ -197,7 +198,7 @@ function Feed({id, feedType}){
                             //console.log("TEAM 4 AUTHOR FOUND")
                            setTeamServer("team4");
                            feedLoader("team4");
-                           //fetchUrlAuthorFollowers("team4");
+                           fetchUrlAuthorFollowers("team4");
                            setUrlAuthor(foreignAuthor);
                             
                         }
@@ -305,7 +306,7 @@ function Feed({id, feedType}){
                     return new Date(p2.published) - new Date(p1.published)
                 }));
                 }
-        }   
+            }   
 
             const fetchUrlAuthorFollowers = async (team) => {
                 var result;
@@ -338,17 +339,17 @@ function Feed({id, feedType}){
                 if (feedType === "posts"){
                     if  (team === "team9"){
                         fetchPosts(team);
-                        //fetchUrlAuthorFollowers(team);
+                        fetchUrlAuthorFollowers(team);
                         //fetchAuthor("team9")
                     } 
                     if (team === "team10"){
                         fetchPosts(team);
                         //fetchAuthor("team10")
-                        /* if (loggedInAuthor.id === urlAuthor.id){
+                        if (loggedInAuthor.id === urlAuthor.id){
                             setUrlAuthorFollowers(loggedInAuthorFollowers)
                         } else {
                             fetchUrlAuthorFollowers(team);
-                        } */
+                        }
                         
                     }
                     if (team === "team4"){
@@ -386,7 +387,7 @@ function Feed({id, feedType}){
                 setLoggedInAuthorFollowers(result.data["items"]);
             }
         fetchLoggedInAuthor();
-        //fetchLoggedInAuthorFollowers();    
+        fetchLoggedInAuthorFollowers();    
         getAuthorServer();
           
     },[page])
@@ -451,6 +452,9 @@ function Feed({id, feedType}){
             </div>
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
+
+            {/* <Github githubURL={"https://api.github.com/users/gurjogsingh"}/>
+            <Github githubURL={"https://github.com/moenuma"}/> */}
 
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
