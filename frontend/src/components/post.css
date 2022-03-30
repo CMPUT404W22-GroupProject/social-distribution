@@ -77,6 +77,11 @@
   margin-right: 10px;
   margin-bottom: 7px;
 }
+
+.postEditDelete {
+  cursor: pointer;
+  right: 0;
+}
 .text-center {
   padding-top: 7px;
 }
