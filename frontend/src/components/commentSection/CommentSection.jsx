@@ -36,6 +36,7 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
             } catch(error){
             }
         }
+        // Team 9
         if (postHostName === "cmput-404-w22-project-group09.herokuapp.com"){
             try {
                 const result = await axios.get(commentsId, {
@@ -44,6 +45,22 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                     }
                   });
                 //puts posts in array + sorts from newest to oldest
+                setBackendComments(result.data.comments.sort((p1, p2) => {
+                return new Date(p2.published) - new Date(p1.published)
+                }))
+            } catch(error){
+            }
+        }
+        // Team 4
+        if (postHostName === "backend-404.herokuapp.com"){
+            try {
+                //TODO: VERIFY commentsId FORMATTING
+                const result = await axios.get(commentsId, {
+                    headers: {
+                      'Authorization': 'Basic ' + team4Authorization
+                    }
+                  });
+                //TODO: VERIFY RESPONSE FORMATTING
                 setBackendComments(result.data.comments.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
                 }))

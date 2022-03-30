@@ -33,6 +33,12 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                       'Authorization': 'Basic ' + team9Authorization
                     }
                   });
+            } else if (commentHostname === "backend-404.herokuapp.com"){
+                result = await axios.get(comment.id + "/likes/", {
+                    headers: {
+                      'Authorization': 'Basic ' + team4Authorization
+                    }
+                  });
             }
            
 

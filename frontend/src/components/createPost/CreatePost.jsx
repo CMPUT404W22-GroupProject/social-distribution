@@ -170,7 +170,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                       status = response.status;
                       })
                   } else if (friendPathname === "backend-404.herokuapp.com"){
-                    await axios.post(friend.id + "/inbox", newPost, {
+                    await axios.post(friend.id + "/inbox/", newPost, {
                       headers: {
                         'authorization': 'Basic ' + team4Authorization
                       }
@@ -217,7 +217,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                         status = response.status;
                         })
                   } else if (followerPathname === "backend-404.herokuapp.com"){
-                      await axios.post(follower.id + "/inbox", newPost, {
+                    // TODO: VERIFY URL FORMATTING  
+                    await axios.post(follower.id + "/inbox/", newPost, {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
                         }

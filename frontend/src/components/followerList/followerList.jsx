@@ -8,7 +8,11 @@ function FollowerList({profileId}) {
 
   const [followers, setFollowers] = useState([])
   const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
+  const URL9 = "https://cmput-404-w22-project-group09.herokuapp.com/service"
+  const URL4 = "http://backend-404.herokuapp.com"
   const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+  const team9Authorization = btoa("group10:pwd1010");
+  const team4Authorization = btoa("Team10:abcdefg");
 
   useEffect(() => {
 
