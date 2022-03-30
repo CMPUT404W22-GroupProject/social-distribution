@@ -74,7 +74,7 @@ class InboxList(ListCreateAPIView):
             items = []
             if page is not None:
 
-                serializer = InboxSerializer(queryset, many=True, context={'request': request})
+                serializer = InboxSerializer(queryset, many=True, context={'request': request, 'author': author5})
                 for each_object in serializer.data:
                     each_object['author'] = author.data['id']
                     items.append(each_object["items"])

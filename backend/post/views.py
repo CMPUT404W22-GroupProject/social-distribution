@@ -103,24 +103,39 @@ class PostDetails(APIView):
         
     #TODO add authentication
     # edit post
-    def post(self, request, post_id, author_id):
+    def put(self, request, post_id, author_id):
         response = self.basic_auth.local_request(request)
         if response:
             return response
-
-        # if request.data.get('author') != str(author_id):
-        #     return Response("You cannot make a post for this URL", status=400)
+        try:
+            author = Author.objects.get(pk=author_id)
+        except Author.DoesNotExist:
+            return Response("Author not found", status=404)
+        
         try: 
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
-            serializer = PostSerializer(post, data = request.data, context={'request':request})
         except Post.DoesNotExist:
             return Response("Post not found", status=404)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status = 201)
-        else:
-            return Response(serializer.errors, status = 400) # bad request
+        request_data = request.data.copy()
+
+        try:
+            sender_id = request_data['author']['id']
+            sender_uuid = uuid.UUID(sender_id.split('/authors/')[1].split('/')[0])
+
+            if author_id != sender_uuid:
+                return Response("Bad request", status=400)
+
+            request_data['author'] = sender_uuid
+
+            serializer = PostSerializer(post, data = request_data, context={'request':request})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status = 201)
+            else:
+                return Response(serializer.errors, status = 400) # bad request
+        except:
+            return Response("Bad request", status=400)
     
 
     # delete post
@@ -138,7 +153,7 @@ class PostDetails(APIView):
 
 
     # create new post with post_id
-    def put(self, request, post_id, author_id):
+    def post(self, request, post_id, author_id):
         response = self.basic_auth.local_request(request)
         if response:
             return response
