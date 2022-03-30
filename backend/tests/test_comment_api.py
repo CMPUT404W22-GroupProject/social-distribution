@@ -2,12 +2,24 @@
 # from author.models import Author
 # from post.models import Post
 # from comment.models import Comment
-# import uuid
+# from node.models import Node
+# import base64
+
 
 # class CommentListTest(APITestCase):
 #     def setUp(self):
+#         #Creating a node object and setting authentication
+#         self.node_dict = {
+#             "username" : "test",
+#             "password" : "test",
+#             "host":"local",
+#             "is_local":"True"
+#         }
+#         Node.objects.create(**self.node_dict)
+#         self.client.credentials(HTTP_AUTHORIZATION= 'Basic ' + base64.b64encode(b"test:test").decode('utf-8'))
+
 #         self.author = Author.objects.create(
-#             email="test@example.com",
+#             # email="test@example.com",
 #             displayName="APITest", 
 #             github="https://github.com/CMPUT404W22-GroupProject/social-distribution"
 #         )
@@ -21,12 +33,16 @@
 #             visibility="FRIENDS",
 #             unlisted=True,
 #         )
+        
+#         # "/authors/"+str(self.author.uuid)+"/posts/"+str(self.post.uuid)+"/comments"
 #         self.comment_data = {
-#             "author": self.author.uuid,
+#             "author": self.author,
 #             "comment": "Test comment",
 #             "contentType": "commonMark",
+#             "published" : "2020-05-05",
 #             "post": self.post.uuid,
 #         }
+
     
 #     def testCommentListGET(self):
 #         """Test GET request for comments"""
@@ -35,10 +51,11 @@
 #             author=self.author,
 #             comment="Test comment!",
 #             contentType="text/plain",
-#             post=self.post,
+#             post=self.post
 #         )
-
-#         response = self.client.get("/authors/"+str(self.author.uuid)+"/posts/"+str(self.post.uuid)+'/comments/')
+#         print(new_comment.post)
+#         response = self.client.get("/authors/"+str(self.author.uuid)+"/posts/"+str(self.post.uuid)+"/comments/")
+#         print(response.data)
 
 #         # check status is 200
 #         self.assertEqual(response.status_code, 200)
@@ -46,15 +63,18 @@
 #         # Check response has data
 #         self.assertTrue(len(response.data) > 0)
     
-#     def testCommentListPOST(self):
-#         """Test POST request for comments"""
-#         response = self.client.post("/authors/"+str(self.author.uuid)+"/posts/"+str(self.post.uuid)+'/comments/', self.comment_data)
+    # def testCommentListPOST(self):
+    #     """Test POST request for comments"""
 
-#         # check status is 200
-#         self.assertEqual(response.status_code, 201)
+    #     # print(self.comment1)
 
-#         # Check response has data
-#         self.assertTrue(len(response.data) > 0)
+    #     response = self.client.post("/authors/"+str(self.author.uuid)+"/posts/"+str(self.post.uuid)+'/comments/', self.comment_data)
+
+    #     # check status is 200
+    #     self.assertEqual(response.status_code, 201)
+
+    #     # Check response has data
+    #     self.assertTrue(len(response.data) > 0)
 
     
 # class CommentDetailsTest(APITestCase):
