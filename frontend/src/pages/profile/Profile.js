@@ -7,6 +7,13 @@ import {useParams} from 'react-router-dom';
 import PaginationControlled from '../../components/paginationFeed'
 import CreatePost from '../../components/createPost/CreatePost';
 
+
+//Components
+import AvatarPhoto from '../../components/avatar/avatar'
+import FollowerList from '../../components/followerList/followerList';
+
+
+
 function Profile({user}){
     
     const {id, setId} = useContext(UserContext); // current users id
@@ -18,21 +25,37 @@ function Profile({user}){
     const [count, setCount] = useState(1);
     const [recievedData, setRecievedData] = useState([]);
 
+
+    const [showFollowers, setShowFollowers] = useState(false)
+
+
+    const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
+    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const [loggedInAuthor, setLoggedInAuthor] = useState([]);
+    const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
+
     useEffect(() => {
         fetchAuthor()    
 
         const fetchPosts = async () => {
             //fetch posts from user/author id, these are posts created by the user/author
             if (page === 1){
-                const result = await axios.get("/authors/" + profileId + "/posts");
+                const result = await axios.get(URL10 + "/authors/" + profileId + "/posts", {
+                    headers: {
+                      'Authorization': 'Basic ' + team10Authorization
+                    }});
                 setRecievedData(result);
                 setCount(result.data.count);
+                console.log(result.data)
                  //puts posts in array + sorts from newest to oldest
-                setPosts(result.data.results.sort((p1, p2) => {
+                setPosts(result.data.items.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
             }));
             } else {
-                const result = await axios.get("/authors/" + profileId + "/posts?page=" + page);
+                const result = await axios.get(URL10 + "/authors/" + profileId + "/posts?page=" + page, {
+                    headers: {
+                      'Authorization': 'Basic ' + team10Authorization
+                    }});
                 setCount(result.data.count);
                 setRecievedData(result);
                 //puts posts in array + sorts from newest to oldest
@@ -41,36 +64,18 @@ function Profile({user}){
             }));
             }}
         fetchPosts()
-    }, [page])
+    }, [page, profileId, showFollowers])
 
-    /*
-    function getPosts (cursor, data){
-        return axios.get(cursor)
-            .then(response => {
-                if(response.data.next == null){
-                    console.log("data", response.data)
-                    
-                    return data
-                }
-                data.push(response.data.results)
-                return getPosts(response.data.next, data)
-            })
-    }*/
+
 
     async function fetchAuthor() {
-        const res = await axios.get(`http://127.0.0.1:8000/authors/${params.id}`);
+        const res = await axios.get(URL10 + `/authors/${profileId}`, {
+            headers: {
+              'Authorization': 'Basic ' + team10Authorization
+            }});
         setAuthorData(res.data)
     }
 
-    async function fetchPosts(){
-        const next = null
-        axios.get(`http://127.0.0.1:8000/authors/${params.id}/posts`).then((res) => {
-            setPosts(res.data.results)
-            setPage(res.data.next)
-
-        });
-    }
-    
     const handleCallBack = (childData) => {
         //https://www.geeksforgeeks.org/how-to-pass-data-from-child-component-to-its-parent-in-reactjs/
         setPage(childData);
@@ -78,34 +83,30 @@ function Profile({user}){
     
     return (
         <div>
-            <h1>{authorData.displayName}</h1>
-            {id == profileId ? <CreatePost/> : null}
+            <AvatarPhoto id={profileId}/>
+            <h2>{authorData.displayName}</h2>
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
 
-            {posts && 
-                <ul>
-                    {posts.map(post => (<li><Post post={post}/></li>))}
-                </ul>
+            {!showFollowers && 
+                <div>
+                    <button onClick={(e) => setShowFollowers(true)}>Followers</button>
+                    <ul>
+                        {posts.map(post => (<li><Post post={post} team="cmput-404-w22-group-10" loggedInAuthor={profileId}/></li>))}
+                    </ul>
+
+                </div>
+                }
+            {showFollowers && 
+
+            <div>
+                <button onClick={(e) => setShowFollowers(false)}>Posts</button>
+                <FollowerList profileId={profileId}/>
+            </div>
             }
-        
         </div>
     )
 }
 
-/*
-<h1>{authorData.displayName}</h1>
-{posts && 
-    <ul>
-        {posts.map(post => (<li><Post post={post}/></li>))}
-    </ul>
-
-        {posts && 
-                <ul>
-                    {posts.map(post => (<li><Post post={post}/></li>))}
-                </ul>
-            }
-}
-*/
-
+/*<CreatePost loggedInAuthorId={profileId} loggedInAuthor={loggedInAuthor} loggedInAuthorFollowers={loggedInAuthorFollowers}/>*/
 export default Profile;
