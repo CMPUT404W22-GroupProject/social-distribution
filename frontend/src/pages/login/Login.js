@@ -30,7 +30,7 @@ const Login = () => {
             "password": "1231498"
         }
 
-        axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/login/",body)
+        axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/login",body)
           .then(res=> console.log(res.data))
           .catch(err=> console.log(err))
 
