@@ -5,40 +5,42 @@ import './login.css';
 import UserContext from '../../context/userContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+const API_URL = "https://cmput-404-w22-group-10-backend.herokuapp.com/"
 
-
+const login = (email, password) => {
+    return axios.post(API_URL+'login/', {
+        "email" : email,
+        "password" : password
+    })
+    .then((response) => {
+        localStorage.setItem('user', JSON.stringify(response.data));
+        console.log(response.data)
+        return response.data;
+    });
+};
 
 const Login = () => {
-
-    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
 
     const navigate = useNavigate();
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
-    
-    const {id, setId} = useContext(UserContext);
-
-    const {loggedIn, setLoggedIn} = useContext(UserContext)
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        var URL = 'https://cmput-404-w22-group-10-backend.herokuapp.com/authors'
-
-        const body = {
-            "email": "nando@gmail.com",
-            "password": "1231498"
-        }
-
-        axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/login",body)
-          .then(res=> console.log(res.data))
-          .catch(err=> console.log(err))
+        login(email, password)
+        .then(() => {
+            navigate('/authors');
+            window.location.reload();
+        },
+        (error) => {
+            console.log(error.response)
+        });
 
 
-    }
+    };
     return (
         <div className='login'>
-            <form className='login_form' onClick={(e) => handleSubmit(e)}>
+            <form className='login_form' onSubmit={handleSubmit}>
                 <h1>Login</h1>
 
                 <input type='email' placeholder='example@gmail.com' 
@@ -49,7 +51,7 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}/>
 
-                <button className='submit_btn'>Log In</button>
+                <button className='submit_btn' type="submit">Log In</button>
             </form>
         </div>
     )

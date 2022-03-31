@@ -41,6 +41,7 @@ function Feed({id, feedType}){
     const [team10Authors, setTeam10Authors] = useState([]);
     const [team9Authors, setTeam9Authors] = useState([]);
     const [team4Authors, setTeam4Authors] = useState([]);
+    const team0Authorization = btoa("admin:tX7^iS8a5Ky$^S");
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
@@ -130,6 +131,30 @@ function Feed({id, feedType}){
                     }
                 })
             });
+            
+            // Team 0
+            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/9d090d84-0501-4a5b-9ce3-259a46a0ea0e/posts/", {
+                headers: {
+                  'authorization': 'Basic ' + team0Authorization
+                }
+              })
+            .then((response) => {
+                console.log("TEAM 0 RESPONSE: ", response);
+                const team0data = response.data.items;
+                team0data.forEach((foreignAuthor) => {
+
+                    const foreignAuthorURL = new URL(foreignAuthor.id);
+                    const foreignAuthorPath = foreignAuthorURL.pathname;
+                    if ("/authors/"+ urlAuthorId === foreignAuthorPath) {
+                        //console.log("TEAM 4 AUTHOR FOUND")
+                       setTeamServer("team0");
+                       feedLoader("team0");
+                       fetchUrlAuthorFollowers("team0");
+                       setUrlAuthor(foreignAuthor);
+                        
+                    }
+                })
+            });
             //checking if author ID from url is in team10 or team9
             //declaring what server to use then 
         }
@@ -205,6 +230,29 @@ function Feed({id, feedType}){
                     })
                 });
     
+            } else if (team === "team0"){
+                await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/?page=" + page, {
+                    headers: {
+                      'authorization': 'Basic ' + team0Authorization
+                    }
+                  })
+                .then((response) => {
+                    //console.log("TEAM 0 RESPONSE: ", response);
+                    const team0data = response.data.items;
+                    team0data.forEach((foreignAuthor) => {
+                        const foreignAuthorURL = new URL(foreignAuthor.id);
+                        const foreignAuthorPath = foreignAuthorURL.pathname;
+                        if ("/authors/"+ urlAuthorId === foreignAuthorPath) {
+                            //console.log("TEAM 4 AUTHOR FOUND")
+                           setTeamServer("team0");
+                           feedLoader("team0");
+                           fetchUrlAuthorFollowers("team0");
+                           setUrlAuthor(foreignAuthor);
+                            
+                        }
+                    })
+                });
+    
             }
     
         }
@@ -216,7 +264,7 @@ function Feed({id, feedType}){
             if (page === 1){
                 var result;
                 if (team === "team10"){
-                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/posts", {
+                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
                         headers: {
                           'Authorization': 'Basic ' + team10Authorization
                         }
@@ -234,6 +282,12 @@ function Feed({id, feedType}){
                     result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
+                        }
+                      });
+                } else if (team === "team0"){
+                    result = await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
+                        headers: {
+                          'authorization': 'Basic ' + team0Authorization
                         }
                       });
                 } 
@@ -265,6 +319,12 @@ function Feed({id, feedType}){
                     result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
+                        }
+                      });
+                } else if (team === "team0"){
+                    result = await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
+                        headers: {
+                          'authorization': 'Basic ' + team0Authorization
                         }
                       });
                 } 
@@ -330,6 +390,12 @@ function Feed({id, feedType}){
                     'authorization': 'Basic ' + team4Authorization
                     }
                     })
+                } else if (team === "team0"){
+                    result = await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/" + urlAuthorId + "/followers/", {
+                  headers: {
+                    'authorization': 'Basic ' + team0Authorization
+                    }
+                    })
                 }
 
                 setUrlAuthorFollowers(result.data.items)
@@ -354,6 +420,11 @@ function Feed({id, feedType}){
                         
                     }
                     if (team === "team4"){
+                        fetchPosts(team);
+                        //fetchAuthor("team4")
+                        //fetchUrlAuthorFollowers(team);
+                    }
+                    if (team === "team0"){
                         fetchPosts(team);
                         //fetchAuthor("team4")
                         //fetchUrlAuthorFollowers(team);

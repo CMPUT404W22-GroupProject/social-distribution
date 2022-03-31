@@ -17,10 +17,14 @@ function Github({githubURL}) {
             }
            
         })
-
-
     }
+    
+    // Call Github initially
+    useEffect(() =>{
+        callGithub();
+    }, [])
 
+    // Call Github on subsequent interval
     useEffect(()=>{
         const interval = setInterval(() => {
             console.log('Logs every minute');
@@ -28,7 +32,6 @@ function Github({githubURL}) {
           }, 300000);//5 mins (300,000)
         return () => clearInterval(interval); 
     })
-
 
     const displayEvent = (item) =>{
         console.log("is this working",item)
