@@ -46,6 +46,7 @@ function Feed({id, feedType}){
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
 
+    console.log("/hi does this work")
    
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
 
