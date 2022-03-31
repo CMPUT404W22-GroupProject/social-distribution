@@ -5,47 +5,51 @@ import './register.css';
 import UserContext from '../../context/userContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+const API_URL = "https://cmput-404-w22-group-10-backend.herokuapp.com/"
 
 
 const Register = () => {
 
-    const URL = "https://cmput-404-w22-group-10-backend.herokuapp.com/register/"
-    const URL2 = "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/6f6995ed-ab47-4a5f-a916-7e238895cd0e"
     const navigate = useNavigate();
     const {displayName, setDisplayName} = useContext(UserContext);
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
-    const {id, setId} = useContext(UserContext);
-    const {loggedIn, setLoggedIn} = useContext(UserContext)
+
+    const register = (displayName, email, password) => {
+        return axios.post(API_URL+'register/', {
+            "displayName" : displayName,
+            "email" : email,
+            "password" : password
+        })
+        .then((response) => {
+            console.log(response)
+        })
+        ;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        register(displayName, email, password)
+        .then(
+            response => {
+                navigate('/login')
+        },
+        error => {
+            setDisplayName("")
+            setEmail("")
+            setPassword("")
+        });
 
         var registerBody = {
             "displayName": displayName,
             "email": email,
             "password": password
         }
-    
-        axios.post(URL, registerBody).then(function (response) {
-            console.log(response.data);
-            var str = response.data.user.uuid
-            console.log("STR", str)
-            var n = str.lastIndexOf('/');
-            var result = str.substring(n + 1)
-            setId(result)
-            setLoggedIn(true)
-            navigate(`/profile/:${id}`)
-          })
-          .catch(function (error) {
-            console.log(error);
-            setDisplayName("")
-          });
     }
 
     return (
         <div className='login'>
-            <form className='login_form' onClick={(e) => handleSubmit(e)}>
+            <form className='login_form' onSubmit={handleSubmit}>
                 <h1>Register</h1>
 
                 <input type='id' placeholder='Display Name' 
@@ -66,7 +70,7 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}/>
 
-                <button className='submit_btn'>Register</button>
+                <button className='submit_btn' type="submit">Register</button>
             </form>
         </div>
     )
