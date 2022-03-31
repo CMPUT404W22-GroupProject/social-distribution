@@ -10,6 +10,10 @@ function Follow({follow}){
     //This is the follow card displayed in the inbox to notify if a follow request has been recieved,
     //and handles accept and decline of requests
 
+    const team4Authorization = btoa("Team10:abcdefg");
+    const team9Authorization = btoa("group10:pwd1010");
+    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+
     console.log("WHO HAS FOLLOWED: ", follow)
 
     const acceptFollow = async () => {
@@ -20,9 +24,15 @@ function Follow({follow}){
         console.log("FOLLLOW REQUEST: ", follow)
         const foreignAuthorIdUrl = new URL(follow.actor.id);
         const foreignAuthorIdPathname = foreignAuthorIdUrl.pathname;
-        const foreignAuthorId = foreignAuthorIdPathname.replace("/service/authors/", " ")
+        //const foreignAuthorId = foreignAuthorIdPathname.replace("/service/authors/", "")//for team9
+        const foreignAuthorId = foreignAuthorIdPathname.replace("/authors/", "").replace("/", "")
 
-        await axios.put(follow.object.id + "/followers/" + foreignAuthorId, follow)
+
+        await axios.put(follow.object.id + "/followers/" + foreignAuthorId, follow, {
+            headers: {
+              'Authorization': 'Basic ' + team10Authorization
+            }
+          })
             .then((response) => {
                 if (response.status === 201){
                     alert("Succesfully accepted follow request!");
@@ -30,6 +40,7 @@ function Follow({follow}){
                     alert("Oops, something went wrong!");
                 }
             })
+
            /* var followRe  =     {
                 "type": "Follow",      
                 "summary":"Greg wants to follow Lara",
