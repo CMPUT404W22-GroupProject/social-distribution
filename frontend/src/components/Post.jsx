@@ -622,6 +622,15 @@ function Post({post, team, loggedInAuthor}){
                             commentCount = {commentCount}
                             postAuthorId = {postAuthor.id}/>
                     }
+                    { (postHostName === "tik-tak-toe-cmput404.herokuapp.com") &&
+                        <CommentSection 
+                            team = {team}
+                            //myAuthorId = {myAuthorId}
+                            loggedInAuthor = {loggedInAuthor}
+                            commentsId = {post.comments}
+                            commentCount = {commentCount}
+                            postAuthorId = {postAuthor.id}/>
+                    }
 
                     
                 </Popup>
