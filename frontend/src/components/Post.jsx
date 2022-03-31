@@ -36,6 +36,7 @@ function Post({post, team, loggedInAuthor}){
     const [buttonSmallPopupForLike, setButtonSmallPopupForLike] = useState(false);
     const [buttonSmallPopupForShare, setButtonSmallPopupForShare] = useState(false);
     const [buttonSmallPopupForEdit, setButtonSmallPopupForEdit] = useState(false);
+    const team0Authorization = btoa("admin:tX7^iS8a5Ky$^S");
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
@@ -104,6 +105,28 @@ function Post({post, team, loggedInAuthor}){
                         await axios.get(post.id + "/likes/", {
                             headers: {
                             'authorization': 'Basic ' + team4Authorization
+                            }
+                        })
+                        .then((response) => {
+                        const result = response;
+                        //console.log("RECIEVED LIKE: ", response)
+                        const likeObjectRecieved = response.data.items;
+                        hasAuthorAlreadyLiked(likeObjectRecieved);
+                        if (result.data.items.length !== undefined){
+                            setLike(result.data.items.length);
+                            setLikeObjects(result.data.items);
+                        }
+                    });
+                } catch (error) {
+                    //console.log(error)
+                }
+            }
+            
+            if ( postHostName === "tik-tak-toe-cmput404.herokuapp.com"){
+                try {
+                        await axios.get(post.id + "/likes/", {
+                            headers: {
+                            'authorization': 'Basic ' + team0Authorization
                             }
                         })
                         .then((response) => {
@@ -288,6 +311,32 @@ function Post({post, team, loggedInAuthor}){
                     }
                 }
             }
+            if (postHostName === "tik-tak-toe-cmput404.herokuapp.com"){
+                if (!isLiked){
+                    try {
+                        await axios.post(post.author.id + "/inbox/", remoteNewLike, {
+                            headers: {
+                              'authorization': 'Basic ' + team0Authorization
+                            }
+                          })
+                        .then((response) => {
+                            //console.log("THIS IS THE DATA",response.data);
+                            //setLikeId(response.data.id);
+                        });
+                    } catch (error) {
+                        ////console.log(error)
+                    }
+                } else {
+                    //console.log("DELETED LIKE");
+                    try {
+                        //await axios.delete( postPath + "/likes/" + likeId)
+                        //likeId is already full path
+                        //await axios.delete(likeId)
+                    } catch (error) {
+                        ////console.log(error)
+                    }
+                }
+            }
 
         //if user has already liked it and called, will decrement. if user hasnt liked, will increment. 
         setLike(isLiked ? like - 1: like + 1); 
@@ -371,6 +420,15 @@ function Post({post, team, loggedInAuthor}){
                           await axios.post(follower.id + "/inbox/", sharedPost, {
                             headers: {
                               'authorization': 'Basic ' + team4Authorization
+                            }
+                          })
+                            .then((response) => {
+                            status = response.status;
+                            }) 
+                      } else if (followerPathname === "tik-tak-toe-cmput404.herokuapp.com"){
+                          await axios.post(follower.id + "/inbox/", sharedPost, {
+                            headers: {
+                              'authorization': 'Basic ' + team0Authorization
                             }
                           })
                             .then((response) => {

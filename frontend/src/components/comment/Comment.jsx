@@ -15,6 +15,7 @@ const Comment = ({comment, loggedInAuthor, team}) => {
         const [author, setAuthor] = useState({});
         const [likeId, setLikeId] = useState(0);
         const commentHostname = new URL(comment.id).hostname;
+        const team0Authorization = btoa("admin:tX7^iS8a5Ky$^S");
         const team4Authorization = btoa("Team10:abcdefg");
         const team9Authorization = btoa("group10:pwd1010");
         const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
@@ -37,6 +38,12 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                 result = await axios.get(comment.id + "/likes/", {
                     headers: {
                       'Authorization': 'Basic ' + team4Authorization
+                    }
+                  });
+            } else if (commentHostname === "tik-tak-toe-cmput404.herokuapp.com"){
+                result = await axios.get(comment.id + "/likes/", {
+                    headers: {
+                      'Authorization': 'Basic ' + team0Authorization
                     }
                   });
             }
@@ -137,6 +144,33 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                             await axios.delete(likeId, {
                                 headers: {
                                   'Authorization': 'Basic ' + team4Authorization
+                                }
+                              })
+                        } catch (error) {
+                            //console.log(error)
+                        }
+                    }    
+            } else if (commentHostname === "tik-tak-toe-cmput404.herokuapp.com"){
+                    if (!isLiked){
+                        console.log("comment.author.id: ", comment);
+                        try {
+                            await axios.post(comment.author.id + "/inbox/", newLike, {
+                                headers: {
+                                  'Authorization': 'Basic ' + team0Authorization
+                                }
+                              })
+                                .then((response) => {
+                                    setLikeId(response.data.id);
+                                }); 
+                        } catch (error) {
+                            //console.log(error)
+                        }
+                    }  else {
+                        console.log("DELETED LIKE");
+                        try {
+                            await axios.delete(likeId, {
+                                headers: {
+                                  'Authorization': 'Basic ' + team0Authorization
                                 }
                               })
                         } catch (error) {

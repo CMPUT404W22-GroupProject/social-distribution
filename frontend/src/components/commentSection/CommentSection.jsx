@@ -12,6 +12,7 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
     //Handles the main comment events such as submitting comments, retrieving comments.
     const [backendComments, setBackendComments] = useState([]);
     const [author, setAuthor] = useState([]);
+    const team0Authorization = btoa("admin:tX7^iS8a5Ky$^S");
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
@@ -67,7 +68,20 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
             } catch(error){
             }
         }
-        
+        // Team 0
+        if (postHostName === "tik-tak-toe-cmput404.herokuapp.com"){
+            try {
+                const result = await axios.get(commentsId, {
+                    headers: {
+                      'Authorization': 'Basic ' + team0Authorization
+                    }
+                  });
+                setBackendComments(result.data.comments.sort((p1, p2) => {
+                return new Date(p2.published) - new Date(p1.published)
+                }))
+            } catch(error){
+            }
+        }
     }
 
     useEffect(() => {
@@ -182,7 +196,36 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                 } catch (error) {
                     //console.log(error)
                 }
+            }
+            if (postHostName === "tik-tak-toe-cmput404.herokuapp.com"){
+                try {
+                    
+                    await axios.post(commentsId, newComment, {
+                        headers: {
+                          'Authorization': 'Basic ' + team0Authorization
+                        }
+                      })
+                    .then((response) => {
+                        //console.log("COMMENTID: ", response)
+                        newComment["id"] = response.data.id;
+                    });
 
+                } catch (error) {
+                    //console.log(error)
+                }
+                try {
+                    console.log("POST AUTHOR ID: ", postAuthorId);
+                    await axios.post(postAuthorId + "/inbox/", newComment, {
+                        headers: {
+                          'Authorization': 'Basic ' + team0Authorization
+                        }
+                      })
+                    .then((response) => {
+                    });
+
+                } catch (error) {
+                    //console.log(error)
+                }
             }
         
 
