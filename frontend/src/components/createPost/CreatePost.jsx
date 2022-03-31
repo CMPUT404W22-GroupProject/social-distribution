@@ -30,6 +30,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
     const [buttonPopup, setButtonPopup] = useState(false);
     const [isPlain, setisPlain] = useState(false);
     const [isMarkdown, setIsMarkdown] = useState(false);
+    const team0Authorization = btoa("admin:tX7^iS8a5Ky$^S");
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
@@ -171,9 +172,18 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                       status = response.status;
                       })
                   } else if (friendPathname === "backend-404.herokuapp.com"){
-                    await axios.post(friend.id + "/inbox", newPost, {
+                    await axios.post(friend.id + "/inbox/", newPost, {
                       headers: {
                         'authorization': 'Basic ' + team4Authorization
+                      }
+                    })
+                      .then((response) => {
+                      status = response.status;
+                      })
+                  } else if (friendPathname === "tik-tak-toe-cmput404.herokuapp.com"){
+                    await axios.post(friend.id + "/inbox/", newPost, {
+                      headers: {
+                        'authorization': 'Basic ' + team0Authorization
                       }
                     })
                       .then((response) => {
@@ -218,7 +228,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                         status = response.status;
                         })
                   } else if (followerPathname === "backend-404.herokuapp.com"){
-                      await axios.post(follower.id + "/inbox", newPost, {
+                    // TODO: VERIFY URL FORMATTING  
+                    await axios.post(follower.id + "/inbox/", newPost, {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
                         }

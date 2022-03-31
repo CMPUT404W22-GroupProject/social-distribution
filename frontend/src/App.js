@@ -23,7 +23,7 @@ function App() {
               <Route exact path='/register' element={<Register/>}/>
               {/* <Route element={<PrivateRoute/>}> */}
                 <Route exact path='/profile/:id' element={<Profile/>}/>
-               { /*<Route exact path='/home' element={<Home/>}/>*/}
+               { <Route exact path='/home' element={<Home/>}/>}
                 <Route exact path='/authors/:id/inbox' element={<Home feedType = "inbox"/>}/>
                 <Route exact path='/authors/:id/posts' element={<Home feedType = "posts"/>}/> 
               {/*</Route>*/}
