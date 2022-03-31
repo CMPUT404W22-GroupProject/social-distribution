@@ -5,6 +5,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import {useState, useEffect} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
+import { compose } from "@mui/system";
 
 const Comment = ({comment, loggedInAuthor, team}) => {
         // this is how the comment will appear in the CommentSection
@@ -19,7 +20,6 @@ const Comment = ({comment, loggedInAuthor, team}) => {
         const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
         
         const fetchLikeCount = async () => {
-            
             var result;
             if (commentHostname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                 result = await axios.get(comment.id + "/likes", {
@@ -40,7 +40,6 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                     }
                   });
             }
-           
 
             if (result.data.length !== undefined){
                 setLike(result.data.length);
@@ -116,11 +115,36 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                     } catch (error) {
                         //console.log(error)
                     }
-                }
-
+                } 
+            } else if (commentHostname === "backend-404.herokuapp.com"){
+                    if (!isLiked){
+                        console.log("comment.author.id: ", comment);
+                        try {
+                            await axios.post(comment.author.id + "/inbox/", newLike, {
+                                headers: {
+                                  'Authorization': 'Basic ' + team4Authorization
+                                }
+                              })
+                                .then((response) => {
+                                    setLikeId(response.data.id);
+                                }); 
+                        } catch (error) {
+                            //console.log(error)
+                        }
+                    }  else {
+                        console.log("DELETED LIKE");
+                        try {
+                            await axios.delete(likeId, {
+                                headers: {
+                                  'Authorization': 'Basic ' + team4Authorization
+                                }
+                              })
+                        } catch (error) {
+                            //console.log(error)
+                        }
+                    }
             }
              
-    
             setLike(isLiked ? like - 1: like + 1); //if user has already liked it and called, will decrement. if user hasnt liked, will increment. 
             setIsLiked(!isLiked) //changes isliked state of user
     

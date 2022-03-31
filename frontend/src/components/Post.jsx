@@ -99,6 +99,27 @@ function Post({post, team, loggedInAuthor}){
                     //console.log(error)
                 }
             }
+            if ( postHostName === "backend-404.herokuapp.com"){
+                try {
+                        await axios.get(post.id + "/likes/", {
+                            headers: {
+                            'authorization': 'Basic ' + team4Authorization
+                            }
+                        })
+                        .then((response) => {
+                        const result = response;
+                        //console.log("RECIEVED LIKE: ", response)
+                        const likeObjectRecieved = response.data.items;
+                        hasAuthorAlreadyLiked(likeObjectRecieved);
+                        if (result.data.items.length !== undefined){
+                            setLike(result.data.items.length);
+                            setLikeObjects(result.data.items);
+                        }
+                    });
+                } catch (error) {
+                    //console.log(error)
+                }
+            }
 
             /* if (result.data.length !== undefined ){
                 if (result.data.some(i => i.id.includes(likeId))){
@@ -241,6 +262,32 @@ function Post({post, team, loggedInAuthor}){
                     }
                 }
             }
+            if (postHostName === "backend-404.herokuapp.com"){
+                if (!isLiked){
+                    try {
+                        await axios.post(post.author.id + "/inbox/", remoteNewLike, {
+                            headers: {
+                              'authorization': 'Basic ' + team4Authorization
+                            }
+                          })
+                        .then((response) => {
+                            //console.log("THIS IS THE DATA",response.data);
+                            //setLikeId(response.data.id);
+                        });
+                    } catch (error) {
+                        ////console.log(error)
+                    }
+                } else {
+                    //console.log("DELETED LIKE");
+                    try {
+                        //await axios.delete( postPath + "/likes/" + likeId)
+                        //likeId is already full path
+                        //await axios.delete(likeId)
+                    } catch (error) {
+                        ////console.log(error)
+                    }
+                }
+            }
 
         //if user has already liked it and called, will decrement. if user hasnt liked, will increment. 
         setLike(isLiked ? like - 1: like + 1); 
@@ -321,7 +368,7 @@ function Post({post, team, loggedInAuthor}){
                             status = response.status;
                             })
                       } else if (followerPathname === "backend-404.herokuapp.com"){
-                          await axios.post(follower.id + "/inbox", sharedPost, {
+                          await axios.post(follower.id + "/inbox/", sharedPost, {
                             headers: {
                               'authorization': 'Basic ' + team4Authorization
                             }
@@ -500,6 +547,15 @@ function Post({post, team, loggedInAuthor}){
                             postAuthorId = {postAuthor.id}/>
                     }
                     { (postHostName === "cmput-404-w22-project-group09.herokuapp.com") &&
+                        <CommentSection 
+                            team = {team}
+                            //myAuthorId = {myAuthorId}
+                            loggedInAuthor = {loggedInAuthor}
+                            commentsId = {post.comments}
+                            commentCount = {commentCount}
+                            postAuthorId = {postAuthor.id}/>
+                    }
+                    { (postHostName === "backend-404.herokuapp.com") &&
                         <CommentSection 
                             team = {team}
                             //myAuthorId = {myAuthorId}

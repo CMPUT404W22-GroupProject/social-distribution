@@ -114,7 +114,7 @@ function Feed({id, feedType}){
                 }
               })
             .then((response) => {
-                //console.log("TEAM 4 RESPONSE: ", response);
+                console.log("TEAM 4 RESPONSE: ", response);
                 //setTeam9Authors(response.data); //authors in response.data.result
                 const team4data = response.data.items;
                 team4data.forEach((foreignAuthor) => {
@@ -216,7 +216,7 @@ function Feed({id, feedType}){
             if (page === 1){
                 var result;
                 if (team === "team10"){
-                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/posts", {
+                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
                         headers: {
                           'Authorization': 'Basic ' + team10Authorization
                         }
@@ -230,7 +230,7 @@ function Feed({id, feedType}){
                       });
                     setCount(result.data.items.length);
                 } else if (team === "team4"){
-                    result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts", {
+                    result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
                         }

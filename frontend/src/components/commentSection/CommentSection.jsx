@@ -152,6 +152,38 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                 }
 
             }
+
+            if (postHostName === "backend-404.herokuapp.com"){
+                try {
+                    
+                    await axios.post(commentsId, newComment, {
+                        headers: {
+                          'Authorization': 'Basic ' + team4Authorization
+                        }
+                      })
+                    .then((response) => {
+                        //console.log("COMMENTID: ", response)
+                        newComment["id"] = response.data.id;
+                    });
+
+                } catch (error) {
+                    //console.log(error)
+                }
+                try {
+                    console.log("POST AUTHOR ID: ", postAuthorId);
+                    await axios.post(postAuthorId + "/inbox/", newComment, {
+                        headers: {
+                          'Authorization': 'Basic ' + team4Authorization
+                        }
+                      })
+                    .then((response) => {
+                    });
+
+                } catch (error) {
+                    //console.log(error)
+                }
+
+            }
         
 
        //fetch from server again if comment is uploaded, ideally new one should show as well or display is internally
