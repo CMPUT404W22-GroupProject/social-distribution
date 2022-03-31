@@ -143,39 +143,39 @@ class AuthorDetailsTest(APITestCase):
         self.assertEqual(response.data["host"]+"/", self.host)
         # self.assertNotEqual(response.data["profileImage"], None)
 
-    def testAuthorUpdate(self):
-        """Test POST request for author updating"""
+    # def testAuthorUpdate(self):
+    #     """Test POST request for author updating"""
         
-        # Field we want to change
-        self.changed_data = {
-            "displayName" : "ChangedValueTest",
-            "type": "notAuthor"
-        }
+    #     # Field we want to change
+    #     self.changed_data = {
+    #         "displayName" : "ChangedValueTest",
+    #         "type": "notAuthor"
+    #     }
 
-        # Check status code 
-        response = self.client.post("/authors/{0}/".format(self.author_id), self.changed_data)
-        self.assertEqual(response.status_code, 200)
+    #     # Check status code 
+    #     response = self.client.post("/authors/{0}/".format(self.author_id), self.changed_data)
+    #     self.assertEqual(response.status_code, 200)
        
-        # Check for content change
-        self.assertEqual(response.data["displayName"], self.changed_data["displayName"])
+    #     # Check for content change
+    #     self.assertEqual(response.data["displayName"], self.changed_data["displayName"])
         
-        # Check to make sure type didnt change
-        self.assertNotEqual(response.data["type"], self.changed_data["type"])
+    #     # Check to make sure type didnt change
+    #     self.assertNotEqual(response.data["type"], self.changed_data["type"])
 
-    def testAuthorDelete(self):
-        """Test DELETE request for author deletion"""
+    # def testAuthorDelete(self):
+    #     """Test DELETE request for author deletion"""
         
-        # Ensure object is present before deletion
-        response = self.client.get("/authors/{0}/".format(self.author_id))
-        self.assertEqual(response.status_code, 200)
+    #     # Ensure object is present before deletion
+    #     response = self.client.get("/authors/{0}/".format(self.author_id))
+    #     self.assertEqual(response.status_code, 200)
 
-        # Remove object
-        response = self.client.delete("/authors/{0}/".format(self.author_id))
-        self.assertEqual(response.status_code, 201)
+    #     # Remove object
+    #     response = self.client.delete("/authors/{0}/".format(self.author_id))
+    #     self.assertEqual(response.status_code, 201)
         
-        # Ensure object was removed
-        response = self.client.get("/authors/{0}/".format(self.author_id))
-        self.assertEqual(response.status_code, 404)
+    #     # Ensure object was removed
+    #     response = self.client.get("/authors/{0}/".format(self.author_id))
+    #     self.assertEqual(response.status_code, 404)
     
     def tearDown(self):
         authors = Author.objects.all()
