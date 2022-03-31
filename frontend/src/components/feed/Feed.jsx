@@ -26,7 +26,7 @@ function Feed({id, feedType}){
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
     const [inbox, setInbox] = useState([]);
-    const loggedInAuthorId = "ad35500f-14e6-42c4-af9e-6eec0b8a29a5"; //MOE AUTHOR
+    const loggedInAuthorId = "9170ef2f-501c-47c7-a8b2-99480fb49216"; //MOE AUTHOR
     //const loggedInAuthorId = "fe231d46-a216-4208-b806-8a064d9e7323"; //GOJO AUTHOR
     const [loggedInAuthor, setLoggedInAuthor] = useState([]);
     const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
@@ -60,7 +60,7 @@ function Feed({id, feedType}){
                 }
               })
             .then((response) => {
-                //console.log("TEAM 10 RESPONSE: ", response.data);
+                console.log("TEAM 10 RESPONSE: ", response.data);
                 //setTeam10Authors(response.data); 
                 const team10data = response.data.items; 
                 team10data.forEach((foreignAuthor) => {
@@ -114,7 +114,7 @@ function Feed({id, feedType}){
                 }
               })
             .then((response) => {
-                //console.log("TEAM 4 RESPONSE: ", response);
+                console.log("TEAM 4 RESPONSE: ", response);
                 //setTeam9Authors(response.data); //authors in response.data.result
                 const team4data = response.data.items;
                 team4data.forEach((foreignAuthor) => {
@@ -230,7 +230,8 @@ function Feed({id, feedType}){
                       });
                     setCount(result.data.items.length);
                 } else if (team === "team4"){
-                    result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts", {
+                    console.log("COMESHERE")
+                    result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
                         }
