@@ -4,6 +4,9 @@ from author.models import Author
 from node.models import Node
 from PIL import Image
 import tempfile
+from rest_framework.authtoken.models import Token
+
+#https://www.django-rest-framework.org/api-guide/authentication/
 
 class AuthorListTest(APITestCase):
     """Test the AuthorList class in views.py"""
@@ -14,22 +17,36 @@ class AuthorListTest(APITestCase):
         image.save(temp)
         temp.seek(0)
         
-        #Creating a node object and setting authentication
-        self.node_dict = {
-            "username" : "test",
-            "password" : "test",
-            "host":"local",
-            "is_local":"True"
-        }
-        Node.objects.create(**self.node_dict)
-        self.client.credentials(HTTP_AUTHORIZATION= 'Basic ' + base64.b64encode(b"test:test").decode('utf-8'))
+        # #Creating a node object and setting authentication
+        # self.node_dict = {
+        #     "username" : "test",
+        #     "password" : "test",
+        #     "host":"local",
+        #     "is_local":"True"
+        # }
+        # self.node = Node.objects.create(**self.node_dict)
+        # self.client.defaults['HTTP_AUTHORIZATION'] = 'Basic ' + base64.b64encode(b"test:test").decode('utf-8')
+        # self.client.credentials(HTTP_AUTHORIZATION= 'Basic ' + base64.b64encode(b"test:test").decode('utf-8'))
 
+        # self.auth_header =  {
+        #     'HTTP_AUTHORIZATION': 'token ' + base64.b64encode(b"test:test").decode('utf-8')
+        # }
+
+        self.user_data={
+            "displayName":"user",
+            "email":"user@user.ca",
+            "github":"http:/www.google.com"
+        }
+        user = Author.objects.create(**self.user_data)
+        # Include an appropriate `Authorization:` header on all requests.
+        Token.objects.create(user=user)
+        token = Token.objects.get(user=user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
         self.author_data = {
-        # "email":"test@example.com",
         "displayName" : "APITest",
+        "email":"apitest@user.ca",
         "github" : "https://github.com/CMPUT404W22-GroupProject/social-distribution"
-        # "profileImage" : temp,
         }
     
     def testViewAuthors(self):
@@ -38,12 +55,13 @@ class AuthorListTest(APITestCase):
         # Populate list
         self.client.post("/authors/", self.author_data)
         
+        
         # Check status is ok
         response = self.client.get("/authors/")
         self.assertEqual(response.status_code, 200)
         
         # Check response has data
-        self.assertTrue(len(response.data) > 0)
+        self.assertTrue(response.data["count"] > 0)
 
     def testAuthorCreation(self):
         """Test POST request to create author"""
@@ -73,20 +91,31 @@ class AuthorDetailsTest(APITestCase):
         temp.seek(0)
         
         #Creating a node object and setting authentication
-        self.node_dict = {
-            "username" : "test",
-            "password" : "test",
-            "host":"local",
-            "is_local":"True"
-        }
-        Node.objects.create(**self.node_dict)
-        self.client.credentials(HTTP_AUTHORIZATION= 'Basic ' + base64.b64encode(b"test:test").decode('utf-8'))
+        # self.node_dict = {
+        #     "username" : "test",
+        #     "password" : "test",
+        #     "host":"local",
+        #     "is_local":"True"
+        # }
+        # Node.objects.create(**self.node_dict)
+        # self.client.credentials(HTTP_AUTHORIZATION= 'Basic ' + base64.b64encode(b"test:test").decode('utf-8'))
 
+
+        self.user_data={
+            "displayName":"user",
+            "email":"user@user.ca",
+            "github":"http:/www.google.com"
+        }
+        user = Author.objects.create(**self.user_data)
+        # Include an appropriate `Authorization:` header on all requests.
+        Token.objects.create(user=user)
+        token = Token.objects.get(user=user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
         self.author_data = {
         "displayName" : "APITest",
-        "github" : "https://github.com/CMPUT404W22-GroupProject/social-distribution",
-        # "profileImage" : temp
+        "email":"apitest@user.ca",
+        "github" : "https://github.com/CMPUT404W22-GroupProject/social-distribution"
         }
         
         # Get object and it's id
