@@ -4,12 +4,18 @@ import Nav from 'react-bootstrap/Nav'
 import Container from 'react-bootstrap/Container'
 import UserContext from '../context/userContext'
 import { Link, useNavigate } from 'react-router-dom'
+import axios from "axios";
+const API_URL = "https://cmput-404-w22-group-10-backend.herokuapp.com/"
 
 
 const linkStyle = {
   margin: "1rem",
   textDecoration: "none",
   color: 'white'
+};
+
+const getCurrentUser = () => {
+  return JSON.parse(localStorage.getItem('user'))
 };
 
 function NavBar() {
@@ -26,10 +32,28 @@ function NavBar() {
     
   })
 
+  const logout = () => {
+    var current = getCurrentUser();
+    localStorage.removeItem('user');
+    return axios.post(API_URL+'logout/', {}, {
+      headers: {
+        'Authorization': 'token ' + current.token
+      }
+    }
+    )
+    .then((response) => {
+      console.log(response.data)
+        return response.data
+    });
+};
+
   const handleLogout = (e) => {
-    e.preventDefault();
-    setLoggedIn(false)
-    setToken('')
+    // e.preventDefault();
+    // setLoggedIn(false)
+    // setToken('')
+    var current = getCurrentUser();
+    console.log(current);
+    logout()
     //setId('')
     navigate('/login')
 }
