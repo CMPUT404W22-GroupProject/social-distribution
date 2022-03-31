@@ -10,14 +10,10 @@ const API_URL = "https://cmput-404-w22-group-10-backend.herokuapp.com/"
 
 const Register = () => {
 
-    const URL = "https://cmput-404-w22-group-10-backend.herokuapp.com/register/"
-    const URL2 = "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/6f6995ed-ab47-4a5f-a916-7e238895cd0e"
     const navigate = useNavigate();
     const {displayName, setDisplayName} = useContext(UserContext);
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
-    const {id, setId} = useContext(UserContext);
-    const {loggedIn, setLoggedIn} = useContext(UserContext)
 
     const register = (displayName, email, password) => {
         return axios.post(API_URL+'register/', {
@@ -49,21 +45,6 @@ const Register = () => {
             "email": email,
             "password": password
         }
-    
-        // axios.post(URL, registerBody).then(function (response) {
-        //     console.log(response.data);
-        //     var str = response.data.user.uuid
-        //     console.log("STR", str)
-        //     var n = str.lastIndexOf('/');
-        //     var result = str.substring(n + 1)
-        //     setId(result)
-        //     setLoggedIn(true)
-        //     navigate(`/profile/:${id}`)
-        //   })
-        //   .catch(function (error) {
-        //     console.log(error);
-        //     setDisplayName("")
-        //   });
     }
 
     return (

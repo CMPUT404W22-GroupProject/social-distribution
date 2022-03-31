@@ -21,15 +21,9 @@ const login = (email, password) => {
 
 const Login = () => {
 
-    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
-
     const navigate = useNavigate();
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
-    
-    const {id, setId} = useContext(UserContext);
-
-    const {loggedIn, setLoggedIn} = useContext(UserContext)
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -41,17 +35,6 @@ const Login = () => {
         (error) => {
             console.log(error.response)
         });
-
-        // var URL = 'https://cmput-404-w22-group-10-backend.herokuapp.com/authors'
-
-        // const body = {
-        //     "email": "nando@gmail.com",
-        //     "password": "1231498"
-        // }
-
-        // axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/login/",body)
-        //   .then(res=> console.log(res.data))
-        //   .catch(err=> console.log(err))
 
 
     };

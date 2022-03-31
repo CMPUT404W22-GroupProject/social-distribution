@@ -48,13 +48,10 @@ function NavBar() {
 };
 
   const handleLogout = (e) => {
-    // e.preventDefault();
-    // setLoggedIn(false)
-    // setToken('')
+    e.preventDefault();
     var current = getCurrentUser();
     console.log(current);
     logout()
-    //setId('')
     navigate('/login')
 }
 
