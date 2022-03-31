@@ -58,6 +58,9 @@ class PostList(ListCreateAPIView):
         response = self.basic_auth.local_request(request)
         if response:
             return response
+        
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
 
         try:
             author = Author.objects.get(pk=author_id)
@@ -107,6 +110,10 @@ class PostDetails(APIView):
         response = self.basic_auth.local_request(request)
         if response:
             return response
+        
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
+
         try:
             author = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
@@ -144,6 +151,9 @@ class PostDetails(APIView):
         if response:
             return response
 
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
+
         try:
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
             post.delete()
@@ -158,6 +168,9 @@ class PostDetails(APIView):
         if response:
             return response
 
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
+            
         try: 
             Author.objects.get(pk=author_id)
         except Author.DoesNotExist:

@@ -65,6 +65,8 @@ class FollowerDetails(APIView, LoginRequiredMixin):
         response = self.basic_auth.local_request(request)
         if response:
             return response
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
 
         if author_id == foreign_author_id:
             return Response("You cannot follow yourself", status=400)
@@ -116,6 +118,8 @@ class FollowerDetails(APIView, LoginRequiredMixin):
         response = self.basic_auth.local_request(request)
         if response:
             return response
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
             
         if author_id == foreign_author_id:
             return Response("You cannot perform following actions to yourself", status=400)
