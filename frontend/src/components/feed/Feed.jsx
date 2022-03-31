@@ -26,7 +26,8 @@ function Feed({id, feedType}){
     const [likes, setLikes] = useState([]);
     const [recievedData, setRecievedData] = useState([]);
     const [inbox, setInbox] = useState([]);
-    const loggedInAuthorId = "9170ef2f-501c-47c7-a8b2-99480fb49216"; //MOE AUTHOR
+    const loggedInAuthorId = JSON.parse(localStorage.getItem('user')).user.uuid //logged in user's uuid (gurjog - 4039f6a5-ab83-4a16-a0eb-377653be1937)
+    //const loggedInAuthorId = "9170ef2f-501c-47c7-a8b2-99480fb49216"; //MOE AUTHOR
     //const loggedInAuthorId = "fe231d46-a216-4208-b806-8a064d9e7323"; //GOJO AUTHOR
     const [loggedInAuthor, setLoggedInAuthor] = useState([]);
     const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
@@ -45,10 +46,12 @@ function Feed({id, feedType}){
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const team10token = JSON.parse(localStorage.getItem('user')).token
 
     
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
-    console.log("HUH WHAT: ",localStorage)
+    console.log("HUH WHAT: ", JSON.parse(localStorage.getItem('user')).user.uuid)
+    //console.log("HUH WHAT: ", localStorage.getItem('user'))
     
     useEffect(() => {
         const getAuthorServer = async () => {
@@ -57,7 +60,8 @@ function Feed({id, feedType}){
             //await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/service/authors/")
             await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/", {
                 headers: {
-                  'Authorization': 'Basic ' + team10Authorization
+                  'Authorization': 'token ' + team10token
+                  //'Authorization': 'Basic ' + team10Authorization
                 }
               })
             .then((response) => {
@@ -133,7 +137,7 @@ function Feed({id, feedType}){
             });
             
             // Team 0
-            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/", {
+            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/9d090d84-0501-4a5b-9ce3-259a46a0ea0e/posts/", {
                 headers: {
                   'authorization': 'Basic ' + team0Authorization
                 }
@@ -163,7 +167,9 @@ function Feed({id, feedType}){
             if (team === "team10"){
                 await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/?page=" + page, {
                     headers: {
-                      'Authorization': 'Basic ' + team10Authorization
+                      
+                      'Authorization': 'token ' + team10token
+                      //'Authorization': 'Basic ' + team10Authorization
                     }
                   })
                 .then((response) => {
@@ -266,7 +272,9 @@ function Feed({id, feedType}){
                 if (team === "team10"){
                     result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
                         headers: {
-                          'Authorization': 'Basic ' + team10Authorization
+                          
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       });
                     setCount(result.data.count);
@@ -304,7 +312,9 @@ function Feed({id, feedType}){
                 if (team === "team10"){
                     result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
-                          'Authorization': 'Basic ' + team10Authorization
+                          
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       });
                       setCount(result.data.count);
@@ -344,7 +354,9 @@ function Feed({id, feedType}){
                 if (page === 1){
                     const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox/", {
                         headers: {
-                          'Authorization': 'Basic ' + team10Authorization
+                          
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       });
                     setRecievedData(result);
@@ -357,6 +369,8 @@ function Feed({id, feedType}){
                 } else {
                     const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox?page=" + page, {
                         headers: {
+                          
+                          //'Authorization': 'token ' + team10token
                           'Authorization': 'Basic ' + team10Authorization
                         }
                       });
@@ -375,7 +389,9 @@ function Feed({id, feedType}){
                 if (team === "team10"){
                     result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/followers/", {
                   headers: {
-                    'Authorization': 'Basic ' + team10Authorization
+                    
+                    'Authorization': 'token ' + team10token
+                    //'Authorization': 'Basic ' + team10Authorization
                     }
                     })
                 } else if (team === "team9"){
@@ -442,7 +458,9 @@ function Feed({id, feedType}){
             const fetchLoggedInAuthor = async () => {
                 const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + loggedInAuthorId + "/", {
                     headers: {
-                      'Authorization': 'Basic ' + team10Authorization
+                      
+                      'Authorization': 'token ' + team10token
+                      //'Authorization': 'Basic ' + team10Authorization
                     }
                   });
                   console.log(result.data)
@@ -452,7 +470,9 @@ function Feed({id, feedType}){
             const fetchLoggedInAuthorFollowers = async () => {
                 const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + loggedInAuthorId + "/followers/", {
                   headers: {
-                    'Authorization': 'Basic ' + team10Authorization
+                    
+                    'Authorization': 'token ' + team10token
+                    //'Authorization': 'Basic ' + team10Authorization
                   }
                 })
                 console.log("FOLLOWER GET: ", result.data)

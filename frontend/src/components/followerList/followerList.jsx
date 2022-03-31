@@ -13,6 +13,7 @@ function FollowerList({profileId}) {
   const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
   const team9Authorization = btoa("group10:pwd1010");
   const team4Authorization = btoa("Team10:abcdefg");
+  const team10token = JSON.parse(localStorage.getItem('user')).token
 
   useEffect(() => {
 
@@ -20,7 +21,8 @@ function FollowerList({profileId}) {
 
         const result = await axios.get(URL10 + "/authors/" + profileId + "/followers", {
             headers: {
-              'Authorization': 'Basic ' + team10Authorization
+              'Authorization': 'token ' + team10token
+              //'Authorization': 'Basic ' + team10Authorization
             }});
         
         setFollowers(result.data.items)

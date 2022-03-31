@@ -34,6 +34,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const team10token = JSON.parse(localStorage.getItem('user')).token
     
     
     const uploadImage = async (e) => {
@@ -125,7 +126,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
          try {
          await axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + loggedInAuthorId + "/posts/", newPost, {
           headers: {
-            'Authorization': 'Basic ' + team10Authorization
+            'Authorization': 'token ' + team10token
+            //'Authorization': 'Basic ' + team10Authorization
           }
         })
          .then((response) => {
@@ -155,7 +157,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                   if (friendPathname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                       await axios.post(friend.id + "/inbox/", newPost, {
                         headers: {
-                          'Authorization': 'Basic ' + team10Authorization
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       })
                       .then((response) => {
@@ -212,7 +215,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                   if (followerPathname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                       await axios.post(follower.id + "/inbox/", newPost, {
                         headers: {
-                          'Authorization': 'Basic ' + team10Authorization
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       })
                       .then((response) => {
