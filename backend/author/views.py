@@ -1,10 +1,11 @@
 from django.http import HttpResponse
+from django.test import RequestFactory
 from author.models import Author
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from author.serializers import AuthorsSerializer, RegisterSerializer, LoginSerializer
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from rest_framework import status, generics, permissions
 from django.views.decorators.csrf import csrf_exempt
 from .pagination import AuthorPageNumberPagination
@@ -15,14 +16,12 @@ import requests
 from node.authentication import BasicAuthentication
 
 class AuthorList(ListCreateAPIView):
-    # permission_classes = (permissions.IsAuthenticated,)
     serializer_class = AuthorsSerializer
     pagination_class = AuthorPageNumberPagination
     basic_auth = BasicAuthentication()
 
     def get_queryset(self):
         return Author.objects.all().order_by('displayName')
-
 
     # Get all Authors
     def list(self, request): 
@@ -68,8 +67,7 @@ class AuthorDetails(APIView):
         response = self.basic_auth.remote_request(request)
         if response:
             return response
-        # if not request.user.is_authenticated:
-        #     return HttpResponse("You must be registered to access this function.", status = 401)
+
         try:
             author = Author.objects.get(pk=author_id)
             serializer = AuthorsSerializer(author, context={'request':request})
@@ -146,7 +144,7 @@ class LoginUser(APIView):
             serialized_data["uuid"] = author.uuid
             serialized_data["displayName"] = author.displayName
             serialized_data.pop("password")
-
+            login(request, author)
             try:
                 token = Token.objects.get(user=author)
                 return Response({
@@ -159,16 +157,16 @@ class LoginUser(APIView):
                     "token": Token.objects.create(user=author).key
 
                 }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutUser(APIView):
     def post(self, request):
-        # Delete token if it's there
         try:
             request.user.auth_token.delete()
         except:
-            pass 
+            return Response("unsuccessful logout", status=500)
         
         logout(request)
 
-        return HttpResponse("Successfully logged out.", status=201)
+        return Response("Successfully logged out.", status=200)
