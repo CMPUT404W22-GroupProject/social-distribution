@@ -79,6 +79,8 @@ class AuthorListTest(APITestCase):
         authors.delete()
         node = Node.objects.all()
         node.delete()
+        token = Token.objects.all()
+        token.delete()
 
 class AuthorDetailsTest(APITestCase):
     """Test the AuthorDetails class in views.py"""
@@ -180,3 +182,5 @@ class AuthorDetailsTest(APITestCase):
         authors.delete()
         node = Node.objects.all()
         node.delete()
+        token = Token.objects.all()
+        token.delete()
