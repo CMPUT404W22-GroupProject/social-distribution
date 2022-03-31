@@ -132,7 +132,7 @@ function Feed({id, feedType}){
             });
             
             // Team 0
-            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/9d090d84-0501-4a5b-9ce3-259a46a0ea0e/posts/", {
+            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/", {
                 headers: {
                   'authorization': 'Basic ' + team0Authorization
                 }
