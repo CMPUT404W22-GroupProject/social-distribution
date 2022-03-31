@@ -55,12 +55,12 @@ class PostList(ListCreateAPIView):
             return Response("Post not found", status=404)
     # create a new post
     def create(self, request, author_id):
-        response = self.basic_auth.local_request(request)
-        if response:
-            return response
+        # response = self.basic_auth.local_request(request)
+        # if response:
+        #     return response
         
-        if not request.user.is_authenticated or author_id != request.user.uuid:
-            return Response("Forbidden", status=403)
+        # if not request.user.is_authenticated or author_id != request.user.uuid:
+        #     return Response("Forbidden", status=403)
 
         try:
             author = Author.objects.get(pk=author_id)
@@ -187,5 +187,22 @@ class PostDetails(APIView):
             else:
                 return Response(serializer.errors, status = 400) # bad request
 
-# class ImagePostDetails(APIView):
-#     def get(self, request, post_id, author_id):
+class ImagePostDetails(APIView):
+    basic_auth = BasicAuthentication()
+    def get(self, request, post_id, author_id):
+        response = self.basic_auth.remote_request(request)
+        if response:
+            return response
+
+        try:
+            post = Post.objects.filter(author_id=author_id).get(pk=post_id)
+        except Post.DoesNotExist:
+            return Response("Post not found", status=404)
+
+        if 'image' in post.contentType:
+            if post.visibility.upper() != "PUBLIC":
+                return Response("Post not public", status=404)
+            image_content = post.content
+            return Response(image_content, status=200)
+        else:
+            return Response("No image", status=404)
