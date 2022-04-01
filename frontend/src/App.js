@@ -10,8 +10,7 @@ import NavBar from './components/Navbar';
 
 import { UserContextProvider } from './context/userContext'
 import Register from './pages/register/Register';
-import PrivateRoute from './index';
-
+import PrivateRoute from './routes/PrivateRoute';
 function App() {
   
   return ( 
