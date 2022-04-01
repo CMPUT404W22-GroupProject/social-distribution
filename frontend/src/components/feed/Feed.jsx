@@ -85,7 +85,6 @@ function Feed({id, feedType}){
 
 
 
-
         const getAuthorServer = async () => {
             
             //getting authors from team 10, and storing
