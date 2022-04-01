@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import Container from 'react-bootstrap/Container'
@@ -14,39 +14,37 @@ const linkStyle = {
 
 function NavBar() {
 
-
-  let {loggedIn, setLoggedIn} = useContext(UserContext)
-  const {token, setToken} = useContext(UserContext)
   //const {id, setId} = useContext(UserContext)
-  const id =  'ad35500f-14e6-42c4-af9e-6eec0b8a29a5'
+  const [user, setUser] = useState(localStorage.getItem('user'))
   const navigate = useNavigate();
 
 
-  useEffect(() => {
-    
-  })
-
   const handleLogout = (e) => {
     e.preventDefault();
-    setLoggedIn(false)
-    setToken('')
-    //setId('')
+    localStorage.removeItem('user')
+    setUser(null)
+    console.log("LOUGOUT",localStorage.getItem('user'))
     navigate('/login')
-}
+  }
+
+  useEffect(() => {
+    setUser(localStorage.getItem('user'))
+  }, [localStorage.getItem('user')])
+
 
   return (
-    <Navbar bg="dark" variant="dark">
-        <Container>
-            <Nav>
-            {loggedIn && (<Link style={linkStyle} to='/home'>Home</Link>)}
-            {loggedIn && (<Link style={linkStyle} to={`/profile/:${id}`}>Profile</Link>)}
-            {loggedIn && (<Link style={linkStyle} onClick={(e) => handleLogout(e)} to='/login'>Logout</Link>)}
-
-            {!loggedIn && (<Link style={linkStyle} to='/login'>Login</Link>)}
-            </Nav>
-        </Container>
-  </Navbar>
-  )
+      <Navbar bg="dark" variant="dark">
+      <Container>
+          <Nav> 
+            {user && (<Link style={linkStyle} to={`/profile/${JSON.parse(user).user.uuid}`}>Inbox</Link>)}
+            {user && (<Link style={linkStyle} to={`/profile/${JSON.parse(user).user.uuid}`}>Home</Link>)}
+            {user && (<Link style={linkStyle} onClick={(e) => handleLogout(e)} to='/login'>Logout</Link>)}
+            {!user && (<Link style={linkStyle} to={'/login'}>Login</Link>)}
+            {!user && (<Link style={linkStyle} to={'/register'}>Register</Link>)}
+          </Nav>
+      </Container>
+      </Navbar>
+    )
 }
 
 export default NavBar
