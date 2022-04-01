@@ -54,6 +54,38 @@ function Feed({id, feedType}){
     //console.log("HUH WHAT: ", localStorage.getItem('user'))
     
     useEffect(() => {
+
+        const followTestSend = async () => {
+
+        var followTest = {
+            "type": "follow",
+            "summary": "I wanna follow you",
+            "actor": "http://backend-404.herokuapp.com/authors/044a48a4-36e4-4fa3-a9ee-c63b216fb8b2",
+            "object": "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/4039f6a5-ab83-4a16-a0eb-377653be1937"
+            }
+        try {
+            await axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/4039f6a5-ab83-4a16-a0eb-377653be1937" + "/inbox/", followTest, {
+                headers: {
+                  //'Authorization': 'token ' + team10token
+                  'Authorization': 'Basic ' + team10Authorization
+                }
+              })
+            .then((response) => {
+                //console.log("THIS IS THE DATA",response.data);
+                console.log("POSTED TO INBOX", response)
+            });
+        } catch (error) {
+            //console.log(error)
+        }
+    }
+        followTestSend()
+    
+
+
+
+
+
+
         const getAuthorServer = async () => {
             
             //getting authors from team 10, and storing
@@ -270,13 +302,14 @@ function Feed({id, feedType}){
             if (page === 1){
                 var result;
                 if (team === "team10"){
-                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
+                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/4039f6a5-ab83-4a16-a0eb-377653be1937/posts/22d3a908-b956-41e8-b894-b9e11fba356f/image", {
                         headers: {
                           
                           'Authorization': 'token ' + team10token
                           //'Authorization': 'Basic ' + team10Authorization
                         }
                       });
+                      console.log("IMAGEPOST: ", result)
                     setCount(result.data.count);
                 } else if (team === "team9"){
                     result = await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/" + urlAuthorId + "/posts", {
