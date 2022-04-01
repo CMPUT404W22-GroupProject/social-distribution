@@ -40,6 +40,7 @@ function Post({post, team, loggedInAuthor}){
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const team10token = JSON.parse(localStorage.getItem('user')).token
     const postHostName = new URL(post.id).hostname;
     const [isPlain, setisPlain] = useState(false);
     const [isMarkdown, setIsMarkdown] = useState(false);
@@ -60,7 +61,8 @@ function Post({post, team, loggedInAuthor}){
                         const postPath = postUrl.pathname; //this is path of post e.g. authors/{authorid}/posts/{postid}
                         await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com" + postPath + "/likes", {
                             headers: {
-                              'Authorization': 'Basic ' + team10Authorization
+                              'Authorization': 'token ' + team10token
+                              //'Authorization': 'Basic ' + team10Authorization
                             }
                           })
                         .then((response) => {
@@ -232,7 +234,8 @@ function Post({post, team, loggedInAuthor}){
                 try {
                     await axios.post(postAuthorId + "/inbox/", remoteNewLike, {
                         headers: {
-                          'Authorization': 'Basic ' + team10Authorization
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       })
                     .then((response) => {
@@ -250,7 +253,8 @@ function Post({post, team, loggedInAuthor}){
                         //console.log("LIKEID: ", likeId)
                         await axios.delete(likeId, {
                             headers: {
-                              'Authorization': 'Basic ' + team10Authorization
+                              'Authorization': 'token ' + team10token
+                              //'Authorization': 'Basic ' + team10Authorization
                             }
                           })
                     } catch (error) {
@@ -373,7 +377,8 @@ function Post({post, team, loggedInAuthor}){
         try {
             await axios.post(loggedInAuthor.id + "/posts/", sharedPost, {
                 headers: {
-                  'Authorization': 'Basic ' + team10Authorization
+                  'Authorization': 'token ' + team10token
+                  //'Authorization': 'Basic ' + team10Authorization
                 }
               })
             .then((response) => {
@@ -388,7 +393,8 @@ function Post({post, team, loggedInAuthor}){
             var followers;
             await axios.get(loggedInAuthor.id + "/followers/", {
                 headers: {
-            'Authorization': 'Basic ' + team10Authorization
+            'Authorization': 'token ' + team10token
+            //'Authorization': 'Basic ' + team10Authorization
                 }
                 }).then((response) => {followers = response.data["items"]});
 
@@ -400,7 +406,8 @@ function Post({post, team, loggedInAuthor}){
                       if (followerPathname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                           await axios.post(follower.id + "/inbox/", sharedPost, {
                             headers: {
-                              'Authorization': 'Basic ' + team10Authorization
+                              'Authorization': 'token ' + team10token
+                              //'Authorization': 'Basic ' + team10Authorization
                             }
                           })
                           .then((response) => {
@@ -467,7 +474,8 @@ function Post({post, team, loggedInAuthor}){
         //Sending edited post to author's posts
         axios.put(post.id + '/', editedPost, {
             headers: {
-              'Authorization': 'Basic ' + team10Authorization
+              'Authorization': 'token ' + team10token
+              //'Authorization': 'Basic ' + team10Authorization
             }
           })
           .then((response) => {
@@ -487,7 +495,8 @@ function Post({post, team, loggedInAuthor}){
         
         axios.delete(post.id,{
             headers: {
-              'Authorization': 'Basic ' + team10Authorization
+              'Authorization': 'token ' + team10token
+              //'Authorization': 'Basic ' + team10Authorization
             }
         })
         .then((response) => {
@@ -541,7 +550,7 @@ function Post({post, team, loggedInAuthor}){
                     }
                     {
                         (post.contentType === "text/markdown") &&
-                        <ReactMarkdown children= {post.content} ></ReactMarkdown>
+                        <ReactMarkdown children= {post.content} escapeHtml={false}></ReactMarkdown>
                     }
 
                 </Card.Body>
@@ -668,6 +677,7 @@ function Post({post, team, loggedInAuthor}){
                      <span>
                          Share this post?
                      </span>
+                     <span>{post.id}</span>
                      <Button onClick={()=>{shareHandler()}}>Share</Button>
                     </div>
                     

@@ -31,6 +31,7 @@ function Profile({user}){
 
     const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const team10token = JSON.parse(localStorage.getItem('user')).token
     const [loggedInAuthor, setLoggedInAuthor] = useState([]);
     const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
 
@@ -42,7 +43,8 @@ function Profile({user}){
             if (page === 1){
                 const result = await axios.get(URL10 + "/authors/" + profileId + "/posts", {
                     headers: {
-                      'Authorization': 'Basic ' + team10Authorization
+                      'Authorization': 'token ' + team10token
+                      //'Authorization': 'Basic ' + team10Authorization
                     }});
                 setRecievedData(result);
                 setCount(result.data.count);
@@ -54,7 +56,8 @@ function Profile({user}){
             } else {
                 const result = await axios.get(URL10 + "/authors/" + profileId + "/posts?page=" + page, {
                     headers: {
-                      'Authorization': 'Basic ' + team10Authorization
+                      'Authorization': 'token ' + team10token
+                      //'Authorization': 'Basic ' + team10Authorization
                     }});
                 setCount(result.data.count);
                 setRecievedData(result);
@@ -71,7 +74,8 @@ function Profile({user}){
     async function fetchAuthor() {
         const res = await axios.get(URL10 + `/authors/${profileId}`, {
             headers: {
-              'Authorization': 'Basic ' + team10Authorization
+              'Authorization': 'token ' + team10token
+              //'Authorization': 'Basic ' + team10Authorization
             }});
         setAuthorData(res.data)
     }
