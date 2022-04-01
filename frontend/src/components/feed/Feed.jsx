@@ -78,7 +78,7 @@ function Feed({id, feedType}){
             //console.log(error)
         }
     }
-        followTestSend()
+        //followTestSend()
     
 
 
@@ -301,7 +301,8 @@ function Feed({id, feedType}){
             if (page === 1){
                 var result;
                 if (team === "team10"){
-                    result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/4039f6a5-ab83-4a16-a0eb-377653be1937/posts/22d3a908-b956-41e8-b894-b9e11fba356f/image", {
+                    //result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/4039f6a5-ab83-4a16-a0eb-377653be1937/posts/22d3a908-b956-41e8-b894-b9e11fba356f/image", {
+                        result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/"+ urlAuthorId +"/posts/", {
                         headers: {
                           
                           'Authorization': 'token ' + team10token
@@ -393,7 +394,7 @@ function Feed({id, feedType}){
                       });
                     setRecievedData(result);
                     //console.log("RESULT: ", result)
-                    setCount(result.data.items.length);
+                    setCount(result.data.count);
                      //puts objects in array + sorts from newest to oldest
                     setInbox(result.data.items.sort((p1, p2) => {
                     return new Date(p2.published) - new Date(p1.published)
