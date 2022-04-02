@@ -2,15 +2,12 @@ from django.test import TestCase
 from author.models import Author
 from like.models import Like
 from post.models import Post
-from author.serializers import AuthorsSerializer
 from comment.models import Comment
 
-    
 class LikeModelTest(TestCase):
     """Test the Like Model"""
 
     def setUp(self):
-        
         self.author = Author.objects.create(
             email="test@example.com",
             displayName="APITest", 
@@ -37,7 +34,6 @@ class LikeModelTest(TestCase):
         }
         self.comment  = Comment.objects.create(**self.comment_data)
 
-
         #Liking a post
         self.like_data_post = {
             "context":"https://www.w3.org/ns/activitystreams",
@@ -48,15 +44,13 @@ class LikeModelTest(TestCase):
         }
         self.like_post  = Like.objects.create(**self.like_data_post)
 
-
         #Liking a comment
         self.like_data_comment = {
             "context":"https://www.w3.org/ns/activitystreams",
             "summary": "APITest likes your post", 
             "type":"Like",
             "author":self.author,
-            "object":self.post,
-            "object1":self.comment
+            "object":self.comment
         }
         self.like_comment  = Like.objects.create(**self.like_data_comment)
 
@@ -70,7 +64,6 @@ class LikeModelTest(TestCase):
         self.assertEqual(self.like_post.type, self.like_data_post["type"])
         self.assertEqual(self.like_post.author, self.like_data_post["author"])
         self.assertEqual(self.like_post.object, self.like_data_post["object"])
-        self.assertEqual(self.like_post.object1, None)
 
         #For comments
         self.assertEqual(self.like_comment.context, self.like_data_comment["context"])
@@ -78,8 +71,6 @@ class LikeModelTest(TestCase):
         self.assertEqual(self.like_comment.type, self.like_data_comment["type"])
         self.assertEqual(self.like_comment.author, self.like_data_comment["author"])
         self.assertEqual(self.like_comment.object, self.like_data_comment["object"])
-        self.assertEqual(self.like_comment.object1, self.like_data_comment["object1"])
-
 
     def tearDown(self):
         self.author.delete()

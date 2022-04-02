@@ -10,6 +10,13 @@ function Follow({follow}){
     //This is the follow card displayed in the inbox to notify if a follow request has been recieved,
     //and handles accept and decline of requests
 
+    const team4Authorization = btoa("Team10:abcdefg");
+    const team9Authorization = btoa("group10:pwd1010");
+    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const team10token = JSON.parse(localStorage.getItem('user')).token
+
+    console.log("WHO HAS FOLLOWED: ", follow)
+
     const acceptFollow = async () => {
         //if user chooses accept
         //sends POST request to ***/followers of logged in user (so my AuthorId), with follower object
@@ -18,9 +25,16 @@ function Follow({follow}){
         console.log("FOLLLOW REQUEST: ", follow)
         const foreignAuthorIdUrl = new URL(follow.actor.id);
         const foreignAuthorIdPathname = foreignAuthorIdUrl.pathname;
-        const foreignAuthorId = foreignAuthorIdPathname.replace("/service/authors/", " ")
+        //const foreignAuthorId = foreignAuthorIdPathname.replace("/service/authors/", "")//for team9
+        const foreignAuthorId = foreignAuthorIdPathname.replace("/authors/", "").replace("/", "")
 
-        await axios.put(follow.object.id + "/followers/" + foreignAuthorId, follow)
+
+        await axios.put(follow.object.id + "/followers/" + foreignAuthorId, follow, {
+            headers: {
+              'Authorization': 'token ' + team10token
+              //'Authorization': 'Basic ' + team10Authorization
+            }
+          })
             .then((response) => {
                 if (response.status === 201){
                     alert("Succesfully accepted follow request!");
@@ -28,6 +42,7 @@ function Follow({follow}){
                     alert("Oops, something went wrong!");
                 }
             })
+
            /* var followRe  =     {
                 "type": "Follow",      
                 "summary":"Greg wants to follow Lara",
@@ -63,13 +78,13 @@ function Follow({follow}){
                     <div className="followTopLeft">
                     {/* <img className="postProfileImg" /> */}
                     <PersonIcon className="followProfileImg"/>
-                    <span className="followUsername">{follow.displayName}</span>
+                    <span className="followUsername">{follow.actor.displayName}</span>
                     <span className="followDate">{format(follow.published)}</span>
                      </div> 
                 </Card.Header>
                 <Card.Body className="text-center">
                         <Card.Text>
-                            {follow.displayName} has requested to follow you!
+                            {follow.summary}
                         </Card.Text>
                      
                 </Card.Body>

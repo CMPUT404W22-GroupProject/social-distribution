@@ -39,7 +39,7 @@ class InboxModelTest(TestCase):
         self.like_post  = Like.objects.create(**self.like_data_post)
 
         #Creating inbox object from like
-        self.inbox = Inbox.create_object_from_like(self.like_post)
+        self.inbox = Inbox.create_object_from_like(self.like_post, self.author.uuid)
 
     def testLikeModel(self):
         """Test all INBOX fields"""

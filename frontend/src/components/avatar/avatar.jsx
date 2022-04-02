@@ -13,6 +13,7 @@ function AvatarPhoto({id}) {
     const [encodedFile, setEncodedFile] = useState(null);
 
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const team10token = JSON.parse(localStorage.getItem('user')).token
 
     const URL = "https://cmput-404-w22-group-10-backend.herokuapp.com"
 
@@ -22,7 +23,8 @@ function AvatarPhoto({id}) {
         const path = URL + "/authors/" + id +  "/" 
         axios.get(path, {
             headers: {
-              'Authorization': 'Basic ' + team10Authorization
+              'Authorization': 'token ' + team10token
+              //'Authorization': 'Basic ' + team10Authorization
             }
           }).then(res => {
             const base64 = res.data.profileImage
@@ -46,7 +48,8 @@ function AvatarPhoto({id}) {
             
             axios.post(path, imagePost, {
                 headers: {
-                  'Authorization': 'Basic ' + team10Authorization
+                  'Authorization': 'token ' + team10token
+                  //'Authorization': 'Basic ' + team10Authorization
                 }
               }
 

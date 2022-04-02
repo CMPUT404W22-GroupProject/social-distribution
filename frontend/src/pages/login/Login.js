@@ -14,7 +14,10 @@ const login = (email, password) => {
     })
     .then((response) => {
         localStorage.setItem('user', JSON.stringify(response.data));
+<<<<<<< HEAD
        
+=======
+>>>>>>> a4d3d84473d07ad59a8aa16266d36289c9c71781
         console.log(response.data)
         return response.data;
     });
@@ -32,7 +35,10 @@ const Login = () => {
         .then(() => {
             navigate('/authors');
             window.location.reload();
+<<<<<<< HEAD
             console.log(localStorage.getItem('user'))
+=======
+>>>>>>> a4d3d84473d07ad59a8aa16266d36289c9c71781
         },
         (error) => {
             console.log(error.response)

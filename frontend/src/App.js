@@ -9,11 +9,10 @@ import Home from './pages/home'
 import NavBar from './components/Navbar';
 
 import { UserContextProvider } from './context/userContext'
-import PrivateRoute from './routes/PrivateRoute';
 import Register from './pages/register/Register';
-
+import PrivateRoute from './routes/PrivateRoute';
 function App() {
-
+  
   return ( 
         <UserContextProvider>
          <Router>    
@@ -21,12 +20,14 @@ function App() {
             <Routes>
               <Route exact path='/login' element={<Login/>}/>
               <Route exact path='/register' element={<Register/>}/>
-              <Route exact path='/profile/:id' element={<Profile/>}/>
-              <Route exact path='/authors/:id/inbox' element={<Home feedType = "inbox"/>}/>
-              <Route exact path='/authors/:id/posts' element={<Home feedType = "posts"/>}/> 
+              <Route exact path='/profile/:id' element={<PrivateRoute><Profile/></PrivateRoute>}/>
+              <Route exact path='/home' element={<PrivateRoute><Home/></PrivateRoute>}/>
+              <Route exact path='/' element={<PrivateRoute><Home/></PrivateRoute>}/>
+              <Route exact path='/authors/:id/inbox' element={<PrivateRoute><Home feedType = "inbox"/></PrivateRoute>}/>
+              <Route exact path='/authors/:id/posts' element={<PrivateRoute><Home feedType = "posts"/></PrivateRoute>}/> 
             </Routes> 
           </Router>
-          </UserContextProvider>
+        </UserContextProvider>
   );
 }
 

@@ -59,7 +59,9 @@ class InboxList(ListCreateAPIView):
         response = self.basic_auth.local_request(request)
         if response:
             return response
-            
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
+
         try:
             try:
                 Author.objects.get(pk=author_id)
@@ -74,7 +76,7 @@ class InboxList(ListCreateAPIView):
             items = []
             if page is not None:
 
-                serializer = InboxSerializer(queryset, many=True, context={'request': request})
+                serializer = InboxSerializer(queryset, many=True, context={'request': request, 'author': author5})
                 for each_object in serializer.data:
                     each_object['author'] = author.data['id']
                     items.append(each_object["items"])
@@ -149,6 +151,8 @@ class InboxList(ListCreateAPIView):
         response = self.basic_auth.local_request(request)
         if response:
             return response
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
         author11 = Author.objects.get(pk=author_id)
         try:

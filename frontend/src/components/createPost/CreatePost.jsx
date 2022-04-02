@@ -30,9 +30,11 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
     const [buttonPopup, setButtonPopup] = useState(false);
     const [isPlain, setisPlain] = useState(false);
     const [isMarkdown, setIsMarkdown] = useState(false);
+    const team0Authorization = btoa("admin:tX7^iS8a5Ky$^S");
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const team10token = JSON.parse(localStorage.getItem('user')).token
     
     
     const uploadImage = async (e) => {
@@ -110,7 +112,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
         //if image is selected and there is no content, so image only post
         if ((base64 !== "") && (postContent.current.value === "")){
           newPost["content"] = base64;
-          newPost["contentType"] = "image/base64";
+          var fileType = file.type;
+          newPost["contentType"] = fileType + ";base64";
           console.log("newPOST W BASE64: ", newPost)
         }
 
@@ -123,7 +126,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
          try {
          await axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + loggedInAuthorId + "/posts/", newPost, {
           headers: {
-            'Authorization': 'Basic ' + team10Authorization
+            'Authorization': 'token ' + team10token
+            //'Authorization': 'Basic ' + team10Authorization
           }
         })
          .then((response) => {
@@ -153,7 +157,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                   if (friendPathname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                       await axios.post(friend.id + "/inbox/", newPost, {
                         headers: {
-                          'Authorization': 'Basic ' + team10Authorization
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       })
                       .then((response) => {
@@ -170,9 +175,18 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                       status = response.status;
                       })
                   } else if (friendPathname === "backend-404.herokuapp.com"){
-                    await axios.post(friend.id + "/inbox", newPost, {
+                    await axios.post(friend.id + "/inbox/", newPost, {
                       headers: {
                         'authorization': 'Basic ' + team4Authorization
+                      }
+                    })
+                      .then((response) => {
+                      status = response.status;
+                      })
+                  } else if (friendPathname === "tik-tak-toe-cmput404.herokuapp.com"){
+                    await axios.post(friend.id + "/inbox/", newPost, {
+                      headers: {
+                        'authorization': 'Basic ' + team0Authorization
                       }
                     })
                       .then((response) => {
@@ -201,7 +215,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                   if (followerPathname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                       await axios.post(follower.id + "/inbox/", newPost, {
                         headers: {
-                          'Authorization': 'Basic ' + team10Authorization
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       })
                       .then((response) => {
@@ -217,7 +232,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                         status = response.status;
                         })
                   } else if (followerPathname === "backend-404.herokuapp.com"){
-                      await axios.post(follower.id + "/inbox", newPost, {
+                    // TODO: VERIFY URL FORMATTING  
+                    await axios.post(follower.id + "/inbox/", newPost, {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
                         }
@@ -275,7 +291,10 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
           <div className="createPostWrapper">
             <div className="createPostTop">
               {/* <img className="pofile-pic" src="/assets/person/1.jpeg" alt="" /> */}
-              <PersonIcon className='createPostProfilepic'/>
+              {(loggedInAuthor.profileImage === "" || loggedInAuthor.profileImage === null) && 
+              <PersonIcon className='createPostProfilepic'/>}
+              {(loggedInAuthor.profileImage !== "" && loggedInAuthor.profileImage !== null) && 
+              <img className='createPostProfilepic' src = {loggedInAuthor.profileImage}/>}
               <input
                 placeholder="Title!"
                 className="createPostInput"
