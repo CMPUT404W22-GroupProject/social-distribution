@@ -5,6 +5,7 @@ import base64
 import requests
 from urllib.parse import urlparse
 from requests.auth import HTTPBasicAuth
+from rest_framework.authtoken.models import Token
 # https://djangosnippets.org/snippets/2468/
 class BasicAuthentication:
 
@@ -16,65 +17,58 @@ class BasicAuthentication:
         return response
     
     def remote_request(self, request):
-        # host = request.META['HTTP_HOST'].split(':')[0]
-        # if host == "localhost" or host == "127.0.0.1" or host == "cmput-404-w22-group-10-backend.herokuapp.com":
-        #     return None
+
         if 'HTTP_AUTHORIZATION' not in request.META:
             return self.unauthed()
         else:
+            print("there is auth")
             authentication = request.META['HTTP_AUTHORIZATION']
             (authmeth, auth) = authentication.split(' ',1)
-            if 'basic' != authmeth.lower():
-                return self.unauthed()
+            if 'basic' == authmeth.lower():
 
-            auth = base64.b64decode(auth.strip()).decode("utf-8")
-            username, password = auth.split(':',1)
+                auth = base64.b64decode(auth.strip()).decode("utf-8")
 
-            try:
-                node = Node.objects.get(username=username)
-                if node.password == password:
+                username, password = auth.split(':',1)
+
+                try:
+                    node = Node.objects.get(username=username)
                     return
-                else:
+
+                except Node.DoesNotExist:
                     return self.unauthed()
 
-            except Node.DoesNotExist:
+            elif 'token' == authmeth.lower():
+                try:
+                    token = Token.objects.get(pk=auth)
+                    return
+                except:
+                    return Response("Forbidden", status=403)
+            else: 
                 return self.unauthed()
 
             
     
     def local_request(self, request):
-        # host = request.META['HTTP_HOST'].split(':')[0]
-        # if host == "localhost" or host == "127.0.0.1" or host == "cmput-404-w22-group-10-backend.herokuapp.com":
-        #     return None
 
         if 'HTTP_AUTHORIZATION' not in request.META:
             return self.unauthed()
         else:
             authentication = request.META['HTTP_AUTHORIZATION']
             (authmeth, auth) = authentication.split(' ',1)
-            if 'basic' != authmeth.lower():
-                return self.unauthed()
 
-            auth = base64.b64decode(auth.strip()).decode("utf-8")
-
-            username, password = auth.split(':',1)
-
-            try:
-                node = Node.objects.get(username=username)
-                if node.password == password:
-                    if node.is_local == True:
-                        return
-                return self.unauthed()
-
-            except Node.DoesNotExist:
+            if 'token' == authmeth.lower():
+                try:
+                    token = Token.objects.get(pk=auth)
+                    return
+                except:
+                    return Response("Forbidden", status=403)
+            else: 
                 return self.unauthed()
         
     def get_request(self, url):
         host = urlparse(url).hostname
-
-        if host == "localhost" or host == "127.0.0.1" or host == "cmput-404-w22-group-10-backend.herokuapp.com":
-            username = 'admin'
-            password = 'gwbRqv8ZLtM3TFRW'
+        if host == 'localhost' or host == '127.0.0.1' or host == 'cmput-404-w22-group-10-backend.herokuapp.com/':
+            return None
         elif host == "backend-404.herokuapp.com":
             username = 'Team10'
             password = 'abcdefg'

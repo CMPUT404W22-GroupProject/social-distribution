@@ -12,7 +12,6 @@ function Github({githubURL}) {
         await axios.get("https://api.github.com/users"+ githubUsername + "/events")
         .then((response) =>{
             if (response.status === 200){
-                console.log("GITHUB RESPONSE", response.data)
                 setGithub(response.data)
             }
            
@@ -34,7 +33,6 @@ function Github({githubURL}) {
     })
 
     const displayEvent = (item) =>{
-        console.log("is this working",item)
 
         return <div className='githubEvent'>
         <span className='githubPushevent'>{item.type}</span>

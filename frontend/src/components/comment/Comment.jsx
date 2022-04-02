@@ -19,13 +19,15 @@ const Comment = ({comment, loggedInAuthor, team}) => {
         const team4Authorization = btoa("Team10:abcdefg");
         const team9Authorization = btoa("group10:pwd1010");
         const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+        const team10token = JSON.parse(localStorage.getItem('user')).token
         
         const fetchLikeCount = async () => {
             var result;
             if (commentHostname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                 result = await axios.get(comment.id + "/likes", {
                     headers: {
-                      'Authorization': 'Basic ' + team10Authorization
+                      'Authorization': 'token ' + team10token
+                      //'Authorization': 'Basic ' + team10Authorization
                     }
                   });
             } else if (commentHostname === "cmput-404-w22-project-group09.herokuapp.com"){
@@ -73,7 +75,8 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                     try {
                         await axios.post(comment.author.id + "/inbox/", newLike, {
                             headers: {
-                              'Authorization': 'Basic ' + team10Authorization
+                              'Authorization': 'token ' + team10token
+                              //'Authorization': 'Basic ' + team10Authorization
                             }
                           })
                             .then((response) => {
@@ -88,7 +91,8 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                     try {
                         await axios.delete(likeId, {
                             headers: {
-                              'Authorization': 'Basic ' + team10Authorization
+                              'Authorization': 'token ' + team10token
+                              //'Authorization': 'Basic ' + team10Authorization
                             }
                           })
                     } catch (error) {

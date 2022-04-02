@@ -31,6 +31,7 @@ const Login = () => {
         .then((response) => {
             let uuid = response.user.uuid;
             navigate('/authors/' + uuid + '/inbox');
+
             window.location.reload();
         },
         (error) => {

@@ -16,6 +16,7 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
     const team4Authorization = btoa("Team10:abcdefg");
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+    const team10token = JSON.parse(localStorage.getItem('user')).token
     const postHostName = new URL(postAuthorId).hostname;
 
     //console.log("commentsID: ", loggedInAuthor);
@@ -27,7 +28,8 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
             try {
                 const result = await axios.get(commentsId, {
                     headers: {
-                      'Authorization': 'Basic ' + team10Authorization
+                      'Authorization': 'token ' + team10token
+                      //'Authorization': 'Basic ' + team10Authorization
                     }
                   });
                 //puts posts in array + sorts from newest to oldest
@@ -109,7 +111,8 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                     try {
                         await axios.post(commentsId + '/', newComment, {
                             headers: {
-                              'Authorization': 'Basic ' + team10Authorization
+                              'Authorization': 'token ' + team10token
+                              //'Authorization': 'Basic ' + team10Authorization
                             }
                           })
                         .then((response) => {
@@ -124,7 +127,8 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                     try {
                         await axios.post(postAuthorId + '/inbox/', newComment, {
                             headers: {
-                              'Authorization': 'Basic ' + team10Authorization
+                              'Authorization': 'token ' + team10token
+                              //'Authorization': 'Basic ' + team10Authorization
                             }
                           })
                         .then((response) => {

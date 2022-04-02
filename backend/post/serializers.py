@@ -52,6 +52,7 @@ class PostSerializer(ModelSerializer):
         return Comment.objects.filter(post=post.uuid).count()
 
     def create(self, validated_data):
+        print("create")
         new_post = Post.objects.create(**validated_data)
         request = self.context.get('request')
 
@@ -67,7 +68,7 @@ class PostSerializer(ModelSerializer):
         return new_post
 
     def update(self, instance, validated_data):
-
+        print("update")
         # update the following fields
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)
