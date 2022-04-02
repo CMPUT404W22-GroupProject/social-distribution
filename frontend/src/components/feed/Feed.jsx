@@ -140,6 +140,13 @@ function Feed({id, feedType}){
                         
                     }
                 })
+                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                 const authorPages = Math.ceil(response.data.count/5)
+                 if (authorPages > 1){
+                     for (let i = 2; i<= authorPages; i++){
+                         getAuthorsPagination(i, "team9")
+                     }
+                 }
             });
 
 
@@ -165,6 +172,13 @@ function Feed({id, feedType}){
                         
                     }
                 })
+                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                 const authorPages = Math.ceil(response.data.count/5)
+                 if (authorPages > 1){
+                     for (let i = 2; i<= authorPages; i++){
+                         getAuthorsPagination(i, "team4")
+                     }
+                 }
             });
             
             // Team 0
@@ -189,6 +203,13 @@ function Feed({id, feedType}){
                         
                     }
                 })
+                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                 const authorPages = Math.ceil(response.data.count/5)
+                 if (authorPages > 1){
+                     for (let i = 2; i<= authorPages; i++){
+                         getAuthorsPagination(i, "team0")
+                     }
+                 }
             });
             //checking if author ID from url is in team10 or team9
             //declaring what server to use then 
