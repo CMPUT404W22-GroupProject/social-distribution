@@ -48,8 +48,8 @@ function AvatarPhoto({id}) {
             
             axios.post(path, imagePost, {
                 headers: {
-                  'Authorization': 'token ' + team10token
-                  //'Authorization': 'Basic ' + team10Authorization
+                  'Authorization': 'token ' + JSON.parse(localStorage.getItem('user')).token
+                  
                 }
               }
 

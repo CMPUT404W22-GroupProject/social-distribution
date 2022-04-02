@@ -13,12 +13,24 @@ import { CardActionArea } from '@mui/material';
 function FollowerCard({follower}) {
 
   const author = follower.id
-
   const id = author.substring(author.lastIndexOf('/') + 1)
+
+  console.log("Follower card", follower.id)
+
+  var followerObject = {
+    user: {
+      uuid: id,
+      displayName: follower.displayName,
+      email: ''
+    }
+  }
+
+
+  var user = JSON.stringify(followerObject)
 
   console.log(id)
   return (
-    <Link to={`/profile/${id}`}>
+    <Link to={`/profile/${id}`}  state={{state: user}}>
         <Card sx={{ maxWidth: 900 }}>
             <CardActionArea >
             <CardContent>
