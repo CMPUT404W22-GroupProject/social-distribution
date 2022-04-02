@@ -14,6 +14,7 @@ const login = (email, password) => {
     })
     .then((response) => {
         localStorage.setItem('user', JSON.stringify(response.data));
+       
         console.log(response.data)
         return response.data;
     });
@@ -31,6 +32,7 @@ const Login = () => {
         .then(() => {
             navigate('/authors');
             window.location.reload();
+            console.log(localStorage.getItem('user'))
         },
         (error) => {
             console.log(error.response)

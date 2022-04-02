@@ -8,13 +8,14 @@ import PaginationControlled from '../../components/paginationFeed'
 import CreatePost from '../../components/createPost/CreatePost';
 
 
+
 //Components
 import AvatarPhoto from '../../components/avatar/avatar'
 import FollowerList from '../../components/followerList/followerList';
 
 
 
-function Profile({user}){
+function Profile(){
     
     const {id, setId} = useContext(UserContext); // current users id
     const [authorData, setAuthorData] = useState('')
@@ -22,19 +23,26 @@ function Profile({user}){
     const [page, setPage] = useState(1);
     const params = useParams();
     const profileId = params.id.replace(":","")
+    console.log("PROFILE", profileId)
     const [count, setCount] = useState(1);
     const [recievedData, setRecievedData] = useState([]);
 
+    const location = useLocation()
 
+    console.log(location.state)
+
+    const user = JSON.parse(location.state.state)
+    console.log('USER', user)
+    
     const [showFollowers, setShowFollowers] = useState(false)
-
+    
 
     const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
-    const [loggedInAuthor, setLoggedInAuthor] = useState([]);
-    const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
-
     useEffect(() => {
+
+        
+
         fetchAuthor()    
 
         const fetchPosts = async () => {
@@ -46,12 +54,15 @@ function Profile({user}){
                     }});
                 setRecievedData(result);
                 setCount(result.data.count);
-                console.log(result.data)
+                console.log("RESULTS",result.data)
                  //puts posts in array + sorts from newest to oldest
                 setPosts(result.data.items.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
             }));
+
             } else {
+
+
                 const result = await axios.get(URL10 + "/authors/" + profileId + "/posts?page=" + page, {
                     headers: {
                       'Authorization': 'Basic ' + team10Authorization
@@ -88,7 +99,7 @@ function Profile({user}){
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
 
-            {!showFollowers && 
+            {showFollowers && 
                 <div>
                     <button onClick={(e) => setShowFollowers(true)}>Followers</button>
                     <ul>

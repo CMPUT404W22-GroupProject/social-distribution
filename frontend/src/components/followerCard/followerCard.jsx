@@ -18,7 +18,7 @@ function FollowerCard({follower}) {
 
   console.log(id)
   return (
-    <Link to={`/profile/:${id}`}>
+    <Link to={`/profile/${id}`}>
         <Card sx={{ maxWidth: 900 }}>
             <CardActionArea >
             <CardContent>
