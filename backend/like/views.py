@@ -48,7 +48,7 @@ class LikeList(APIView):
 
         all_likes = Like.objects.filter(object=url)
         if not all_likes:
-            return Response("Like not found", status=404)
+            return Response({}, status=200)
             
         serializer = LikeSerializerGet(all_likes, many=True, context={'request': request})
         result = []

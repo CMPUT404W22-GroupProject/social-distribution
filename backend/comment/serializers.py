@@ -44,10 +44,17 @@ class CommentSerializerGet(CommentSerializer):
     basic_auth = BasicAuthentication()
 
     def get_author(self, comment):
-        response = self.basic_auth.get_request(comment.author)
-        if response.status_code == 404:
-            return "Author Not Found"
-        elif response.status_code != 200:
-            return comment.author
-        else:
-            return response.json()
+        request = self.context.get('request')
+        try:
+            author = Author.objects.get(id=comment.author)
+            serializer = AuthorsSerializer(author, context={'request':request})
+            return serializer.data
+        except:
+            response = self.basic_auth.get_request(comment.author)
+            if response == None:
+                return "Author Not Found"
+            elif response.status_code != 200:
+                return comment.author
+            else:
+                return response.json()
+            
