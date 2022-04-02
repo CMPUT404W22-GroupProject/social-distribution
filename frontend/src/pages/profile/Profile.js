@@ -6,9 +6,8 @@ import { useLocation } from 'react-router-dom';
 import {useParams} from 'react-router-dom';
 import PaginationControlled from '../../components/paginationFeed'
 import CreatePost from '../../components/createPost/CreatePost';
-
-
-
+import Popup from '../../components/popup/Popup';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 //Components
 import AvatarPhoto from '../../components/avatar/avatar'
 import FollowerList from '../../components/followerList/followerList';
@@ -19,8 +18,10 @@ function Profile(){
     
 
     const [authorData, setAuthorData] = useState('')
+    const [followers, setFollowers] = useState('')
     const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(1);
+    const [buttonPopup, setButtonPopup] = useState(false);
     const params = useParams();
     const profileId = params.id.replace(":","")
     const [count, setCount] = useState(1);
@@ -32,15 +33,19 @@ function Profile(){
     const [showFollowers, setShowFollowers] = useState(false)
     const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
-
-
     const [showFollowBtn, setShowFollowBtn] = useState(true)
+    const [showCreatePost, setShowCreatePost] = useState(false)
 
 
     useEffect(() => {
 
+
+        
         fetchAuthor(user)
 
+        if(currentUser.user.uuid == user.user.uuid){
+            setShowCreatePost(true)
+        }
 
         const checkFollowing = async () => {
             if (currentUser.user.uuid != user.user.uuid){
@@ -96,9 +101,11 @@ function Profile(){
                 return new Date(p2.published) - new Date(p1.published)
             }));
             }}
+
+        
+        
         fetchPosts()
         checkFollowing()
-
 
     }, [page, profileId, showFollowers, showFollowBtn])
 
@@ -112,12 +119,12 @@ function Profile(){
         setAuthorData(res.data)
     }
 
-
-
     const handleCallBack = (childData) => {
         //https://www.geeksforgeeks.org/how-to-pass-data-from-child-component-to-its-parent-in-reactjs/
         setPage(childData);
     }
+
+
 
     //current user will make follow request to current users profile
 
@@ -151,21 +158,54 @@ function Profile(){
                 <button onClick={handleFollow}>Follow</button>
             )}
 
+            
+            {!showFollowers &&
+                <button onClick={(e) => setShowFollowers(true)}>Followers</button>
+            }
+
+            {showFollowers &&
+                <button onClick={(e) => setShowFollowers(false)}>Posts</button>
+            }
+
+            {showCreatePost &&  
+                <div>
+                    <div className="feedCreatePost" >
+                    <AddCircleOutlineIcon 
+                        htmlColor="blue" 
+                        className="feedCreatePostIcon" 
+                        onClick={() => setButtonPopup(true)}
+                        />
+                        <span 
+                        className="feedCreatePostText">
+                            Create Post!
+                        </span>
+                    </div>
+                    <Popup 
+                    trigger = {buttonPopup} 
+                    setTrigger = {setButtonPopup}
+                    >
+                        <CreatePost loggedInAuthor = {authorData} loggedInAuthorId = {authorData.id} loggedInAuthorFollowers={followers}/>
+                    </Popup>
+                </div>
+            }
+
             {!showFollowers && 
                 <div>
-                    <button onClick={(e) => setShowFollowers(true)}>Followers</button>
                     <ul>
                         {posts.map(post => (<li><Post post={post} team="cmput-404-w22-group-10" loggedInAuthor={profileId}/></li>))}
                     </ul>
 
                 </div>
                 }
+
+
             {showFollowers && 
             <div>
-                <button onClick={(e) => setShowFollowers(false)}>Posts</button>
                 <FollowerList profileId={profileId}/>
             </div>
             }
+
+
         </div>
     )
 }
