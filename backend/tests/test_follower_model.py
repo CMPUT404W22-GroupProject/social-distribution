@@ -70,10 +70,10 @@ class FollowRequestModelTest(TestCase):
 
     def testNodeModel(self):
         """Test all Follower fields"""
-        self.assertEqual(self.follow_object.type, self.test_dict["type"])
-        self.assertEqual(self.follow_object.actor, self.test_dict["actor"])
-        self.assertEqual(self.follow_object.object, self.test_dict["object"])
-        self.assertEqual(self.follow_object.summary, self.test_dict["summary"])
+        self.assertEqual(self.follow_request_object.type, self.test_dict["type"])
+        self.assertEqual(self.follow_request_object.actor, self.test_dict["actor"])
+        self.assertEqual(self.follow_request_object.object, self.test_dict["object"])
+        self.assertEqual(self.follow_request_object.summary, self.test_dict["summary"])
 
 
     def tearDown(self):
