@@ -77,28 +77,28 @@ class AuthorDetails(APIView):
             return Response("Author not found", status=404)
 
     # Update an author
-    # def post(self, request, author_id):
+    def post(self, request, author_id):
 
-    #     response = self.basic_auth.local_request(request)
-    #     if response:
-    #         return response
-    #     # if not request.user.is_authenticated:
-    #     #     return HttpResponse("You must be registered to access this function.", status = 401)
+        response = self.basic_auth.local_request(request)
+        if response:
+            return response
+        # if not request.user.is_authenticated:
+        #     return HttpResponse("You must be registered to access this function.", status = 401)
 
-    #     try:
-    #         author = Author.objects.get(pk=author_id)
-    #     except  Author.DoesNotExist:
-    #         return HttpResponse("Author not found.", status=401)
+        try:
+            author = Author.objects.get(pk=author_id)
+        except  Author.DoesNotExist:
+            return HttpResponse("Author not found.", status=401)
 
-    #     request_data = request.data.copy()
+        request_data = request.data.copy()
 
-    #     serializer = AuthorsSerializer(author, data = request_data, partial=True, context={'request':request})
-    #     if serializer.is_valid():
-    #         serializer.save()
+        serializer = AuthorsSerializer(author, data = request_data, partial=True, context={'request':request})
+        if serializer.is_valid():
+            serializer.save()
 
-    #         return Response(serializer.data, status=200)
-    #     else:
-    #         return Response(serializer.errors, status=400)
+            return Response(serializer.data, status=200)
+        else:
+            return Response(serializer.errors, status=400)
 
     # # Delete an author
     # def delete(self, request, author_id):
