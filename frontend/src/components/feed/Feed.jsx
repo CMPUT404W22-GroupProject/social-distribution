@@ -140,6 +140,13 @@ function Feed({id, feedType}){
                         
                     }
                 })
+                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                 const authorPages = Math.ceil(response.data.count/5)
+                 if (authorPages > 1){
+                     for (let i = 2; i<= authorPages; i++){
+                         getAuthorsPagination(i, "team9")
+                     }
+                 }
             });
 
 
@@ -165,6 +172,13 @@ function Feed({id, feedType}){
                         
                     }
                 })
+                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                 const authorPages = Math.ceil(response.data.count/5)
+                 if (authorPages > 1){
+                     for (let i = 2; i<= authorPages; i++){
+                         getAuthorsPagination(i, "team4")
+                     }
+                 }
             });
             
             // Team 0
@@ -189,6 +203,13 @@ function Feed({id, feedType}){
                         
                     }
                 })
+                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                 const authorPages = Math.ceil(response.data.count/5)
+                 if (authorPages > 1){
+                     for (let i = 2; i<= authorPages; i++){
+                         getAuthorsPagination(i, "team0")
+                     }
+                 }
             });
             //checking if author ID from url is in team10 or team9
             //declaring what server to use then 
@@ -325,12 +346,14 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team4Authorization
                         }
                       });
+                    setCount(result.data.count);
                 } else if (team === "team0"){
                     result = await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
                         headers: {
                           'authorization': 'Basic ' + team0Authorization
                         }
                       });
+                    setCount(result.data.count);
                 } 
                 setRecievedData(result);
                 //console.log("FUJFVSUFSPUVFBVF: ", result.data)
@@ -364,12 +387,14 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team4Authorization
                         }
                       });
+                    setCount(result.data.count);
                 } else if (team === "team0"){
                     result = await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
                           'authorization': 'Basic ' + team0Authorization
                         }
                       });
+                    setCount(result.data.count);
                 } 
                 
                 setRecievedData(result);
@@ -400,11 +425,11 @@ function Feed({id, feedType}){
                     return new Date(p2.published) - new Date(p1.published)
                 }));
                 } else {
-                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox?page=" + page, {
+                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox/?page=" + page, {
                         headers: {
                           
-                          //'Authorization': 'token ' + team10token
-                          'Authorization': 'Basic ' + team10Authorization
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       });
                     setCount(result.data.count);

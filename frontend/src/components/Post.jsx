@@ -515,9 +515,11 @@ function Post({post, team, loggedInAuthor}){
             <Card >
                 <Card.Header>
                     <div className="postTopLeft">
-
                         {/* <img className="postProfileImg" /> */}
-                        <PersonIcon className="postProfileImg"/>
+                        {(post.author.profileImage === "" || post.author.profileImage === null) && 
+                        <PersonIcon className="postProfileImg"/>}
+                        {(post.author.profileImage !== "" && post.author.profileImage !== null) && 
+                        <img className= "postProfileImg" src = {post.author.profileImage}/>}
                         <span className="postUsername">
                             {postAuthor.displayName}
                         </span>
