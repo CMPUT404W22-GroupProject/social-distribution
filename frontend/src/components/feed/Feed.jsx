@@ -346,12 +346,14 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team4Authorization
                         }
                       });
+                    setCount(result.data.count);
                 } else if (team === "team0"){
                     result = await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
                         headers: {
                           'authorization': 'Basic ' + team0Authorization
                         }
                       });
+                    setCount(result.data.count);
                 } 
                 setRecievedData(result);
                 //console.log("FUJFVSUFSPUVFBVF: ", result.data)
@@ -385,12 +387,14 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team4Authorization
                         }
                       });
+                    setCount(result.data.count);
                 } else if (team === "team0"){
                     result = await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
                           'authorization': 'Basic ' + team0Authorization
                         }
                       });
+                    setCount(result.data.count);
                 } 
                 
                 setRecievedData(result);
@@ -421,11 +425,11 @@ function Feed({id, feedType}){
                     return new Date(p2.published) - new Date(p1.published)
                 }));
                 } else {
-                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox?page=" + page, {
+                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox/?page=" + page, {
                         headers: {
                           
-                          //'Authorization': 'token ' + team10token
-                          'Authorization': 'Basic ' + team10Authorization
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
                         }
                       });
                     setCount(result.data.count);

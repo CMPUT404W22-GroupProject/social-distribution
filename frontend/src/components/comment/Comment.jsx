@@ -226,7 +226,10 @@ const Comment = ({comment, loggedInAuthor, team}) => {
 
     return (
         <div className="comment">
-            <PersonIcon className="comment-image-container"/>
+            {(comment.author.profileImage === "" || comment.author.profileImage === null) && 
+                <PersonIcon className="comment-image-container"/>}
+            {(comment.author.profileImage !== "" && comment.author.profileImage !== null) && 
+                <img className= "comment-image-container" src = {comment.author.profileImage}/>}
             <div className="comment-right-part">
         
                     <div className="comment-author">{comment.author.displayName}</div>

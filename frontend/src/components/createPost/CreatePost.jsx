@@ -291,7 +291,10 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
           <div className="createPostWrapper">
             <div className="createPostTop">
               {/* <img className="pofile-pic" src="/assets/person/1.jpeg" alt="" /> */}
-              <PersonIcon className='createPostProfilepic'/>
+              {(loggedInAuthor.profileImage === "" || loggedInAuthor.profileImage === null) && 
+              <PersonIcon className='createPostProfilepic'/>}
+              {(loggedInAuthor.profileImage !== "" && loggedInAuthor.profileImage !== null) && 
+              <img className='createPostProfilepic' src = {loggedInAuthor.profileImage}/>}
               <input
                 placeholder="Title!"
                 className="createPostInput"
