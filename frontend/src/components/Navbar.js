@@ -25,13 +25,6 @@ function NavBar() {
   const navigate = useNavigate();
 
 
-<<<<<<< HEAD
-  const handleLogout = (e) => {
-    e.preventDefault();
-    localStorage.removeItem('user')
-    setUser(null)
-    console.log("LOUGOUT",localStorage.getItem('user'))
-=======
   useEffect(() => {
     
   })
@@ -56,7 +49,6 @@ function NavBar() {
     var current = getCurrentUser();
     console.log(current);
     logout()
->>>>>>> a4d3d84473d07ad59a8aa16266d36289c9c71781
     navigate('/login')
   }
 
