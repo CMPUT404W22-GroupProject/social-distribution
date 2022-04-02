@@ -118,6 +118,27 @@ function Profile(){
         //https://www.geeksforgeeks.org/how-to-pass-data-from-child-component-to-its-parent-in-reactjs/
         setPage(childData);
     }
+
+    //current user will make follow request to current users profile
+
+    const handleFollow = () => {
+
+        console.log("button pressed")
+
+        //this isnt working right now 
+        var followRequest = { //the json file that will be sent
+            "type": "follow",
+            "summary": currentUser.user.displayName + "wants to follow you",
+            "id": currentUser.user.uuid
+          }
+        axios.post(URL10 + '/authors/' + user.user.uuid + '/inbox/', followRequest, {
+            headers: {
+              'Authorization': 'token ' + currentUser.token
+            }
+          }).then( res => {
+              console.log(res)
+          });
+    }
     
     return (
         <div>
@@ -127,7 +148,7 @@ function Profile(){
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
 
             {showFollowBtn && (
-                <button>Follow</button>
+                <button onClick={handleFollow}>Follow</button>
             )}
 
             {!showFollowers && 
