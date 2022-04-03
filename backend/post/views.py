@@ -1,9 +1,10 @@
+from email.mime import image
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, request
 from post.models import Post
 from author.models import Author
 from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, ListAPIView
 from rest_framework.response import Response
 from .pagination import PostPageNumberPagination
 from rest_framework import permissions
@@ -16,9 +17,32 @@ from urllib.parse import urlparse
 import requests
 import uuid
 from node.models import Node
+import base64
+from PIL import Image
+from io import BytesIO
+import codecs
 
 from post.serializers import PostSerializer, PostSerializerGet
 from node.authentication import BasicAuthentication
+
+class PublicPostList(ListAPIView):
+    serializer_class = PostSerializerGet
+    pagination_class = PostPageNumberPagination
+    basic_auth = BasicAuthentication()
+
+    def get_queryset(self):
+        return Post.objects.filter(visibility="PUBLIC").order_by('published')
+
+    def list(self, request):
+
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer =  PostSerializerGet(page, many=True, context={'request':request})
+            return self.get_paginated_response(serializer.data)
+
+        serializer =  PostSerializerGet(queryset, many=True, context={'request':request})
+        return Response(serializer.data, status=200)
 
 
 class PostList(ListCreateAPIView):
@@ -190,19 +214,30 @@ class PostDetails(APIView):
 class ImagePostDetails(APIView):
     basic_auth = BasicAuthentication()
     def get(self, request, post_id, author_id):
-        response = self.basic_auth.remote_request(request)
-        if response:
-            return response
 
         try:
             post = Post.objects.filter(author_id=author_id).get(pk=post_id)
         except Post.DoesNotExist:
             return Response("Post not found", status=404)
-
-        if 'image' in post.contentType:
+        
+        content_type = post.contentType
+        if 'png' in content_type or 'jpg' in content_type or 'jpeg' in content_type:
             if post.visibility.upper() != "PUBLIC":
                 return Response("Post not public", status=404)
-            image_content = post.content
-            return Response(image_content, status=200)
+
+            if 'png' in content_type:
+                filetype = "image/png"
+            elif 'jpg' in content_type:
+                filetype = "image/jpeg"
+            else:
+                filetype = "image/jpeg"
+
+            image_b64_str = bytes(post.content, 'utf-8')
+            strOne = image_b64_str.partition(b",")[2]
+            pad = len(strOne)%4
+            strOne += b"="*pad
+            decode_image = codecs.decode(strOne.strip(),'base64')
+            
+            return HttpResponse(decode_image, content_type=filetype)
         else:
             return Response("No image", status=404)
