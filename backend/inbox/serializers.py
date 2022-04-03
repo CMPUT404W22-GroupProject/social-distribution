@@ -15,10 +15,12 @@ from like.serializers import LikeSerializerGet
 from post.serializers import PostSerializerGet
 from urllib.parse import urlparse
 from requests.auth import HTTPBasicAuth
+from node.authentication import BasicAuthentication
 
 class InboxSerializer(ModelSerializer):
     author = AuthorsSerializer(many=False, read_only=True)
     items = SerializerMethodField()
+    basic_auth = BasicAuthentication()
    
     class Meta:
         model = Inbox
@@ -54,8 +56,28 @@ class InboxSerializer(ModelSerializer):
                 response = {}
                 response['type'] = "follow"
                 response['summary'] = follow_request.summary
-                response['actor'] = self.make_request(follow_request.actor)
-                response['object'] = self.make_request(follow_request.object)
+
+                # get actor (local/remote)
+                try:
+                    actor = Author.objects.get(id=follow_request.actor)
+                    serializer_actor = AuthorsSerializer(author, context={'request':request})
+                    actor_data = serializer_actor.data
+                except:
+                    response_get = self.basic_auth.get_request(follow_request.actor)
+                    if response_get == None:
+                        actor_data = "Author not found"
+                    elif response_get.status_code != 200:
+                        actor_data = follow_request.actor
+                    else:
+                        actor_data = response_get.json()
+                response['actor'] = actor_data
+
+                try:
+                    object = Author.objects.get(id=follow_request.object)
+                    serializer_object = AuthorsSerializer(object, context={'request':request})
+                except:
+                    return {}
+                response['object'] = serializer_object.data
 
             return response
         except Exception as e:
