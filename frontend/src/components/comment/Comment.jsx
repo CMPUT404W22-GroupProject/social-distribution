@@ -19,38 +19,75 @@ const Comment = ({comment, loggedInAuthor, team}) => {
         const team4Authorization = btoa("Team10:abcdefg");
         const team9Authorization = btoa("group10:pwd1010");
         const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+        const team10token = JSON.parse(localStorage.getItem('user')).token
         
+
+        const hasAuthorAlreadyLiked = (likeObjectRecieved) => {
+            likeObjectRecieved.forEach((like) => {
+                //chekcing to see if logged in user has already liked the post i.e. seeing if logged in user is already in like object list
+                // if so, then isLiked will be set to true. This is will avoid user liking the same object multiple times. 
+                //console.log("like.author.id: ", like)
+                    //console.log("myAuthorIdUrl: ", myAuthorIdUrl)
+                if (like.author.id === loggedInAuthor.id){
+                    //console.log("SET TO TRUE")
+                    setIsLiked(true);
+                    //const likeIdUrl = new URL(like.id);
+                    //const likeIdUrlPath = likeIdUrl.pathname;
+                    //console.log("LIKE OBJECT: ", like)
+                    setLikeId(like.id);
+                }
+            })
+        } 
         const fetchLikeCount = async () => {
             var result;
             if (commentHostname === "cmput-404-w22-group-10-backend.herokuapp.com"){
                 result = await axios.get(comment.id + "/likes", {
                     headers: {
-                      'Authorization': 'Basic ' + team10Authorization
+                      'Authorization': 'token ' + team10token
+                      //'Authorization': 'Basic ' + team10Authorization
                     }
                   });
+                  if (result.data.length !== undefined){
+                    setLike(result.data.length);
+                }
+                const likeObjectRecieved = result.data;
+                hasAuthorAlreadyLiked(likeObjectRecieved);
             } else if (commentHostname === "cmput-404-w22-project-group09.herokuapp.com"){
                 result = await axios.get(comment.id + "/likes", {
                     headers: {
                       'Authorization': 'Basic ' + team9Authorization
                     }
                   });
+                  if (result.data.length !== undefined){
+                    setLike(result.data.length);
+                }
+                const likeObjectRecieved = result.data;
+                hasAuthorAlreadyLiked(likeObjectRecieved);
             } else if (commentHostname === "backend-404.herokuapp.com"){
                 result = await axios.get(comment.id + "/likes/", {
                     headers: {
                       'Authorization': 'Basic ' + team4Authorization
                     }
                   });
+                  if (result.data.length !== undefined){
+                    setLike(result.data.length);
+                }
+                const likeObjectRecieved = result.data;
+                hasAuthorAlreadyLiked(likeObjectRecieved);
             } else if (commentHostname === "tik-tak-toe-cmput404.herokuapp.com"){
                 result = await axios.get(comment.id + "/likes/", {
                     headers: {
                       'Authorization': 'Basic ' + team0Authorization
                     }
                   });
+                  if (result.data.length !== undefined){
+                    setLike(result.data.length);
+                }
+                const likeObjectRecieved = result.data;
+                hasAuthorAlreadyLiked(likeObjectRecieved);
             }
 
-            if (result.data.length !== undefined){
-                setLike(result.data.length);
-            }
+            
         }
         
         useEffect(() => {
@@ -73,7 +110,8 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                     try {
                         await axios.post(comment.author.id + "/inbox/", newLike, {
                             headers: {
-                              'Authorization': 'Basic ' + team10Authorization
+                              'Authorization': 'token ' + team10token
+                              //'Authorization': 'Basic ' + team10Authorization
                             }
                           })
                             .then((response) => {
@@ -88,7 +126,8 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                     try {
                         await axios.delete(likeId, {
                             headers: {
-                              'Authorization': 'Basic ' + team10Authorization
+                              'Authorization': 'token ' + team10token
+                              //'Authorization': 'Basic ' + team10Authorization
                             }
                           })
                     } catch (error) {
@@ -187,7 +226,10 @@ const Comment = ({comment, loggedInAuthor, team}) => {
 
     return (
         <div className="comment">
-            <PersonIcon className="comment-image-container"/>
+            {(comment.author.profileImage === "" || comment.author.profileImage === null) && 
+                <PersonIcon className="comment-image-container"/>}
+            {(comment.author.profileImage !== "" && comment.author.profileImage !== null) && 
+                <img className= "comment-image-container" src = {comment.author.profileImage}/>}
             <div className="comment-right-part">
         
                     <div className="comment-author">{comment.author.displayName}</div>

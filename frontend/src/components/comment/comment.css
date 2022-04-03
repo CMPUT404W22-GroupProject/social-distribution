@@ -1,5 +1,9 @@
 .comment-image-container {
   margin-right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .comment {
@@ -7,9 +11,7 @@
   padding-bottom: 20px;
 }
 
-.comment-image-container img {
-  border-radius: 50px;
-}
+
 
 .comment-left-part {
   right: 0;

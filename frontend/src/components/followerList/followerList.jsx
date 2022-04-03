@@ -7,12 +7,15 @@ import './followerList.css'
 function FollowerList({profileId}) {
 
   const [followers, setFollowers] = useState([])
-  const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
-  const URL9 = "https://cmput-404-w22-project-group09.herokuapp.com/service"
+  const URL0 = "http://tik-tak-toe-cmput404.herokuapp.com/authors/"
   const URL4 = "http://backend-404.herokuapp.com"
+  const URL9 = "https://cmput-404-w22-project-group09.herokuapp.com/service"
+  const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
+  const team0Authorization = btoa("admin:tX7^iS8a5Ky$^S");
   const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
   const team9Authorization = btoa("group10:pwd1010");
   const team4Authorization = btoa("Team10:abcdefg");
+  const team10token = JSON.parse(localStorage.getItem('user')).token
 
   useEffect(() => {
 
@@ -20,7 +23,8 @@ function FollowerList({profileId}) {
 
         const result = await axios.get(URL10 + "/authors/" + profileId + "/followers", {
             headers: {
-              'Authorization': 'Basic ' + team10Authorization
+              'Authorization': 'token ' + team10token
+              //'Authorization': 'Basic ' + team10Authorization
             }});
         
         setFollowers(result.data.items)

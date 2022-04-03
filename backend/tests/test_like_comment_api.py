@@ -5,34 +5,64 @@
 # from like.models import Like
 # from PIL import Image
 # import tempfile
+# from rest_framework.authtoken.models import Token
+
 # from post.models import Post
 
 # class LikeListTest(APITestCase):
 #     """Test the LikeList class in views.py"""
 
 #     def setUp(self):
-#         self.author = Author.objects.create(
-#             email="test@example.com",
-#             displayName="APITest", 
-#             github="https://github.com/CMPUT404W22-GroupProject/social-distribution"
-#         )
-#         self.post = Post.objects.create(
-#             title="Test title for editing Post",
-#             description="This is a edit description",
-#             contentType="text/plain",
-#             content="This is a test content",
-#             author=self.author,
-#             categories="Category3,Category4",
-#             visibility="FRIENDS",
-#             unlisted=True,
-#         )
+        
+#         self.user_data={
+#             "displayName":"user",
+#             "email":"user@user.ca",
+#             "github":"http:/www.google.com"
+#         }
+#         user = Author.objects.create(**self.user_data)
+#         Token.objects.create(user=user)
+#         self.token = Token.objects.get(user=user)
+#         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
-#         self.comment = Comment.objects.create(
-#             author = self.author,
-#             comment= "Test comment",
-#             contentType = "commonMark",
-#             post = self.post
-#         )
+
+#         self.author_data = {
+#         "displayName" : "APITest",
+#         "email":"apitest@user.ca",
+#         "github" : "https://github.com/CMPUT404W22-GroupProject/social-distribution"
+#         }
+
+#         self.author = self.client.post("/authors/", self.author_data)
+#         self.author1 = Author.objects.get(id=self.author.data["id"])
+#         user = self.author1
+#         Token.objects.create(user=user)
+#         self.token = Token.objects.get(user=user)
+#         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
+#         author = self.author1
+#         self.author_data1 = {
+#             "type": "author",
+#             "id": author.id,
+#             "host": author.host,
+#             "displayName": author.displayName,
+#             "url": author.url,
+#             "github": author.github,
+#             "profileImage": author.profileImage
+#         }
+    
+#         self.post_data = {
+#             "title": "Test title for Post",
+#             "description": "This is a description",
+#             "contentType": "text/plain",
+#             "content": "This is a test content",
+#             "author": self.author_data1,
+#             "categories": "Category1,Category2",
+#             "visibility": "FRIENDS",
+#             "unlisted": False
+#         }
+
+#         self.post1 = self.client.post("/authors/" +str(self.author1.uuid)+"/posts/", self.post_data,  format="json")
+#         self.post = Post.objects.get(id=self.post1.data["id"])
+
 
 
 #         self.like_data_post = {

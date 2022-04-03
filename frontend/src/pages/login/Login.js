@@ -28,8 +28,10 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         login(email, password)
-        .then(() => {
-            navigate('/authors');
+        .then((response) => {
+            let uuid = response.user.uuid;
+            navigate('/authors/' + uuid + '/inbox');
+
             window.location.reload();
         },
         (error) => {
