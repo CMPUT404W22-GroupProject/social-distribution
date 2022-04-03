@@ -37,9 +37,36 @@ class FollowerSerializerGet(FollowerSerializer):
 
 
 class FollowRequestSerializer(ModelSerializer):
-    # actor = AuthorsSerializer(many=False, read_only=True)
-    # object = AuthorsSerializer(many=False, read_only=True)
 
     class Meta:
         model = FollowRequest
-        fields = ("type", "summary", "actor", "object")
+        fields = ("type", "id", "summary", "actor", "object")
+
+class FollowRequestSerializerGet(FollowRequestSerializer):
+    actor = SerializerMethodField()
+    object = SerializerMethodField()
+    basic_auth = BasicAuthentication()
+
+    def get_actor(self, follow_request):
+        request = self.context.get('request')
+        try:
+            actor = Author.objects.get(id=follow_request.actor)
+            serializer = AuthorsSerializer(actor, context={'request':request})
+            return serializer.data
+        except:
+            response_get = self.basic_auth.get_request(follow_request.actor)
+            if response_get == None:
+                return "Author not found"
+            elif response_get.status_code != 200:
+                return follow_request.actor
+            else:
+                return response_get.json()
+
+    def get_object(self, follow_request):
+        request = self.context.get('request')
+        try:
+            object = Author.objects.get(id=follow_request.object)
+            serializer = AuthorsSerializer(object, context={'request':request})
+            return serializer.data
+        except:
+            return {}
