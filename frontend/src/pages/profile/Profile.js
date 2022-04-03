@@ -36,7 +36,6 @@ function Profile(){
     const [showFollowBtn, setShowFollowBtn] = useState(true)
     const [showCreatePost, setShowCreatePost] = useState(false)
 
-
     useEffect(() => {
 
 
@@ -129,15 +128,33 @@ function Profile(){
     //current user will make follow request to current users profile
 
     const handleFollow = () => {
-
         console.log("button pressed")
-
+        console.log("AUTHOR DATA ID", authorData.id)
+        console.log("currentUser ID", currentUser.user.uuid)
         //this isnt working right now 
         var followRequest = { //the json file that will be sent
             "type": "follow",
             "summary": currentUser.user.displayName + "wants to follow you",
-            "id": currentUser.user.uuid
-          }
+            "actor":{
+                "type": "author",
+                "id": URL10 + "/authors/" + currentUser.user.uuid,
+                "url": URL10 + "/authors/" + currentUser.user.uuid,
+                "host": URL10 + "/",
+                "displayName": currentUser.user.displayName,
+                "github": '',
+                "profileImage": authorData.profileImage
+            },
+            "object":{
+                "type":"author",
+                "id": URL10 + "/authors/" + user.user.uuid,
+                "host": URL10 + "/",
+                "displayName": user.user.uuid,
+                "url":URL10 + "/authors/" + user.user.uuid,
+                "github": " ",
+                "profileImage": authorData.profileImage
+            }      
+        }
+
         axios.post(URL10 + '/authors/' + user.user.uuid + '/inbox/', followRequest, {
             headers: {
               'Authorization': 'token ' + currentUser.token

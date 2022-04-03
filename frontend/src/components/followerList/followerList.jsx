@@ -7,6 +7,7 @@ import './followerList.css'
 function FollowerList({profileId}) {
 
   const [followers, setFollowers] = useState([])
+  const [foreignFollowers, setForeignFollowers] = useState([])
   const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
   const URL9 = "https://cmput-404-w22-project-group09.herokuapp.com/service"
   const URL4 = "http://backend-404.herokuapp.com"
@@ -17,20 +18,36 @@ function FollowerList({profileId}) {
 
   useEffect(() => {
 
-    const fetchFollowers = async () => {
-
+    const fetchLocalFollowers = async () => {
         const result = await axios.get(URL10 + "/authors/" + profileId + "/followers", {
             headers: {
               'Authorization': 'token ' + team10token
               //'Authorization': 'Basic ' + team10Authorization
             }});
-        
         setFollowers(result.data.items)
-        
-        return 0
-        
+        return 0     
     }
-    fetchFollowers()
+    const fetchTeam9Followers = async () => {
+      const result = await axios.get(URL9 + "/authors/" + profileId + "/followers", {
+        headers: {
+          'Authorization': 'token ' + team9Authorization
+          //'Authorization': 'Basic ' + team10Authorization
+        }});
+      setForeignFollowers(...result.data.items)
+      return 0
+    }
+
+    const fetchTeam4Followers = async () => {
+      const result = await axios.get(URL10 + "/authors/" + profileId + "/followers", {
+        headers: {
+          'Authorization': 'token ' + team9Authorization
+          //'Authorization': 'Basic ' + team10Authorization
+        }});
+      setForeignFollowers(...result.data.items)
+      return 0
+    }
+
+    fetchLocalFollowers()
   },[])
   
 
