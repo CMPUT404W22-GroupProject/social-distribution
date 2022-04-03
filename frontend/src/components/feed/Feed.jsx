@@ -337,7 +337,7 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team9Authorization
                         }
                       });
-                    setCount(result.data.items.length);
+                    setCount(result.data.count);
                 } else if (team === "team4"){
                     console.log("COMESHERE")
                     result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
@@ -379,7 +379,7 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team9Authorization
                         }
                       });
-                    setCount(result.data.items.length);
+                    setCount(result.data.count);
                 } else if (team === "team4"){
                     result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
