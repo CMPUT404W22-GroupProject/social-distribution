@@ -502,11 +502,12 @@ function Post({post, team, loggedInAuthor}){
         .then((response) => {
             if (response.status === 204) {
                 alert("Deleted successfully!");
-                //window.location.href = window.location.href;
+                window.location.href = window.location.href;
                 } else {
                   alert("Oops! Something went wrong! Please try again!");
                 }
           })
+        
 
     }
 
@@ -552,7 +553,7 @@ function Post({post, team, loggedInAuthor}){
                     }
                     {
                         (post.contentType === "text/markdown") &&
-                        <ReactMarkdown children= {post.content} escapeHtml={false}></ReactMarkdown>
+                        <ReactMarkdown children= {post.content}></ReactMarkdown>
                     }
 
                 </Card.Body>

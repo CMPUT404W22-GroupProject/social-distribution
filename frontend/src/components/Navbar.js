@@ -61,6 +61,7 @@ function NavBar() {
             <Nav>
             {loggedIn && (<Link style={linkStyle} to='/home'>Home</Link>)}
             {loggedIn && (<Link style={linkStyle} to={`/profile/:${id}`}>Profile</Link>)}
+            {loggedIn && (<Link style={linkStyle} to='/publicPosts'>Public Posts</Link>)}
             {loggedIn && (<Link style={linkStyle} onClick={(e) => handleLogout(e)} to='/login'>Logout</Link>)}
 
             {!loggedIn && (<Link style={linkStyle} to='/login'>Login</Link>)}
