@@ -7,7 +7,7 @@ import Login from './pages/login/Login'
 import Profile from './pages/profile/Profile'
 import Home from './pages/home'
 import NavBar from './components/Navbar';
-import Authors from './pages/authors/authors';
+import AuthorsList from './components/authorList/authorList';
 import ForeignProfile from './pages/profile/foreignProfile';
 import { UserContextProvider } from './context/userContext'
 import Register from './pages/register/Register';
@@ -25,9 +25,8 @@ function App() {
               <Route exact path='/home' element={<PrivateRoute><Home/></PrivateRoute>}/>
               <Route exact path='/' element={<PrivateRoute><Home/></PrivateRoute>}/>
               <Route exact path='/authors/:id/inbox' element={<PrivateRoute><Home feedType = "inbox"/></PrivateRoute>}/>
-              <Route exact path='/authors/:id/posts' element={<PrivateRoute><Home feedType = "posts"/></PrivateRoute>}/>
-              <Route exact path='/friends' element={<PrivateRoute><Authors/></PrivateRoute>}/>
               <Route exact path='/fprofile/:id' element={<PrivateRoute><ForeignProfile/></PrivateRoute>}/>  
+              <Route exact path='/directory' element={<PrivateRoute><AuthorsList/></PrivateRoute>}/>  
 
             </Routes> 
           </Router>

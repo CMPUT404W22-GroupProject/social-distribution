@@ -1,5 +1,6 @@
 import "./feed.css"
 import CreatePost from '../createPost/CreatePost'
+import { useParams } from "react-router-dom"
 import Post from '../Post'
 import Follow from "../follow/follow"
 import Like from '../like/like'
@@ -19,7 +20,10 @@ import Github from "../github/Github"
 
 function Feed({id, feedType}){
     //This is the main feed of the application, will house the createPost and other inbox related components
-
+    console.log("ID", id)
+    const params = useParams();
+    const profileId = params.id.replace(":","")
+    console.log("Profile ID", profileId)
     const [posts, setPosts] = useState([]);
     const [like, setLike] = useState([]);
     const [followerReq, setFollowerReq] = useState([]);
@@ -34,7 +38,7 @@ function Feed({id, feedType}){
     const [buttonPopup, setButtonPopup] = useState(false);
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(1);
-    const [urlAuthorId, setUrlAuthorId] = useState(JSON.parse(id)["id"]); //authorId from URL
+    const [urlAuthorId, setUrlAuthorId] = useState(params.id.replace(":",""))//authorId from URL
     const [urlAuthor, setUrlAuthor] = useState([]);
     const [urlAuthorFollowers, setUrlAuthorFollowers] = useState([]);
     const emptyObject = {}// temporary for Follow

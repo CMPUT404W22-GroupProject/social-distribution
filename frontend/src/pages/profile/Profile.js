@@ -12,11 +12,10 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AvatarPhoto from '../../components/avatar/avatar'
 import FollowerList from '../../components/followerList/followerList';
 import FollowerCard from '../../components/followerCard/followerCard';
-
+import Feed from '../../components/feed/Feed';
 
 function Profile(){
     
-
     const [authorData, setAuthorData] = useState('')
     const [followers, setFollowers] = useState([])
     const [posts, setPosts] = useState([]);
@@ -31,19 +30,21 @@ function Profile(){
     const user = JSON.parse(location.state.state)
     const [userState, setUserState] = useState(user)
     const currentUser = JSON.parse(localStorage.getItem('user'))
-
     const [hostName, setHostName] = useState("https://cmput-404-w22-group-10-backend.herokuapp.com")
-
     const [showFollowers, setShowFollowers] = useState(false)
     const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
     const [showFollowBtn, setShowFollowBtn] = useState(true)
     const [showCreatePost, setShowCreatePost] = useState(false)
     const team10token = JSON.parse(localStorage.getItem('user')).token
-
- 
+    const tempId = {"id": user.user.uuid}
+    const feedId = JSON.stringify(tempId)
 
     useEffect(() => {
+
+        if(user == null){
+            console.log("nULLLLLLLLL")
+        }
 
         fetchAuthor(user)
         if(currentUser.user.uuid == user.user.uuid){
@@ -76,7 +77,6 @@ function Profile(){
                 setShowFollowBtn(false)
             }
         }
-
         const fetchLocalFollowers = async () => {
             const result = await axios.get(URL10 + "/authors/" + user.user.uuid + "/followers", {
                 headers: {
@@ -86,40 +86,14 @@ function Profile(){
             setFollowers(result.data.items)
             return 0     
         }
-
-        const fetchPosts = async () => {
-            //fetch posts from user/author id, these are posts created by the user/author
-            if (page === 1){
-                const result = await axios.get(URL10 + "/authors/" + user.user.uuid + "/posts", {
-                    headers: {
-                      'Authorization': 'Basic ' + team10Authorization
-                    }});
-                setRecievedData(result);
-                setCount(result.data.count);
-                 //puts posts in array + sorts from newest to oldest
-                setPosts(result.data.items.sort((p1, p2) => {
-                return new Date(p2.published) - new Date(p1.published)
-            }));
-
-            } else {
-                const result = await axios.get(URL10 + "/authors/" + user.user.uuid+ "/posts?page=" + page, {
-                    headers: {
-                      'Authorization': 'Basic ' + team10Authorization
-                    }});
-                setCount(result.data.count);
-                setRecievedData(result);
-                //puts posts in array + sorts from newest to oldest
-                setPosts(result.data.results.sort((p1, p2) => {
-                return new Date(p2.published) - new Date(p1.published)
-            }));
-            }}
-
-        
-        
-        fetchPosts()
         checkFollowing()
         fetchLocalFollowers()
-    },[])
+    },[user.user.uuid])
+
+
+    useEffect(() => {
+
+    },[user.user.uuid])
 
 
 
@@ -190,8 +164,7 @@ function Profile(){
             <AvatarPhoto id={user.user.uuid}/>
             <h2>{user.user.displayName}</h2>
 
-            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-         
+        
             {!showFollowers &&
                 <button onClick={showPostsButton}>Followers</button>
             }
@@ -200,43 +173,17 @@ function Profile(){
                 <button onClick={showFollowersButton}>Posts</button>
             }
 
-            {showCreatePost &&  
-                <div>
-                    <div className="feedCreatePost" >
-                    <AddCircleOutlineIcon 
-                        htmlColor="blue" 
-                        className="feedCreatePostIcon" 
-                        onClick={() => setButtonPopup(true)}
-                        />
-                        <span 
-                        className="feedCreatePostText">
-                            Create Post!
-                        </span>
-                    </div>
-                    <Popup 
-                    trigger = {buttonPopup} 
-                    setTrigger = {setButtonPopup}
-                    >
-                        <CreatePost loggedInAuthor = {authorData} loggedInAuthorId = {authorData.id} loggedInAuthorFollowers={followers}/>
-                    </Popup>
-                </div>
-            }
-
             {!showFollowers && 
                 <div key={user.user.uuid}>
-                    <ul> 
-                        {posts.map(post => (<li ><Post key={post.id} post={post} team="cmput-404-w22-group-10" loggedInAuthor={currentUser.user.uuid}/></li>))}
-                    </ul>
+                    {console.log("FEED", user.user.uuid)}
+                    <Feed id={feedId} feedType={'posts'}/>
 
                 </div>
                 }
-
-
             {showFollowers && 
                 <div>
                     <ul>
-                        {followers.map(follower => (<li key={follower.id}><FollowerCard follower={follower} 
-                        posts={posts} setPosts={setPosts} /></li>))}
+                        {followers.map(follower => (<li key={follower.id}><FollowerCard follower={follower}/></li>))}
                     </ul>
                 </div>
             }
