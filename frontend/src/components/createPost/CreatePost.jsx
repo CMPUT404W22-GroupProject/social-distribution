@@ -107,6 +107,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
           newPost["contentType"] = "text/markdown";
         }
 
+        console.log("LOGGED AUTHOR", loggedInAuthorId)
         console.log(newPost)
 
         //if image is selected and there is no content, so image only post

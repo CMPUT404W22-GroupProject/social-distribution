@@ -41,15 +41,16 @@ function AvatarPhoto({id}) {
             setEncodedFile(encodedImage)
             console.log(encodedImage)
             var imagePost = {
-                "profileImage": encodedImage,
+                "github": "example.com",
+                //"id": "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/f05ace80-4ee0-4f43-ba3c-ae644b607c22",
+                //"profileImage": "https://th-thumbnailer.cdn-si-edu.com/xg8ymcfArLplIH3H3l457Xu7ThI=/fit-in/1072x0/filters:focal(1014x799:1015x800)/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/93/ea/93ea364e-6fc3-4a67-970a-c71db4118181/bluesun.jpg"
             }
 
-            const path = URL + "/authors/" + id +  "/" 
-            
-            axios.post(path, imagePost, {
+            const uuid = JSON.parse(localStorage.getItem('user')).user.uuid
+            axios.post(URL + '/authors/' + uuid, imagePost, {
                 headers: {
                   'Authorization': 'token ' + team10token
-                  //'Authorization': 'Basic ' + team10Authorization
+                  
                 }
               }
 
@@ -57,6 +58,7 @@ function AvatarPhoto({id}) {
                 console.log("RESPONSE", res.data)
             })
         }
+        return 0
     };
 
 
@@ -104,14 +106,3 @@ function AvatarPhoto({id}) {
 }
 
 export default AvatarPhoto;
-
-/*<IconButton>
-<Avatar 
-src="https://thepowerofthedream.org/wp-content/uploads/2015/09/generic-profile-picture.jpg"
-style={{
-    margin: "10px",
-    width: "200px",
-    height: "200px",
-}} 
-/>
-</IconButton>*/
