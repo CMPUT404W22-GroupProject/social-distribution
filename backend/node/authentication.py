@@ -21,7 +21,6 @@ class BasicAuthentication:
         if 'HTTP_AUTHORIZATION' not in request.META:
             return self.unauthed()
         else:
-            print("there is auth")
             authentication = request.META['HTTP_AUTHORIZATION']
             (authmeth, auth) = authentication.split(' ',1)
             if 'basic' == authmeth.lower():
@@ -32,7 +31,10 @@ class BasicAuthentication:
 
                 try:
                     node = Node.objects.get(username=username)
-                    return
+                    if node.password == password:
+                        return
+                    else:
+                        return self.unauthed()
 
                 except Node.DoesNotExist:
                     return self.unauthed()
