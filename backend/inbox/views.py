@@ -51,11 +51,11 @@ class InboxList(ListCreateAPIView):
 
     # Get inbox
     def list(self, request, author_id):
-        # response = self.basic_auth.local_request(request)
-        # if response:
-        #     return response
-        # if not request.user.is_authenticated or author_id != request.user.uuid:
-        #     return Response("Forbidden", status=403)
+        response = self.basic_auth.local_request(request)
+        if response:
+            return response
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
 
         try:
             try:
