@@ -50,7 +50,7 @@ function Post({post, team, loggedInAuthor}){
     const [postTags, setPostTags] = useState(post.categories);
     const [isPublic, setIsPublic] = useState(false);
 
-    console.log("contentype: ", post.contentType)
+    //console.log("contentype: ", post)
 
 
 
@@ -643,7 +643,7 @@ function Post({post, team, loggedInAuthor}){
                             team = {team}
                             //myAuthorId = {myAuthorId}
                             loggedInAuthor = {loggedInAuthor}
-                            commentsId = {post.comments}
+                            commentsId = {post.id + "/comments/"}
                             commentCount = {commentCount}
                             postAuthorId = {postAuthor.id}/>
                     }

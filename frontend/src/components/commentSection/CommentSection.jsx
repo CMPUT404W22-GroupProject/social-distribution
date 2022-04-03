@@ -59,10 +59,11 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
               }))
           } catch(error){
           }
-          setCount(result.data.items.length);
+          setCount(result.data.count);
       }
       // Team 4
       if (postHostName === "backend-404.herokuapp.com"){
+        console.log("COMING HERE", commentsId)
           try {
               //TODO: VERIFY commentsId FORMATTING
               result = await axios.get(commentsId, {
@@ -126,7 +127,7 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
               }))
           } catch(error){
           }
-          setCount(result.data.items.length);
+          setCount(result.data.count);
       }
       // Team 4
       if (postHostName === "backend-404.herokuapp.com"){

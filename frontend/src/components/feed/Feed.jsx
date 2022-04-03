@@ -50,7 +50,7 @@ function Feed({id, feedType}){
 
 
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
-    console.log("HUH WHAT: ", feedType)
+    console.log("HUH WHAT: ", posts)
     //console.log("HUH WHAT: ", localStorage.getItem('user'))
     
     useEffect(() => {
@@ -337,7 +337,7 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team9Authorization
                         }
                       });
-                    setCount(result.data.items.length);
+                    setCount(result.data.count);
                 } else if (team === "team4"){
                     console.log("COMESHERE")
                     result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
@@ -379,7 +379,7 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team9Authorization
                         }
                       });
-                    setCount(result.data.items.length);
+                    setCount(result.data.count);
                 } else if (team === "team4"){
                     result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
