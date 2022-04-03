@@ -21,21 +21,23 @@ function FollowerCard({follower}) {
   const author = follower.id
   const currentUser = JSON.parse(localStorage.getItem('user'))
   const id = author.substring(author.lastIndexOf('/') + 1)
+
   var followerObject = {
     user: {
       uuid: id,
       displayName: follower.displayName,
-      email: ''
+      email: follower,
+      host: follower.host
     }
   }
-  var user = JSON.stringify(followerObject)
+  const user = JSON.stringify(followerObject)
 
 
   useEffect(() => {
 
     if(follower.host != URL10){
       setLocalAuthor(false)
-    } 
+  }
 
 
     const checkFriendship = async () => {
@@ -48,9 +50,7 @@ function FollowerCard({follower}) {
       const followers = res.data.items
 
       for(var i =0; i<followers.length; i++){
-        console.log("follower: ", followers[i])
         if (followers[i].displayName === currentUser.user.displayName){
-          console.log("IS SAME")
           setIsFriend(true)
         }
       }
@@ -60,13 +60,13 @@ function FollowerCard({follower}) {
 
   checkFriendship()
 
-  },[isFriend])
+  },[])
 
   return (
     <div>
 
     {localAuthor ? (
-        <Link to={`/profile/${id}`}  state={{state: user}}>
+        <Link to={`/profile/${id}`} state={{state: user}}>
           <Card sx={{ maxWidth: 900 }}>
             <CardActionArea >
               <CardContent>
@@ -86,18 +86,26 @@ function FollowerCard({follower}) {
         </Card>
         </Link>
     ): (
+      <Link to={`/fprofile/${id}`} state={{state: user}}>
+      {console.log("card", follower)}
       <Card sx={{ maxWidth: 900 }}>
-      <CardActionArea >
-        <CardContent>
-            <Typography align='start' gutterBottom variant="h5" component="div">
-            {follower.displayName}
-            </Typography>
-            <Typography align='start' variant="body2" color="text.secondary">
-            {follower.host}
-            </Typography>
-        </CardContent>
-      </CardActionArea>
-      </Card>
+        <CardActionArea >
+          <CardContent>
+              <Typography align='start' gutterBottom variant="h5" component="div">
+              {follower.displayName}
+              </Typography>
+              <Typography align='start' variant="body2" color="text.secondary">
+              {follower.host}
+              </Typography>
+              {isFriend && (
+                <Typography align='end' variant="body2" color="text.secondary">
+                Friend 
+                </Typography>
+              )}
+          </CardContent>
+        </CardActionArea>
+    </Card>
+    </Link>
     )}
 
   </div>

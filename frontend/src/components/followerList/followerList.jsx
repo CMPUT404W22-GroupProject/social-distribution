@@ -4,7 +4,7 @@ import axios from 'axios'
 
 import './followerList.css'
 
-function FollowerList({profileId}) {
+function FollowerList({user}) {
 
   const [followers, setFollowers] = useState([])
   const [foreignFollowers, setForeignFollowers] = useState([])
@@ -21,7 +21,7 @@ function FollowerList({profileId}) {
   useEffect(() => {
 
     const fetchLocalFollowers = async () => {
-        const result = await axios.get(URL10 + "/authors/" + profileId + "/followers", {
+        const result = await axios.get(URL10 + "/authors/" + user.user.uuid + "/followers", {
             headers: {
               'Authorization': 'token ' + team10token
               //'Authorization': 'Basic ' + team10Authorization
@@ -32,12 +32,13 @@ function FollowerList({profileId}) {
 
     fetchLocalFollowers()
 
-  },[followers, profileId])
+  },[])
   
 
   return (
     <div className='followersContainer'>
             <ul className='list'>
+                {console.log("heheheh",followers)}
                 {followers.map(follower => (<li key={follower.id}><FollowerCard follower={follower}/></li>))}
             </ul>
     </div>
