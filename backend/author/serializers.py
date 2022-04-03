@@ -58,6 +58,17 @@ class AuthorsSerializer(ModelSerializer):
         new_author.save()
         return new_author
 
+    def ignoreMethod(self, validated_data):
+        # Used in follower_api test
+        new_author = Author.objects.create(**validated_data)
+        host = "http://testserver"
+        new_author.host = host
+        new_author.id = host + '/authors/' + str(new_author.uuid)
+        new_author.url = host + '/authors/' + str(new_author.uuid)
+
+        new_author.save()
+        return new_author
+
     def update(self, instance, validated_data):
         # Only update the following fields
         instance.displayName = validated_data.get('displayName', instance.displayName)
