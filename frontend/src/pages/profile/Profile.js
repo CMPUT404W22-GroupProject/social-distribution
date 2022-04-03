@@ -6,58 +6,92 @@ import { useLocation } from 'react-router-dom';
 import {useParams} from 'react-router-dom';
 import PaginationControlled from '../../components/paginationFeed'
 import CreatePost from '../../components/createPost/CreatePost';
-
-
+import Popup from '../../components/popup/Popup';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 //Components
 import AvatarPhoto from '../../components/avatar/avatar'
 import FollowerList from '../../components/followerList/followerList';
 
 
 
-function Profile({user}){
+function Profile(){
     
-    const {id, setId} = useContext(UserContext); // current users id
+
     const [authorData, setAuthorData] = useState('')
+    const [followers, setFollowers] = useState('')
     const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(1);
+    const [buttonPopup, setButtonPopup] = useState(false);
     const params = useParams();
     const profileId = params.id.replace(":","")
     const [count, setCount] = useState(1);
     const [recievedData, setRecievedData] = useState([]);
-
+    const location = useLocation()
+    const user = JSON.parse(location.state.state)
+    const currentUser = JSON.parse(localStorage.getItem('user'))
 
     const [showFollowers, setShowFollowers] = useState(false)
-
-
     const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
-    const team10token = JSON.parse(localStorage.getItem('user')).token
-    const [loggedInAuthor, setLoggedInAuthor] = useState([]);
-    const [loggedInAuthorFollowers, setLoggedInAuthorFollowers] = useState([]);
+    const [showFollowBtn, setShowFollowBtn] = useState(true)
+    const [showCreatePost, setShowCreatePost] = useState(false)
 
     useEffect(() => {
-        fetchAuthor()    
+
+
+        
+        fetchAuthor(user)
+
+        if(currentUser.user.uuid == user.user.uuid){
+            setShowCreatePost(true)
+        }
+
+        const checkFollowing = async () => {
+            if (currentUser.user.uuid != user.user.uuid){
+                try{
+                    const res = await axios.get(URL10 + "/authors/" + user.user.uuid + '/followers/', {
+                        headers: {
+                            'Authorization': 'Basic ' + team10Authorization
+                        }
+                    })
+                    const data = res.data.items
+                    for (var i=0; i < data.length; i++){
+                        console.log(data[i].displayName)
+                        if (currentUser.user.displayName == data[i].displayName){
+                            setShowFollowBtn(false)
+                        }
+               }
+                }catch (err){
+                    console.error(err.response)
+                    console.log('error')
+
+                }
+
+            }else{
+                setShowFollowBtn(false)
+            }
+        }
 
         const fetchPosts = async () => {
             //fetch posts from user/author id, these are posts created by the user/author
             if (page === 1){
                 const result = await axios.get(URL10 + "/authors/" + profileId + "/posts", {
                     headers: {
-                      'Authorization': 'token ' + team10token
-                      //'Authorization': 'Basic ' + team10Authorization
+                      'Authorization': 'Basic ' + team10Authorization
                     }});
                 setRecievedData(result);
                 setCount(result.data.count);
-                console.log(result.data)
                  //puts posts in array + sorts from newest to oldest
                 setPosts(result.data.items.sort((p1, p2) => {
                 return new Date(p2.published) - new Date(p1.published)
             }));
+
             } else {
+
+
                 const result = await axios.get(URL10 + "/authors/" + profileId + "/posts?page=" + page, {
                     headers: {
-                      'Authorization': 'token ' + team10token
-                      //'Authorization': 'Basic ' + team10Authorization
+                      'Authorization': 'Basic ' + team10Authorization
                     }});
                 setCount(result.data.count);
                 setRecievedData(result);
@@ -66,16 +100,20 @@ function Profile({user}){
                 return new Date(p2.published) - new Date(p1.published)
             }));
             }}
+
+        
+        
         fetchPosts()
-    }, [page, profileId, showFollowers])
+        checkFollowing()
+
+    }, [page, profileId, showFollowers, showFollowBtn])
 
 
 
-    async function fetchAuthor() {
-        const res = await axios.get(URL10 + `/authors/${profileId}`, {
+    async function fetchAuthor(user) {
+        const res = await axios.get(URL10 + `/authors/${user.user.uuid}`, {
             headers: {
-              'Authorization': 'token ' + team10token
-              //'Authorization': 'Basic ' + team10Authorization
+              'Authorization': 'Basic ' + team10Authorization
             }});
         setAuthorData(res.data)
     }
@@ -84,30 +122,107 @@ function Profile({user}){
         //https://www.geeksforgeeks.org/how-to-pass-data-from-child-component-to-its-parent-in-reactjs/
         setPage(childData);
     }
+
+
+
+    //current user will make follow request to current users profile
+
+    const handleFollow = () => {
+        console.log("button pressed")
+        console.log("AUTHOR DATA ID", authorData.id)
+        console.log("currentUser ID", currentUser.user.uuid)
+        //this isnt working right now 
+        var followRequest = { //the json file that will be sent
+            "type": "follow",
+            "summary": currentUser.user.displayName + "wants to follow you",
+            "actor":{
+                "type": "author",
+                "id": URL10 + "/authors/" + currentUser.user.uuid,
+                "url": URL10 + "/authors/" + currentUser.user.uuid,
+                "host": URL10 + "/",
+                "displayName": currentUser.user.displayName,
+                "github": '',
+                "profileImage": authorData.profileImage
+            },
+            "object":{
+                "type":"author",
+                "id": URL10 + "/authors/" + user.user.uuid,
+                "host": URL10 + "/",
+                "displayName": user.user.uuid,
+                "url":URL10 + "/authors/" + user.user.uuid,
+                "github": " ",
+                "profileImage": authorData.profileImage
+            }      
+        }
+
+        axios.post(URL10 + '/authors/' + user.user.uuid + '/inbox/', followRequest, {
+            headers: {
+              'Authorization': 'token ' + currentUser.token
+            }
+          }).then( res => {
+              console.log(res)
+          });
+    }
     
     return (
         <div>
             <AvatarPhoto id={profileId}/>
-            <h2>{authorData.displayName}</h2>
+            <h2>{user.user.displayName}</h2>
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
 
+            {showFollowBtn && (
+                <button onClick={handleFollow}>Follow</button>
+            )}
+
+            
+            {!showFollowers &&
+                <button onClick={(e) => setShowFollowers(true)}>Followers</button>
+            }
+
+            {showFollowers &&
+                <button onClick={(e) => setShowFollowers(false)}>Posts</button>
+            }
+
+            {showCreatePost &&  
+                <div>
+                    <div className="feedCreatePost" >
+                    <AddCircleOutlineIcon 
+                        htmlColor="blue" 
+                        className="feedCreatePostIcon" 
+                        onClick={() => setButtonPopup(true)}
+                        />
+                        <span 
+                        className="feedCreatePostText">
+                            Create Post!
+                        </span>
+                    </div>
+                    <Popup 
+                    trigger = {buttonPopup} 
+                    setTrigger = {setButtonPopup}
+                    >
+                        <CreatePost loggedInAuthor = {authorData} loggedInAuthorId = {authorData.id} loggedInAuthorFollowers={followers}/>
+                    </Popup>
+                </div>
+            }
+
             {!showFollowers && 
                 <div>
-                    <button onClick={(e) => setShowFollowers(true)}>Followers</button>
                     <ul>
                         {posts.map(post => (<li><Post post={post} team="cmput-404-w22-group-10" loggedInAuthor={profileId}/></li>))}
                     </ul>
 
                 </div>
                 }
-            {showFollowers && 
 
+
+            {showFollowers && 
             <div>
-                <button onClick={(e) => setShowFollowers(false)}>Posts</button>
                 <FollowerList profileId={profileId}/>
             </div>
             }
+
+
         </div>
     )
 }
