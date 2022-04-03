@@ -39,3 +39,12 @@ div {
   height: 2em !important;
   cursor: pointer;
 }
+.paginationAndDelete{
+  display: flex;
+}
+
+.FeedClearIcon{
+  cursor: pointer;
+  color: red;
+  right:1000 px;
+}

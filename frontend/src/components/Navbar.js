@@ -57,8 +57,8 @@ function NavBar() {
       <Navbar bg="dark" variant="dark">
       <Container>
           <Nav> 
-            {user && (<Link style={linkStyle} to={`/authors/${JSON.parse(user).user.uuid}/inbox`}>Inbox</Link>)}
-            {user && (<Link style={linkStyle} to={`/authors/${JSON.parse(user).user.uuid}/posts`}>Posts</Link>)}
+            {user && (<Link style={linkStyle} to={`/authors/${JSON.parse(user).user.uuid}/inbox/`}>Inbox</Link>)}
+            {/* {user && (<Link style={linkStyle} to={`/authors/${JSON.parse(user).user.uuid}/posts/`}>Posts</Link>)} */}
             {user && (<Link style={linkStyle} to='/publicPosts'>Public Posts</Link>)}
             {user && (<Link style={linkStyle} to={`/profile/${JSON.parse(user).user.uuid}`} state={{state: user}}>Profile</Link>)}
             {user && (<Link style={linkStyle} onClick={(e) => handleLogout(e)} to='/login'>Logout</Link>)}
