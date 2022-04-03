@@ -1,25 +1,11 @@
-from email.mime import image
-from django.shortcuts import render
-from django.http import HttpResponse, Http404, request
+from django.http import HttpResponse
 from post.models import Post
 from author.models import Author
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView, ListAPIView
 from rest_framework.response import Response
 from .pagination import PostPageNumberPagination
-from rest_framework import permissions
-import os
-from rest_framework.permissions import IsAuthenticated
-from .permissions import IsAuthorOrReadOnly
-from rest_framework import generics, permissions
-import json
-from urllib.parse import urlparse
-import requests
 import uuid
-from node.models import Node
-import base64
-from PIL import Image
-from io import BytesIO
 import codecs
 
 from post.serializers import PostSerializer, PostSerializerGet

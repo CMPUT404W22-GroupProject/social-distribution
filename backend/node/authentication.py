@@ -77,6 +77,9 @@ class BasicAuthentication:
         elif host == "cmput-404-w22-project-group09.herokuapp.com":
             username = 'group10'
             password = 'pwd1010'
+        elif host == "tik-tak-toe-cmput404.herokuapp.com":
+            username = 'admin'
+            password = 'tX7^iS8a5Ky$^S'
         else:
             username = ''
             password = ''
