@@ -25,10 +25,13 @@ function Profile(){
     const params = useParams();
     const profileId = params.id.replace(":","")
     const [count, setCount] = useState(1);
+    const [btnCount, setBtnCount] = useState(1)
     const [recievedData, setRecievedData] = useState([]);
     const location = useLocation()
     const user = JSON.parse(location.state.state)
     const currentUser = JSON.parse(localStorage.getItem('user'))
+
+    const [hostName, setHostName] = useState(null)
 
     const [showFollowers, setShowFollowers] = useState(false)
     const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
@@ -36,16 +39,14 @@ function Profile(){
     const [showFollowBtn, setShowFollowBtn] = useState(true)
     const [showCreatePost, setShowCreatePost] = useState(false)
 
+
     useEffect(() => {
 
-
-        
         fetchAuthor(user)
 
         if(currentUser.user.uuid == user.user.uuid){
             setShowCreatePost(true)
         }
-
         const checkFollowing = async () => {
             if (currentUser.user.uuid != user.user.uuid){
                 try{
@@ -71,7 +72,6 @@ function Profile(){
                 setShowFollowBtn(false)
             }
         }
-
         const fetchPosts = async () => {
             //fetch posts from user/author id, these are posts created by the user/author
             if (page === 1){
@@ -87,8 +87,6 @@ function Profile(){
             }));
 
             } else {
-
-
                 const result = await axios.get(URL10 + "/authors/" + profileId + "/posts?page=" + page, {
                     headers: {
                       'Authorization': 'Basic ' + team10Authorization
@@ -106,7 +104,7 @@ function Profile(){
         fetchPosts()
         checkFollowing()
 
-    }, [page, profileId, showFollowers, showFollowBtn])
+    },[])
 
 
 
@@ -126,7 +124,6 @@ function Profile(){
 
 
     //current user will make follow request to current users profile
-
     const handleFollow = () => {
         console.log("button pressed")
         console.log("AUTHOR DATA ID", authorData.id)
@@ -164,6 +161,16 @@ function Profile(){
           });
     }
     
+    function showFollowersButton(e){
+        setShowFollowers(false)
+        setBtnCount(btnCount + 1)
+    }
+
+    function showPostsButton(e){
+        setShowFollowers(true)
+        setBtnCount(btnCount + 1)
+    }
+
     return (
         <div>
             <AvatarPhoto id={profileId}/>
@@ -177,11 +184,11 @@ function Profile(){
 
             
             {!showFollowers &&
-                <button onClick={(e) => setShowFollowers(true)}>Followers</button>
+                <button onClick={showPostsButton}>Followers</button>
             }
 
             {showFollowers &&
-                <button onClick={(e) => setShowFollowers(false)}>Posts</button>
+                <button onClick={showFollowersButton}>Posts</button>
             }
 
             {showCreatePost &&  
@@ -208,8 +215,8 @@ function Profile(){
 
             {!showFollowers && 
                 <div>
-                    <ul>
-                        {posts.map(post => (<li><Post post={post} team="cmput-404-w22-group-10" loggedInAuthor={profileId}/></li>))}
+                    <ul> 
+                        {posts.map(post => (<li ><Post key={user.user.id} post={post} team="cmput-404-w22-group-10" loggedInAuthor={currentUser.user.uuid}/></li>))}
                     </ul>
 
                 </div>
@@ -218,7 +225,7 @@ function Profile(){
 
             {showFollowers && 
             <div>
-                <FollowerList profileId={profileId}/>
+                <FollowerList key={user.user.uuid} profileId={user.user.uuid} />
             </div>
             }
 

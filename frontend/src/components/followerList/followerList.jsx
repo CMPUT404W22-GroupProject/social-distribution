@@ -27,34 +27,16 @@ function FollowerList({profileId}) {
         setFollowers(result.data.items)
         return 0     
     }
-    const fetchTeam9Followers = async () => {
-      const result = await axios.get(URL9 + "/authors/" + profileId + "/followers", {
-        headers: {
-          'Authorization': 'token ' + team9Authorization
-          //'Authorization': 'Basic ' + team10Authorization
-        }});
-      setForeignFollowers(...result.data.items)
-      return 0
-    }
-
-    const fetchTeam4Followers = async () => {
-      const result = await axios.get(URL10 + "/authors/" + profileId + "/followers", {
-        headers: {
-          'Authorization': 'token ' + team9Authorization
-          //'Authorization': 'Basic ' + team10Authorization
-        }});
-      setForeignFollowers(...result.data.items)
-      return 0
-    }
 
     fetchLocalFollowers()
-  },[])
+
+  },[followers, profileId])
   
 
   return (
     <div className='followersContainer'>
             <ul className='list'>
-                {followers.map(follower => (<li><FollowerCard follower={follower}/></li>))}
+                {followers.map(follower => (<li key={follower.id}><FollowerCard follower={follower}/></li>))}
             </ul>
     </div>
   )
