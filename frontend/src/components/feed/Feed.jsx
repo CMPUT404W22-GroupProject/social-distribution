@@ -50,7 +50,7 @@ function Feed({id, feedType}){
 
 
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
-    console.log("HUH WHAT: ", feedType)
+    console.log("HUH WHAT: ", posts)
     //console.log("HUH WHAT: ", localStorage.getItem('user'))
     
     useEffect(() => {

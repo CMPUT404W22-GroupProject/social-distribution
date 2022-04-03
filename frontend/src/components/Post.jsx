@@ -50,7 +50,7 @@ function Post({post, team, loggedInAuthor}){
     const [postTags, setPostTags] = useState(post.categories);
     const [isPublic, setIsPublic] = useState(false);
 
-    console.log("contentype: ", post)
+    //console.log("contentype: ", post)
 
 
 
