@@ -48,7 +48,7 @@ function Feed({id, feedType}){
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
     const team10token = JSON.parse(localStorage.getItem('user')).token
 
-    
+
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
     console.log("HUH WHAT: ", feedType)
     //console.log("HUH WHAT: ", localStorage.getItem('user'))
@@ -108,6 +108,7 @@ function Feed({id, feedType}){
                         feedLoader("team10");
                         fetchUrlAuthorFollowers("team10");
                         setUrlAuthor(foreignAuthor);
+                        
                     }
                 })
                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
@@ -306,7 +307,6 @@ function Feed({id, feedType}){
                            feedLoader("team0");
                            fetchUrlAuthorFollowers("team0");
                            setUrlAuthor(foreignAuthor);
-                            
                         }
                     })
                 });
@@ -330,7 +330,6 @@ function Feed({id, feedType}){
                           //'Authorization': 'Basic ' + team10Authorization
                         }
                       });
-                      console.log("IMAGEPOST: ", result)
                     setCount(result.data.count);
                 } else if (team === "team9"){
                     result = await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/" + urlAuthorId + "/posts", {
@@ -584,6 +583,22 @@ function Feed({id, feedType}){
           
     },[page])
 
+    const clearInbox = async () => {
+
+        await axios.delete("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox/", {
+            headers: {      
+                'Authorization': 'token ' + team10token
+                }
+            }).then((response) => {
+                if (response.status === 201){
+                    alert("Successfully cleared inbox!")
+                    window.location.href = window.location.href;
+                } else {
+                    alert("Oops! Something went wrong!")
+                }
+            })
+
+    }
     function refreshPage(){
         //https://stackoverflow.com/questions/3715047/how-to-reload-a-page-using-javascript
         window.location.href = window.location.href;
@@ -644,10 +659,16 @@ function Feed({id, feedType}){
                 </span>
             </div>}
 
+            <div className="paginationAndDelete">
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
+            <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
 
-            <Github githubURL={"https://api.github.com/gurjogsingh"}/>
-            <Github githubURL={"https://github.com/moenuma"}/> 
+
+            </div>
+
+            
+
+            <Github githubURL={urlAuthor.github}/>
 
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">

@@ -6,8 +6,9 @@ import { useEffect, useState } from 'react';
 function Github({githubURL}) {
 
     const [github, setGithub] = useState([])
-    const githubUsername = new URL(githubURL).pathname;
-
+    var githubUsername;
+    if (githubURL !== "" && githubURL !== undefined && githubURL !== null){githubUsername = new URL(githubURL).pathname;}
+    
     const callGithub = async () => {
         await axios.get("https://api.github.com/users"+ githubUsername + "/events")
         .then((response) =>{
@@ -20,8 +21,10 @@ function Github({githubURL}) {
     
     // Call Github initially
     useEffect(() =>{
-        callGithub();
-    }, [])
+        if (githubURL !== "" && githubURL !== undefined && githubURL !== null){
+            callGithub();
+        }
+    }, [githubURL])
 
     // Call Github on subsequent interval
     useEffect(()=>{

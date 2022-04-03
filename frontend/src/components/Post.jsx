@@ -50,6 +50,8 @@ function Post({post, team, loggedInAuthor}){
     const [postTags, setPostTags] = useState(post.categories);
     const [isPublic, setIsPublic] = useState(false);
 
+    console.log("contentype: ", post.contentType)
+
 
 
      useEffect(() => {
@@ -126,7 +128,7 @@ function Post({post, team, loggedInAuthor}){
             
             if ( postHostName === "tik-tak-toe-cmput404.herokuapp.com"){
                 try {
-                        await axios.get(post.id + "/likes/", {
+                        await axios.get(post.id + "/likes", {
                             headers: {
                             'authorization': 'Basic ' + team0Authorization
                             }
@@ -537,14 +539,18 @@ function Post({post, team, loggedInAuthor}){
                     {post.title}
                 </Card.Title>
                 <Card.Subtitle className='postDesc'>
-                    {post.description}
+                {(team !== "team0") && 
+                            post.description}
                 </Card.Subtitle>
                 
 
                 <Card.Body className="text-center">
                     {(post.contentType == "text/plain") &&
                         <Card.Text>
-                            {post.content}
+                        {(team !== "team0") && 
+                            post.content}
+                        {(team === "team0") && 
+                            post.description}
 
                         </Card.Text>}
                     {
@@ -552,8 +558,15 @@ function Post({post, team, loggedInAuthor}){
                         <Card.Img src = {post.content} ></Card.Img>
                     }
                     {
-                        (post.contentType === "text/markdown") &&
+                        (post.contentType === "text/markdown") && (team !== "team0") &&
+                        
                         <ReactMarkdown children= {post.content}></ReactMarkdown>
+                    }
+
+                    {
+                        (post.contentType === "text/markdown") && (team === "team0") &&
+                        
+                        <ReactMarkdown children= {post.description}></ReactMarkdown>
                     }
 
                 </Card.Body>

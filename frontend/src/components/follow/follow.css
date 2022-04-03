@@ -36,6 +36,12 @@
   cursor: pointer;
   background-color: green;
 }
+.acceptedFollowButton {
+  align-items: center;
+  margin-right: 15px;
+  background-color: grey;
+  pointer-events: none;
+}
 .declineFollowButton {
   align-items: center;
   margin-right: 15px;
