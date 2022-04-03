@@ -101,7 +101,6 @@ class FollowerDetails(APITestCase):
         # Check response has data
         self.assertTrue(len(response.data) > 0)
     
-    # to fix
     # def testFollowerDetailsPUT(self):
     #     """Test PUT request for a specific follower"""
     #     # new_follower = Follower.objects.create(
