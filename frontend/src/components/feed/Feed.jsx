@@ -50,7 +50,7 @@ function Feed({id, feedType}){
 
     
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
-    console.log("HUH WHAT: ", JSON.parse(localStorage.getItem('user')).user.uuid)
+    console.log("HUH WHAT: ", feedType)
     //console.log("HUH WHAT: ", localStorage.getItem('user'))
     
     useEffect(() => {
@@ -182,7 +182,7 @@ function Feed({id, feedType}){
             });
             
             // Team 0
-            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/9d090d84-0501-4a5b-9ce3-259a46a0ea0e/posts/", {
+            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/", {
                 headers: {
                   'authorization': 'Basic ' + team0Authorization
                 }
@@ -439,7 +439,43 @@ function Feed({id, feedType}){
                     return new Date(p2.published) - new Date(p1.published)
                 }));
                 }
-            }   
+            }
+            
+            const fetchPublicPosts = async () => {
+                if (page === 1){
+                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/public-posts/", {
+                        headers: {
+                          
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
+                        }
+                      });
+                    setRecievedData(result);
+                    //console.log("RESULT: ", result)
+                    setCount(result.data.count);
+                     //puts objects in array + sorts from newest to oldest
+                    setPosts(result.data.items.sort((p1, p2) => {
+                    return new Date(p2.published) - new Date(p1.published)
+                }));
+
+
+                } else {
+                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/public-posts/?page=" + page, {
+                        headers: {
+                          
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
+                        }
+                      });
+                    setCount(result.data.count);
+                    setRecievedData(result);
+                    //puts objects in array + sorts from newest to oldest
+                    setPosts(result.data.items.sort((p1, p2) => {
+                    return new Date(p2.published) - new Date(p1.published)
+                }));
+                }
+
+            }
 
             const fetchUrlAuthorFollowers = async (team) => {
                 var result;
@@ -511,6 +547,9 @@ function Feed({id, feedType}){
                         //fetchUrlAuthorFollowers("team10");
                     }
                 }
+                if (feedType === "publicPosts"){
+                    fetchPublicPosts();
+                }
             }
 
             const fetchLoggedInAuthor = async () => {
@@ -539,6 +578,9 @@ function Feed({id, feedType}){
         fetchLoggedInAuthor();
         fetchLoggedInAuthorFollowers();    
         getAuthorServer();
+        if (feedType === "publicPosts"){
+            fetchPublicPosts();
+        }
           
     },[page])
 
@@ -589,6 +631,7 @@ function Feed({id, feedType}){
         //returning feed that will have createPost + other appropriate components shown to user form their inbox
         <div>
             {/*createPost button here, when clicked popup will popup*/}
+            { (feedType !== "publicPosts") &&
             <div className="feedCreatePost" >
                 <AddCircleOutlineIcon 
                     htmlColor="blue" 
@@ -599,7 +642,7 @@ function Feed({id, feedType}){
                     className="feedCreatePostText">
                         Create Post!
                 </span>
-            </div>
+            </div>}
 
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
 
