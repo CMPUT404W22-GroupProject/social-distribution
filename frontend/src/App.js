@@ -28,8 +28,8 @@ function App() {
               <Route exact path='/' element={<PrivateRoute><Home/></PrivateRoute>}/>
               <Route exact path='/authors/:id/inbox' element={<PrivateRoute><Home feedType = "inbox"/></PrivateRoute>}/>
               <Route exact path='/authors/:id/posts' element={<PrivateRoute><Profile/></PrivateRoute>}/>
-              <Route exact path='/fprofile/:id' element={<PrivateRoute><ForeignProfile/></PrivateRoute>}/>  
-              <Route exact path='/directory' element={<PrivateRoute><AuthorsList/></PrivateRoute>}/>  
+              <Route exact path='/fprofile/:id' element={<PrivateRoute><ForeignProfile/></PrivateRoute>}/> 
+              <Route exact path='/directory' element={<PrivateRoute><AuthorsList/></PrivateRoute>}/>   
 
             </Routes> 
           </Router>

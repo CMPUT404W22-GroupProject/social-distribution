@@ -13,13 +13,15 @@ const Register = () => {
     const navigate = useNavigate();
     const {displayName, setDisplayName} = useContext(UserContext);
     const[email, setEmail] = useState("");
+    const [github, setGithub] = useState("")
     const[password, setPassword] = useState("");
 
-    const register = (displayName, email, password) => {
+    const register = (displayName, email, github, password) => {
         return axios.post(API_URL+'register/', {
             "displayName" : displayName,
             "email" : email,
-            "password" : password
+            "password" : password,
+            "github": github
         })
         .then((response) => {
             console.log(response)
@@ -29,7 +31,7 @@ const Register = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        register(displayName, email, password)
+        register(displayName, email,github, password)
         .then(
             response => {
                 navigate('/login')
@@ -59,6 +61,11 @@ const Register = () => {
                 <input type='email' placeholder='example@gmail.com' 
                     value={email} 
                     onChange={(e) => setEmail(e.target.value)}/>
+
+                
+                <input type='url' placeholder='https://www.github.com/user' 
+                    value={github} 
+                    onChange={(e) => setGithub(e.target.value)}/>
 
 
                 <input type='password' placeholder='password' 

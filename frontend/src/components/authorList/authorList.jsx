@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import PaginationControlled from '../paginationFeed'
+import { Card } from '@mui/material';
+import { Avatar } from '@mui/material';
+import { CardHeader } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 function AuthorsList({host}) {
 
@@ -19,17 +23,31 @@ function AuthorsList({host}) {
   const [page, setPage] = useState([1])
   const [recievedData, setRecievedData] = useState([]);
   const [count, setCount] = useState(1);
+  const [id, setId] = useState(null)
 
   useEffect(()=> {
 
-      const fetchAuthors = async () => {
-        const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/",{
-          headers: {
-            'Authorization': 'Basic ' + team10Authorization
-          }});
 
-        console.log(result)
+      const fetchAuthors = async () => {
+
+        if (page == 1){
+          const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors",{
+            headers: {
+              'Authorization': 'token ' + team10Authorization
+            }});
+          setCount(result.data.count)
+          setLocalAuthors(result.data.items)
+        }else{
+          const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/?page="+ page  ,{
+            headers: {
+              'Authorization': 'token ' + team10Authorization
+            }});
+          setLocalAuthors(result.data.items)
+          setCount(result.data.count)
+        }
       }
+
+
 
     fetchAuthors()
   },[page])
@@ -40,6 +58,11 @@ function AuthorsList({host}) {
     setPage(childData);
   }
 
+  function getId(id){
+    var n = id.lastIndexOf('/');
+    var result = id.substring(n + 1); 
+    return result 
+  }
 
   return (
     <div>
@@ -51,8 +74,23 @@ function AuthorsList({host}) {
         <div>
           <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
           <ul>
-            {console.log('DIRECT', localAuthors)}
+            {console.log(localAuthors)}
+              {localAuthors.map(author => (
+                <li>
+                  <Link to={`/profile/${getId(author.id)}`}>
+                    <Card>
+                    <CardHeader
+                        avatar={<Avatar alt="An apple" src={author.profileImage} />}
+                        title={author.displayName}
+                        titleTypographyProps={{ variant: "h4", component: "span" }}
+                      />
+                    </Card>
+                  </Link>
+                </li>
+              ))}
+
           </ul>
+
         </div>
     </div>
   )

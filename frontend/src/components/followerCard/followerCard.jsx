@@ -60,13 +60,13 @@ function FollowerCard({follower}) {
 
   checkFriendship()
 
-  },[])
+  },[author])
 
   return (
     <div>
 
     {localAuthor ? (
-        <Link to={`/profile/${id}`} state={{state: user}}>
+        <Link to={`/authors/${id}/posts`} state={{state: user}}>
           <Card sx={{ maxWidth: 900 }}>
             <CardActionArea >
               <CardContent>
@@ -86,7 +86,7 @@ function FollowerCard({follower}) {
         </Card>
         </Link>
     ): (
-      <Link to={`/fprofile/${id}`} state={{state: user}}>
+      <Link to={`profile/${id}`} state={{state: user}}>
       {console.log("card", follower)}
       <Card sx={{ maxWidth: 900 }}>
         <CardActionArea >
