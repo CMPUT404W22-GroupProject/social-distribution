@@ -14,7 +14,7 @@ import AvatarPhoto from '../../components/avatar/avatar'
 import FollowerList from '../../components/followerList/followerList';
 import FollowerCard from '../../components/followerCard/followerCard';
 import Feed from '../../components/feed/Feed';
-
+import { Alert } from '@mui/material';
 
 function Profile(){
     
@@ -23,7 +23,7 @@ function Profile(){
     const params = useParams();
     const profileId = params.id.replace(":","")
     const idObject = JSON.stringify({"id": profileId})
-    const location = useLocation()
+
     //const user = JSON.parse(location.state.state)
     const currentUser = JSON.parse(localStorage.getItem('user'))
     const [showFollowers, setShowFollowers] = useState(false)
@@ -37,21 +37,13 @@ function Profile(){
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
 
-
     const [teamServer, setTeamServer] = useState("");
     const [urlAuthor, setUrlAuthor] = useState([]);
 
-
+    const [followSuccess, setFollowSuccess] = useState(false)
     const [showFollowBtn, setShowFollowBtn] = useState(true)
     const team10token = JSON.parse(localStorage.getItem('user')).token
 
-
-
-    useEffect(() => {
-
-
-        
-    })
 
     useEffect(() => {
 
@@ -327,50 +319,10 @@ function Profile(){
         checkFollowing()
         
 
-    },[profileId])
-
-
-    //current user will make follow request to current users profile
-    /*function handleFollow(e){
-        console.log("AUTHOR DATA ID", authorData.id)
-        console.log("currentUser ID", currentUser.user.uuid)
-        //this isnt working right now 
-        var followRequest = { //the json file that will be sent
-            "type": "follow",
-            "summary": currentUser.user.displayName + "wants to follow you",
-            "actor":{
-                "type": "author",
-                "id": URL10 + "/authors/" + currentUser.user.uuid,
-                "url": URL10 + "/authors/" + currentUser.user.uuid,
-                "host": URL10 + "/",
-                "displayName": currentUser.user.displayName,
-                "github": '',
-                "profileImage": authorData.profileImage
-            },
-            "object":{
-                "type":"author",
-                "id": URL10 + "/authors/" + user.user.uuid,
-                "host": URL10 + "/",
-                "displayName": user.user.uuid,
-                "url":URL10 + "/authors/" + user.user.uuid,
-                "github": " ",
-                "profileImage": authorData.profileImage
-            }      
-        }
-
-        axios.post(URL10 + '/authors/' + user.user.uuid + '/inbox/', followRequest, {
-            headers: {
-              'Authorization': 'token ' + currentUser.token
-            }
-          }).then( res => {
-              console.log(res)
-          });
-
-    }*/
+    },[showFollowers,profileId])
     
     function showFollowersButton(e){
         setShowFollowers(false)
-
     }
 
     function showPostsButton(e){
@@ -490,8 +442,8 @@ function Profile(){
                 </div>
                 }
             {showFollowers && 
-                <div>
-                    <ul>
+                <div className="wrapper">
+                    <ul className="followerList">
                         {followers.map(follower => (<li key={follower.id}><FollowerCard follower={follower}/></li>))}
                     </ul>
                 </div>
@@ -501,6 +453,4 @@ function Profile(){
         </div>
     )
 }
-
-/*<CreatePost loggedInAuthorId={profileId} loggedInAuthor={loggedInAuthor} loggedInAuthorFollowers={loggedInAuthorFollowers}/>*/
 export default Profile;

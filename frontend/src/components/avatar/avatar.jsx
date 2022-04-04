@@ -14,28 +14,17 @@ function AvatarPhoto({user}) {
     const [file, setFile] = useState(null);
     const params = useParams();
     const profileId = params.id.replace(":","")
-    const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
     const team10token = JSON.parse(localStorage.getItem('user')).token
-
     const URL = "https://cmput-404-w22-group-10-backend.herokuapp.com"
     const currentUser = JSON.parse(localStorage.getItem('user'))
-
     const [upload, setUpload] = useState(false)
 
 
     useEffect(() => {
-
-
-      const allowUpload = async () => {
         if(currentUser.user.uuid == profileId){
           setUpload(true)
         }
-      }
-
-
-      
-      allowUpload()
-    },[upload])
+    },[profileId])
 
 
     const handleChange = async (event)  => {

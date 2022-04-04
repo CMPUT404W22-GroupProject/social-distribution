@@ -47,6 +47,7 @@ const Register = () => {
                     />
                     {errors.email && <p>{errors.email.message}</p>}
 
+            
 
                 <input type='password' placeholder='password' 
                     {...register("password", {
