@@ -16,6 +16,7 @@ import UserContext from '../../context/userContext';
 import { useContext } from "react";
 import PaginationControlled from "../paginationFeed";
 import ClearIcon from '@mui/icons-material/Clear';
+import {Button} from 'react-bootstrap'
 import Github from "../github/Github"
 import { CatchingPokemonSharp } from "@mui/icons-material"
 
@@ -618,34 +619,25 @@ function Feed({id, feedType}){
     return (
         //returning feed that will have createPost + other appropriate components shown to user form their inbox
         <div>
-            { (feedType !== "publicPosts") &&
-                <div className="feedCreatePost" >
-                    <AddCircleOutlineIcon 
-                        htmlColor="blue" 
-                        className="feedCreatePostIcon" 
-                        onClick={() => setButtonPopup(true)}
-                        />
-                    <span 
-                        className="feedCreatePostText">
-                            Create Post!
-                    </span>
-                </div>
+            <div class="sideView">
+                { (feedType !== "publicPosts") &&
+                        <Button
+                            htmlColor="blue" 
+                            className="createPostBtn" 
+                            onClick={() => setButtonPopup(true)}
+                            >
+                        Create a new post
+                        </Button>
+                }
+                
+                {(feedType === "inbox") && 
+                    <Button className="feedClearBtn" onClick ={() =>{clearInbox()}}>Clear Inbox</Button>
+                }
+
+            {(feedType != "publicPosts") && 
+                <Github githubURL={urlAuthor.github}/>
             }
-
-            <div className="paginationAndDelete">
-            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-            <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
-
-
-            
-
-            <Github githubURL={urlAuthor.github}/>
-
             </div>
-
-            
-
-            <Github githubURL={urlAuthor.github}/>
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
                 <SentimentVeryDissatisfiedIcon 

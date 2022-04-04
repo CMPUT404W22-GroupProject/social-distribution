@@ -332,8 +332,9 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
       }
     }
 
-    function visibilityChange(checked) {
-      if (checked) {
+    function visibilityChange(publicChecked) {
+      console.log("here", publicChecked);
+      if (publicChecked) {
         setIsPublic(true);
         setIsPrivate(false);
         document.getElementById("chooseFriendField").hidden = true;
@@ -343,8 +344,9 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
         document.getElementById("chooseFriendField").hidden = false;
     }
   }
-    function unlistedChange(checked) {
-      if (checked) {
+    function unlistedChange(unlistedChecked) {
+      console.log("ahh", unlistedChecked)
+      if (unlistedChecked) {
         setIsUnlisted(true);
       } else {
         setIsUnlisted(false);
@@ -419,7 +421,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                     onstyle="warning"
                     onlabel='Public'
                     offlabel='Private'
-                    onChange={(checked: boolean) => visibilityChange(checked)}
+                    onChange={(publicChecked) => visibilityChange(publicChecked)}
                   />
                   <div id = "chooseFriendField" className="chooseFriendButton" onClick={() => setButtonPopup(true)}>
                       <PeopleAltIcon htmlColor="black" className="createPostIcon" />
@@ -428,7 +430,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                 </div>
               </div>
               <div class="form-group form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"onChange={(checked: boolean) =>unlistedChange(checked)}/>
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"onChange={(unlistedChecked) =>unlistedChange(unlistedChecked)}/>
                 <label class="form-check-label" for="flexCheckDefault">
                   Unlist
                 </label>

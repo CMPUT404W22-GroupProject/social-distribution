@@ -64,13 +64,13 @@
   cursor: pointer;
   color: black;
   background-color: white;
-  border: 2px solid #D08080;
+  border: 2px solid #FE3B00;
   border-radius: 5px;
   padding: 4px 12px;
 }
 .declineFollowButton:hover {
-  background-color: #D08080;
-  border: 2px solid #D08080;
+  background-color: #FE3B00;
+  border: 2px solid #FE3B00;
 }
 
 
