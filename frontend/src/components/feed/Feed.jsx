@@ -601,10 +601,8 @@ function Feed({id, feedType}){
                 </span>
             </div>
 
-            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-
             <Github githubURL={"https://api.github.com/gurjogsingh"}/>
-            <Github githubURL={"https://github.com/moenuma"}/> 
+            {/* <Github githubURL={"https://github.com/moenuma"}/>  */}
 
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
@@ -664,6 +662,7 @@ function Feed({id, feedType}){
                 >
                     <CreatePost loggedInAuthor = {loggedInAuthor} loggedInAuthorId = {loggedInAuthorId} loggedInAuthorFollowers = {loggedInAuthorFollowers}/>
             </Popup>
+            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
         </div>
     )
     }
