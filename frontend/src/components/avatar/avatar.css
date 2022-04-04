@@ -1,4 +1,13 @@
 .avatarContainer{
-    justify-content: center;
-    align-items: right;
+        height: 100%;
+        padding: 0;
+        margin: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+}
+
+.avatar{
+    margin: 0 auto;
+
 }
