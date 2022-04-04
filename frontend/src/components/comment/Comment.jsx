@@ -238,7 +238,11 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                     <div className="comment-date">{format(comment.published)}</div>
                     
                 </div>
+                {(comment.author.hostname !== "http://tik-tak-toe-cmput404.herokuapp.com/")}
                 <div className="comment-text">{comment.comment}</div>
+                {(comment.author.hostname === "http://tik-tak-toe-cmput404.herokuapp.com/")}
+                <div className="comment-text">{comment.content}</div>
+                
             </div>
             
             { !isLiked && <div className="comment-left-part" onClick={likeHandler}>
