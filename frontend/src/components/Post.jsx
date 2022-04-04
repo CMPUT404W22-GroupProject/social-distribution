@@ -681,7 +681,7 @@ function Post({post, team, loggedInAuthor}){
                     <span>Edit Post</span>
 
                     <label htmlFor="postTitle">Title:</label>
-                    <input name = "postTile"
+                    <input name = "postTitle"
                         value = {postTitle}
                         onChange = {(e) => {setPostTitle(e.target.value)}}
                     />
