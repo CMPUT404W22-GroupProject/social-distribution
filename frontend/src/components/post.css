@@ -10,10 +10,48 @@
 }
 .card {
   position: static;
+  border: 0px;
+  border-radius: 20px;
+  padding: 10px 0px;
 }
+.card-header {
+  background-color: transparent;
+  border: 0px;
+}
+.card-footer {
+  background-color: transparent;
+  border: 0px;
+  padding: 0px 15px 15px 20px;
+}
+.card-title {
+  text-align: left;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+.card-subtitle {
+  text-align: left;
+  /* margin-left: 10px; */
+  font-size: 0.9em;
+}
+.card-body {
+  border-radius: 15px;
+  border: 1px solid;
+  text-align: left;
+  padding: 10px 10px;
+  margin: 10px 0px;
+  font-size: 1em;
+}
+.card-text {
+  text-align: left;
+}
+
 .postTopLeft {
   display: flex;
   align-items: center;
+}
+
+.postDetails {
+  padding: 10px 20px;
 }
 
 .postProfileImg {
@@ -24,8 +62,8 @@
 }
 
 .postUsername {
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 1.2em;
+  font-weight: 400;
   margin: 0 10px;
 }
 
@@ -42,7 +80,6 @@
 
 .postOptions {
   display: flex;
-  margin-left: 20px;
 }
 
 .postOption {
@@ -50,38 +87,90 @@
   align-items: center;
   margin-right: 15px;
   cursor: pointer;
+  font-size: 0.8em;
+  color: black;
 }
 
 .postIcon {
-  width: 40px !important;
+  width: 30px !important;
   margin-right: 3px;
 }
-
-.postTitle {
-  text-align: left;
-  margin-left: 10px;
-  margin-top: 10px;
-  font-weight: bold;
-}
-.postDesc {
-  text-align: left;
-  margin-left: 10px;
-  font-size: 12px;
-  color: gray !important;
-  font-weight: bold;
-}
-.postTags {
-  text-align: right;
-  bottom: 0;
-  font-size: 10px;
+.editDeleteIcon {
+  width: 30px !important;
+  height: 30px !important;
   margin-right: 10px;
-  margin-bottom: 7px;
+}
+.deleteIcon:hover {
+  color: #FE3B00;
+}
+.editIcon:hover {
+  color: #79E584;
+}
+
+.postTags {
+  width:fit-content;
+  text-align: left;
+  bottom: 0;
+  border-radius: 15px;
+  border: 1px solid;
+  padding: 5px 10px;
+  margin: 10px 0px;
+  font-size: 0.8em;
 }
 
 .postEditDelete {
   cursor: pointer;
-  right: 0;
+  margin-left: auto;
+  margin-right: 10px;
 }
-.text-center {
+/* .text-center {
   padding-top: 7px;
+} */
+.visibilityBtn {
+  width: 90%;
+  /* position: relative;
+  top: 0;
+  left: 0; */
+  /* margin-left: -70%; */
+}
+.smallPopupHead {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.smallPopupTop {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.smallPopupBtn {
+  border: 1px solid #9695F0;
+  padding: 8px 10px;
+  border-radius: 5px;
+  background-color: #9695F0;
+  font-weight: 500;
+  cursor: pointer;
+  color: white;
+  /* margin-top: 20px; */
+  width: 50%;
+  margin-top: 20px;
+}
+.smallPopupBtn:hover{
+  border: 1px solid #9695F0;
+  background-color: white;
+  color: #9695F0;
+}
+.smallPopupBtn:active{
+  border: 1px solid #9695F0;
+  background-color: white;
+  color: #9695F0;
+}
+.smallPopupBtn:focus{
+  border: 1px solid #9695F0;
+  background-color: white;
+  color: #9695F0;
+}
+.likedBy {
+  margin-right: auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }

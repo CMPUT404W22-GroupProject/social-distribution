@@ -1,6 +1,7 @@
 import React from 'react'
 import './popupSmall.css'
 import {Button} from 'react-bootstrap'
+import CloseIcon from '@mui/icons-material/Close';
 
 function PopupSmall(props) {
     //This is the general popup template and functionality
@@ -9,9 +10,9 @@ function PopupSmall(props) {
 
         <div className='popupSmallWrapper'>
             <div className='popupSmallInner'>
-            <Button className ='closeSmallButton' variant='primary' onClick={() => props.setTrigger(false)}>
+            <CloseIcon className ='closeSmallButton' htmlColor="black" onClick={() => props.setTrigger(false)}>
                 Close
-                </Button>
+                </CloseIcon>
                 {props.children}
                 
 

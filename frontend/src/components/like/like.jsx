@@ -1,6 +1,7 @@
 import {Card} from 'react-bootstrap'
 import PersonIcon from '@mui/icons-material/Person'
 import './like.css'
+// import '../../components/post.css'
 import {useState, useEffect} from 'react'
 import axios from "axios"
 import {format} from "timeago.js"
@@ -21,12 +22,13 @@ function Like({like}){
                     <span className="likeDate">{like.published}</span>
                      </div> 
                 </Card.Header>
-                <Card.Body className="text-center">
+                <Card.Text>
+                    <div className="likeDetails">
                         <Card.Text>
                             {like.summary}
                         </Card.Text>
-                     
-                </Card.Body>
+                     </div>
+                </Card.Text>
 
             </Card>
 

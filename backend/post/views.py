@@ -17,7 +17,7 @@ class PublicPostList(ListAPIView):
     basic_auth = BasicAuthentication()
 
     def get_queryset(self):
-        return Post.objects.filter(visibility="PUBLIC").order_by('published')
+        return Post.objects.filter(visibility="PUBLIC").order_by('-published')
 
     def list(self, request):
 
@@ -40,7 +40,7 @@ class PostList(ListCreateAPIView):
     # permission_classes = (IsAuthorOrReadOnly,)
 
     def get_queryset(self):
-        return Post.objects.filter(author_id=self.author_id).order_by('published')
+        return Post.objects.filter(author_id=self.author_id).order_by('-published')
 
     # get recent posts of author
     def list(self, request, author_id):

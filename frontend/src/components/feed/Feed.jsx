@@ -16,6 +16,7 @@ import UserContext from '../../context/userContext';
 import { useContext } from "react";
 import PaginationControlled from "../paginationFeed";
 import ClearIcon from '@mui/icons-material/Clear';
+import {Button} from 'react-bootstrap'
 import Github from "../github/Github"
 import { CatchingPokemonSharp } from "@mui/icons-material"
 
@@ -648,6 +649,8 @@ function Feed({id, feedType}){
             { (feedType !== "publicPosts") &&
                 <div className="githubSection">
 
+
+            {(feedType != "publicPosts") && 
                 <Github githubURL={urlAuthor.github}/>
     
                 </div>
@@ -707,6 +710,7 @@ function Feed({id, feedType}){
                 }
 
 
+
                 </div>
 
             </div>
@@ -722,6 +726,7 @@ function Feed({id, feedType}){
                 >
                     <CreatePost loggedInAuthor = {loggedInAuthor} loggedInAuthorId = {loggedInAuthorId} loggedInAuthorFollowers = {loggedInAuthorFollowers}/>
             </Popup>
+            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
         </div>
     )
     }

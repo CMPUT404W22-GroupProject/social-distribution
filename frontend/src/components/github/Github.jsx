@@ -46,18 +46,34 @@ function Github({githubURL}) {
     }
 
     return(
-        <div className="githubBox">
-            {
-                (github.length !== 0) &&
-                    <div className='githubUserDisplay'>
-                    <img className = "githubAvatar" src = {github[0].actor.avatar_url}/>
-                    <span className='githubDisplayname'> {github[0].actor.display_login}</span>
-                </div>
-               
-            }
-            { (github.length === 0) &&
-            <span className='githubDisplayname'> Github URL not working :(</span>}
-            {/* <div className='githubEvent'>
+        <div className="githubView">
+            <div className="githubBox">
+                {
+                    (github.length !== 0) &&
+                        <div className='githubUserDisplay'>
+                        <img className = "githubAvatar" src = {github[0].actor.avatar_url}/>
+                        <span className='githubDisplayname'> {github[0].actor.display_login}</span>
+                    </div>
+                
+                }
+                { (github.length === 0) &&
+                <span className='githubDisplayname'> Github URL not working :(</span>}
+                {/* <div className='githubEvent'>
+                        <span className='githubPushevent'>{github[0].type}</span>
+                        <span>{github[0].created_at}</span>
+                        <span>{github[0].repo.name}</span>
+                </div> */}
+                {/* <div className='githubEvent'>
+                        <span className='githubPushevent'>{item.type}</span>
+                        <span>{item.created_at}</span>
+                        <span>{item.repo.name}</span>
+                </div> */}
+                {/* {(github.length !== 0) &&
+                    github.forEach((item) =>  
+                    displayEvent(item)
+                    )} */}
+                {(github.length !== 0) &&
+                    <div className='githubEvent'>
                     <span className='githubPushevent'>{github[0].type}</span>
                     <span>{github[0].created_at}</span>
                     <span>{github[0].repo.name}</span>
@@ -113,7 +129,9 @@ function Github({githubURL}) {
                 <span>{github[7].repo.name}</span> </div>}
                 
 
-                </div>
+
+                    </div>
+        </div>
                     
 
                 

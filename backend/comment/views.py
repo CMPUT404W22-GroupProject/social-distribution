@@ -19,7 +19,7 @@ class CommentList(ListCreateAPIView):
     basic_auth = BasicAuthentication()
 
     def get_queryset(self):
-        return Comment.objects.filter(post=self.post_id).order_by('published')
+        return Comment.objects.filter(post=self.post_id).order_by('-published')
 
     # get recent posts of author
     def list(self, request, author_id, post_id):
@@ -34,7 +34,7 @@ class CommentList(ListCreateAPIView):
 
             # there is no comment to a post
             if not queryset:
-                return Response("No comments", status=404)
+                return Response("", status=404)
 
             page = self.paginate_queryset(queryset)
             if page is not None:

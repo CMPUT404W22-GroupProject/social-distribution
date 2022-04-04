@@ -20,18 +20,18 @@ function InboxComment({inboxComment}){
                     <span className="inboxCommentDate">{format(inboxComment.published)}</span>
                      </div> 
                 </Card.Header>
-                <Card.Title className="text-center">
-                        <Card.Text>
-                            {inboxComment.author.displayName} commented on your post!
-                        </Card.Text>
-                     
-                </Card.Title>
-                <Card.Body className="text-center">
-                        <Card.Text>
-                            {inboxComment.comment}
-                        </Card.Text>
-                     
-                </Card.Body>
+                <div className="inboxCommentDetails">
+                    <Card.Text>
+                        {inboxComment.author.displayName} commented on your post!
+                        
+                    </Card.Text>
+                    <Card.Body className="text-center">
+                            <Card.Text>
+                                {inboxComment.comment}
+                            </Card.Text>
+                        
+                    </Card.Body>
+                </div>
 
             </Card>
 

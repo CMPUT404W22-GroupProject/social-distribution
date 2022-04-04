@@ -15,7 +15,7 @@
   position: relative;
   padding: 32px;
   width: 100%;
-  height: 350px;
+  height: auto;
   max-width: 640px;
   background-color: white;
   border-radius: 10px;
@@ -28,6 +28,14 @@
 
 .closeSmallButton {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 25px;
+  right: 25px;
+  transform: scale(1.5);
+  cursor: pointer;
+}
+.closeSmallButton:hover {
+  color: grey;
+}
+.closeSmallButton:active {
+  color: black;
 }
