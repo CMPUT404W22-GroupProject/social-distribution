@@ -23,21 +23,23 @@ describe('testCommenting', () => {
     
 
         //create post
-        expect(cy.findByTestId('AddCircleOutlineIcon')).to.exist;
-        cy.findByTestId('AddCircleOutlineIcon').click();
+        cy.findByRole('button', {  name: /create a new post/i}).should('be.visible');
+        cy.findByRole('button', {  name: /create a new post/i}).click();
             
             const postTitle = 'postTestComment title';
             const postDescription = 'postTestComment description'
             const postContent = 'postTestComment content'
             const postTags = 'postcomment, postcomment, postcomment'
-            cy.findByPlaceholderText(/title!/i).type(postTitle);
-            cy.findByPlaceholderText(/describe it a little/i).type(postDescription);
+            cy.findByPlaceholderText(/give it a title!/i).type(postTitle);
+            cy.findByPlaceholderText(/what is this post about?/i).type(postDescription);
             cy.findByPlaceholderText(/what's in your mind?/i).type(postContent);
             cy.findByPlaceholderText(/add tags!/i).type(postTags);
-            cy.findByText(/public\?/i).click();
+            cy.findByText(/private/i).click();
 
-            cy.findByRole('button', { name: /share/i}).click();
-            cy.findByRole('button', { name: /close/i}).click();
+            cy.findByRole('button', { name: "Post"}).click();
+            //cy.findByRole('button', { name: /close/i}).click();
+            cy.wait(1000);
+            cy.reload();
 
             //find post on the page
             cy.findByText(postTitle).scrollIntoView().should('be.visible')
@@ -45,26 +47,26 @@ describe('testCommenting', () => {
 
             //create and like and dislike comment and check if it is successful and if the numbers are alright
             cy.findByTestId('CommentIcon').click();
-            cy.findByRole('textbox').type('post test comment 1');
-            cy.findByRole('button', {  name: /post/i}).should('be.enabled');
-            cy.findByRole('button', {  name: /post/i}).click();
+            cy.findByTestId('commentSectionTextbox').type('post test comment 1');
+            cy.findByRole('button', { name: "Post"}).should('be.enabled');
+            cy.findByRole('button', { name: "Post"}).click();
             expect(cy.findByText(/post test comment 1/i)).to.exist;
             cy.findByTestId('likeCommentCount').contains("0");
-            cy.findByTestId('FavoriteIcon').click();
+            cy.findByTestId('FavoriteBorderIconComment').click();
             cy.findByTestId('likeCommentCount').contains("1");
-            cy.findByTestId('FavoriteIcon').click();
+            cy.findByTestId('FavoriteIconComment').click();
             cy.findByTestId('likeCommentCount').contains("0");
-            cy.findByRole('button', {  name: /close/i}).click();
+            cy.findByTestId('CloseIcon').click();
             cy.findByTestId('CommentIcon').click();
             cy.findByTestId('likeCommentCount').contains("0");
-            cy.findByTestId('FavoriteIcon').click();
+            cy.findByTestId('FavoriteBorderIconComment').click();
             cy.findByTestId('likeCommentCount').contains("1");
-            cy.findByRole('button', {  name: /close/i}).click();
+            cy.findByTestId('CloseIcon').click();
             cy.reload();
             cy.findByTestId('commentCount').contains("1");
             cy.findByTestId('CommentIcon').click();
             cy.findByTestId('likeCommentCount').contains("1");
-            cy.findByRole('button', {  name: /close/i}).click();
+            cy.findByTestId('CloseIcon').click();
             
             
  
