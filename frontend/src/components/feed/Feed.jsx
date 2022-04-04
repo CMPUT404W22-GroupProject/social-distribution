@@ -16,6 +16,7 @@ import UserContext from '../../context/userContext';
 import { useContext } from "react";
 import PaginationControlled from "../paginationFeed";
 import ClearIcon from '@mui/icons-material/Clear';
+import {Button} from 'react-bootstrap'
 import Github from "../github/Github"
 import { CatchingPokemonSharp } from "@mui/icons-material"
 
@@ -618,42 +619,33 @@ function Feed({id, feedType}){
     return (
         //returning feed that will have createPost + other appropriate components shown to user form their inbox
         <div>
-            {/*createPost button here, when clicked popup will popup*/}
-            { (feedType !== "publicPosts") &&
-            <div className="feedCreatePost" >
-                <AddCircleOutlineIcon 
-                    htmlColor="blue" 
-                    className="feedCreatePostIcon" 
-                    onClick={() => setButtonPopup(true)}
-                    />
-                <span 
-                    className="feedCreatePostText">
-                        Create Post!
-                </span>
-            </div>}
+            <div class="sideView">
+                { (feedType !== "publicPosts") && (loggedInAuthorId === urlAuthorId) &&
+                        <Button
+                            htmlColor="blue" 
+                            className="createPostBtn" 
+                            onClick={() => setButtonPopup(true)}
+                            >
+                        Create a new post
+                        </Button>
+                }
+                
+                {(feedType === "inbox") && 
+                    <Button className="feedClearBtn" onClick ={() =>{clearInbox()}}>Clear Inbox</Button>
+                }
 
-            <div className="paginationAndDelete">
-            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-            <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
-
-
-            
-
-            <Github githubURL={urlAuthor.github}/>
-
+            {(feedType != "publicPosts") && 
+                <Github githubURL={urlAuthor.github}/>
+            }
             </div>
-
-            
-
-            <Github githubURL={urlAuthor.github}/>
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
-                <SentimentVeryDissatisfiedIcon 
+                {/* <SentimentVeryDissatisfiedIcon 
                     htmlColor = "Red"
-                    className="feedNoPostImage"/>
+                    className="feedNoPostImage"/> */}
                 <span
                     className="feedNoPostText">
-                    No new posts!
+                    No items in your inbox!
                 </span>
                 <RefreshIcon
                     className="feedNoPostRefresh"
@@ -662,9 +654,9 @@ function Feed({id, feedType}){
             
             {(feedType === "posts") && (posts.length === 0) && //display message if post array is empty
             <div className="feedNoPostMessage">
-                <SentimentVeryDissatisfiedIcon 
+                {/* <SentimentVeryDissatisfiedIcon 
                     htmlColor = "Red"
-                    className="feedNoPostImage"/>
+                    className="feedNoPostImage"/> */}
                 <span
                     className="feedNoPostText">
                     No new posts!
@@ -700,10 +692,11 @@ function Feed({id, feedType}){
             {/*popup with createPost component in it, called when button is clicked*/}
             <Popup 
                 trigger = {buttonPopup} 
-                setTrigger = {setButtonPopup}
+                setTrigger = {[setButtonPopup, refreshPage]}
                 >
                     <CreatePost loggedInAuthor = {loggedInAuthor} loggedInAuthorId = {loggedInAuthorId} loggedInAuthorFollowers = {loggedInAuthorFollowers}/>
             </Popup>
+            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
         </div>
     )
     }

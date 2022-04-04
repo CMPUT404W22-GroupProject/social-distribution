@@ -3,7 +3,11 @@ import './post.css'
 import PersonIcon from '@mui/icons-material/Person'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import CommentIcon from '@mui/icons-material/Comment'
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import IosShareIcon from '@mui/icons-material/IosShare';
 import ShareIcon from '@mui/icons-material/Share'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {useState, useEffect} from 'react'
 import Popup from '../components/popup/Popup'
 import CommentSection from './commentSection/CommentSection'
@@ -51,8 +55,6 @@ function Post({post, team, loggedInAuthor}){
     const [isPublic, setIsPublic] = useState(false);
 
     //console.log("contentype: ", post)
-
-
 
      useEffect(() => {
          //fetches data from the server
@@ -180,7 +182,7 @@ function Post({post, team, loggedInAuthor}){
         if (post.visibility == "PUBLIC"){
             setIsPublic(true);
         }
-    },[])
+    },[like, commentCount])
 
  
     const likeHandler = async () => {
@@ -510,11 +512,35 @@ function Post({post, team, loggedInAuthor}){
                         </span>
                        { (post.author.id === loggedInAuthor.id) && (isPublic) && <span className ="postEditDelete">
                            {console.log(post.postAuthorId, "=====", loggedInAuthor.id)}
-                            <EditIcon htmlColor='purple' onClick = {()=>{setButtonSmallPopupForEdit(true)}}/>
-                            <DeleteIcon htmlColor='red' onClick = {() => {deleteHandler()}}/>
+                            <EditIcon htmlColor='black' className="editDeleteIcon editIcon" onClick = {()=>{setButtonSmallPopupForEdit(true)}}/>
+                            <DeleteOutlineIcon htmlColor='black'className="editDeleteIcon deleteIcon" onClick = {() => {deleteHandler()}}/>
                         </span>}
                      </div> 
                 </Card.Header>
+                {/* <div className="postDetails">
+                    <Card.Title className='postTitle'>
+                        {post.title}
+                    </Card.Title>
+                    <Card.Subtitle className='postDesc'>
+                        {post.description}
+                    </Card.Subtitle>
+                    
+
+                    <Card.Body>
+                        {(post.contentType == "text/plain") &&
+                            <Card.Text>
+                                {post.content}
+
+                            </Card.Text>}
+                        {
+                            (post.contentType === "image/png;base64" || post.contentType === "image/jpeg;base64") &&
+                            <Card.Img src = {post.content} ></Card.Img>
+                        }
+                        {
+                            (post.contentType === "text/markdown") &&
+                            <ReactMarkdown children= {post.content} escapeHtml={false}></ReactMarkdown>
+                        } */}
+                <div className="postDetails">
                 <Card.Title className='postTitle'>
                     {post.title}
                 </Card.Title>
@@ -524,7 +550,7 @@ function Post({post, team, loggedInAuthor}){
                 </Card.Subtitle>
                 
 
-                <Card.Body className="text-center">
+                <Card.Body>
                     {(post.contentType == "text/plain") &&
                         <Card.Text>
                         {(team !== "team0") && 
@@ -551,7 +577,7 @@ function Post({post, team, loggedInAuthor}){
 
                 </Card.Body>
                 <Card.Subtitle className='postTags'>
-                    Tags: {post.categories}
+                        #{post.categories}
                 </Card.Subtitle>
 
                 {hasImage && 
@@ -560,37 +586,38 @@ function Post({post, team, loggedInAuthor}){
                         variant="bottom" 
                         src="holder.js/100px180" 
                     /> }
-    
+                    
+                </div>
                 <Card.Footer className="text-muted">
                     <div className="postOptions">
 
 
                         { !isLiked && 
                             <div className="postOption" onClick={likeHandler}>
-                                <ThumbUpIcon htmlColor="blue" className="postIcon" />
+                                <FavoriteBorderIcon htmlColor="black" className="postIcon" />
                                 <span data-testid = "likeCount" className="postLikeCounter">
-                                    {like}
+                                    {like} Like
                                 </span>
                             </div>}
 
                         { isLiked && 
                             <div className="postOption" >
-                                <ThumbUpIcon htmlColor="red" className="postIcon" onClick={likeHandler}/>
+                                <FavoriteIcon htmlColor="red" className="postIcon" onClick={likeHandler}/>
                                 <span data-testid = "likeCount" className="postLikeCounter" onClick={() => setButtonSmallPopupForLike(true)}>
-                                    {like}
+                                    {like} Like
                                 </span>
                             </div>}
 
 
                         <div className="postOption" onClick={() => setButtonPopup(true)}>
-                            <CommentIcon htmlColor="green" className="postIcon" />
+                            <CommentIcon htmlColor="black" className="postIcon" />
                             <span data-testid = "commentCount" className="postCommentCounter">
-                                {commentCount}
+                                {commentCount} Comment
                             </span>
                         </div>
                     
                         <div className="postOption" onClick={() => setButtonSmallPopupForShare(true)}>
-                            <ShareIcon htmlColor="red" className="postIcon" />
+                            <IosShareIcon htmlColor="black" className="postIcon" /> Share
                         </div>
                     </div>
                     
@@ -639,71 +666,85 @@ function Post({post, team, loggedInAuthor}){
 
                     
                 </Popup>
-
                 <PopupSmall trigger = {buttonSmallPopupForLike} setTrigger = {setButtonSmallPopupForLike}>
-                    
-                    {(likeObjects.length !== 0) && // Fetched data is being displayed here, if likeObjects array isnt empty
-                          likeObjects.map((liker) => (
-                            <div className="createPostOption">
-              
-                            <PersonIcon htmlColor="blue" className="createPostIcon" />
-                             
-                            <span className="createPostOptionText">{liker.author.displayName}</span>
+                    <div className="smallPopupTop">
+                        <div className="smallPopupHead">
+                                Liked by
+                            </div>
+                        {(likeObjects.length !== 0) && // Fetched data is being displayed here, if likeObjects array isnt empty
+                            likeObjects.map((liker) => (
+                                <div className="likedBy">
+                
+                                <PersonIcon htmlColor="black" className="likedByIcon" />
+                                
+                                <span className="createPostOptionText">{liker.author.displayName}</span>
+                            </div>
+                            ))
+                            }
+                        {(likeObjects.length === 0) && 
+                        <div>
+                            <SentimentVeryDissatisfiedIcon 
+                            htmlColor = "Red"/>
+                        <span>
+                            You have no likes!
+                        </span>
                         </div>
-                          ))
-                          }
-                    {(likeObjects.length === 0) && 
-                     <div>
-                        <SentimentVeryDissatisfiedIcon 
-                         htmlColor = "Red"/>
-                     <span>
-                         You have no likes!
-                     </span>
-                    </div>
-                    
-                    }
-              
-                   
+                        
+                        }
+                    </div>  
                 </PopupSmall>
 
-                <PopupSmall style = {{height: "20px !important"}} trigger = {buttonSmallPopupForShare} setTrigger = {setButtonSmallPopupForShare}>
-                    
+                <PopupSmall style = {{height: "20px !important"}} trigger = {buttonSmallPopupForShare} setTrigger = {setButtonSmallPopupForShare}>     
                 
-                     <div style = {{display: "flex"}}>
-                     <span>
-                         Share this post?
-                     </span>
-                     <span>{post.id}</span>
-                     <Button onClick={()=>{shareHandler()}}>Share</Button>
+                     <div className="smallPopupTop">
+                        <div className="smallPopupHead">
+                            Share this post
+                        </div>
+                        <div>{post.id}</div>
+                        <Button className="smallPopupBtn" onClick={()=>{shareHandler()}}>Share</Button>
                     </div>
                     
                 </PopupSmall>
 
                 <PopupSmall trigger = {buttonSmallPopupForEdit} setTrigger = {setButtonSmallPopupForEdit}>
-                    <span>Edit Post</span>
+                    <div className="smallPopupTop">
+                        <div className="smallPopupHead">Edit Post</div>
+                        <div className="form-group">
+                            <label htmlFor="postTitle">Title:</label>
+                            <input className="form-control" 
+                                name = "postTitle"
+                                value = {postTitle}
+                                onChange = {(e) => {setPostTitle(e.target.value)}}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="postDescription">Description:</label>
+                            <input className="form-control"
+                                name = "postDescription"
+                                value = {postDescription}
+                                onChange = {(e) => {setPostDescription(e.target.value)}}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="postContent">Content:</label>
+                            <textarea className="form-control"
+                                name = "postContent"
+                                value = {postContent}
+                                onChange = {(e) => {setPostContent(e.target.value)}}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="postTags">Tags:</label>
+                            <input className="form-control"
+                                name = "postTags"
+                                value = {postTags}
+                                onChange = {(e) => {setPostTags(e.target.value)}}
+                            />
+                        </div>
+                        
 
-                    <label htmlFor="postTitle">Title:</label>
-                    <input name = "postTile"
-                        value = {postTitle}
-                        onChange = {(e) => {setPostTitle(e.target.value)}}
-                    />
-                    <label htmlFor="postDescription">Description:</label>
-                    <input name = "postDescription"
-                        value = {postDescription}
-                        onChange = {(e) => {setPostDescription(e.target.value)}}
-                    />
-                    <label htmlFor="postContent">Content:</label>
-                    <textarea name = "postContent"
-                        value = {postContent}
-                        onChange = {(e) => {setPostContent(e.target.value)}}
-                    />
-                    <label htmlFor="postTags">Tags:</label>
-                    <input name = "postTags"
-                        value = {postTags}
-                        onChange = {(e) => {setPostTags(e.target.value)}}
-                    />
-
-                    <Button onClick={()=>{editHandler()}}>Update</Button>
+                        <Button className="smallPopupBtn" onClick={()=>{editHandler()}}>Update</Button>
+                    </div>
 
                 </PopupSmall>
         </div>

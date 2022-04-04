@@ -16,7 +16,6 @@ import PrivateRoute from './routes/PrivateRoute';
 function App() {
   
   return ( 
-        <UserContextProvider>
          <Router>    
             <NavBar/>
             <Routes>
@@ -33,7 +32,6 @@ function App() {
 
             </Routes> 
           </Router>
-        </UserContextProvider>
   );
 }
 

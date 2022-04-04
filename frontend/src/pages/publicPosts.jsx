@@ -10,7 +10,6 @@ function PublicPosts({feedType}){
 
     return (
         <div>
-            <span>Public Posts</span>
             <Feed id = {JSON.stringify(params)} feedType = {feedType}/>
         </div>
     )

@@ -419,6 +419,7 @@ function Profile(){
     return (
         <div>
             <AvatarPhoto user={urlAuthor}/>
+            {console.log("LETS SEE",urlAuthor)}
             <h2>{urlAuthor.displayName}</h2>
 
             <div className="buttonContainer">

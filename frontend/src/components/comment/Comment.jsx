@@ -2,6 +2,7 @@ import React from "react";
 import '../comment/comment.css'
 import {format} from "timeago.js"
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import {useState, useEffect} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
@@ -230,16 +231,18 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                 <PersonIcon className="comment-image-container"/>}
             {(comment.author.profileImage !== "" && comment.author.profileImage !== null) && 
                 <img className= "comment-image-container" src = {comment.author.profileImage}/>}
-            <div className="comment-right-part">
-        
+            <div className="comment-center">
+                <div className="comment-right-part">
                     <div className="comment-author">{comment.author.displayName}</div>
                     
                     <div className="comment-date">{format(comment.published)}</div>
-                
+                    
+                </div>
+                <div className="comment-text">{comment.comment}</div>
             </div>
-            <div className="comment-text">{comment.comment}</div>
+            
             { !isLiked && <div className="comment-left-part" onClick={likeHandler}>
-                        <FavoriteIcon htmlColor="grey" className="comment-like" />
+                        <FavoriteBorderIcon htmlColor="black" className="comment-like" />
                         <span data-testid = "likeCommentCount" className="comment-like-counterr">{like}</span>
                     </div> }
 
