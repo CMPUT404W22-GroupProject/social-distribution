@@ -82,6 +82,8 @@ class AuthorDetails(APIView):
         response = self.basic_auth.local_request(request)
         if response:
             return response
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
         # if not request.user.is_authenticated:
         #     return HttpResponse("You must be registered to access this function.", status = 401)
 
