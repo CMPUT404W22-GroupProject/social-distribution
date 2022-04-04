@@ -19,7 +19,7 @@ class CommentList(ListCreateAPIView):
     basic_auth = BasicAuthentication()
 
     def get_queryset(self):
-        return Comment.objects.filter(post=self.post_id).order_by('published')
+        return Comment.objects.filter(post=self.post_id).order_by('-published')
 
     # get recent posts of author
     def list(self, request, author_id, post_id):
