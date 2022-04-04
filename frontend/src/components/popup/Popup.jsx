@@ -1,17 +1,17 @@
 import React from 'react'
 import './popup.css'
 import {Button} from 'react-bootstrap'
+import CloseIcon from '@mui/icons-material/Close';
 
 function Popup(props) {
     //This is the general popup template and functionality
 
     return (props.trigger) ? (
 
-        <div className='popupWrapper'>
+        <div className='popupWrapper' role="dialog">
             <div className='popupInner'>
-            <Button className ='closeButton' variant='primary' onClick={() => props.setTrigger(false)}>
-                Close
-                </Button>
+            <CloseIcon className ='closeButton' htmlColor="black" onClick={() => props.setTrigger(false)}>
+                </CloseIcon>
                 {props.children}
 
             </div>
