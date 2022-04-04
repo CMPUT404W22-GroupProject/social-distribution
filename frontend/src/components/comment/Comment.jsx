@@ -237,7 +237,7 @@ const Comment = ({comment, loggedInAuthor, team}) => {
                     
                     <div className="comment-date">{format(comment.published)}</div>
                 </div>
-                {(comment.author.hostname === "http://tik-tak-toe-cmput404.herokuapp.com/")
+                {(comment.author.hostname.includes("tik-tak-toe-cmput404.herokuapp.com"))
                 ? <div className="comment-text">{comment.content}</div>
                 : <div className="comment-text">{comment.comment}</div>}
             </div>
