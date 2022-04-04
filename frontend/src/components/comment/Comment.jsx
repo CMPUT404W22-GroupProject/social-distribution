@@ -243,12 +243,12 @@ const Comment = ({comment, loggedInAuthor, team}) => {
             </div>
             
             { !isLiked && <div className="comment-left-part" onClick={likeHandler}>
-                        <FavoriteBorderIcon htmlColor="black" className="comment-like" />
+                        <FavoriteBorderIcon data-testid="FavoriteBorderIconComment" htmlColor="black" className="comment-like" />
                         <span data-testid = "likeCommentCount" className="comment-like-counterr">{like}</span>
                     </div> }
 
                     { isLiked && <div className="comment-left-part" onClick={likeHandler}>
-                        <FavoriteIcon htmlColor="red" className="comment-like" />
+                        <FavoriteIcon data-testid="FavoriteIconComment" htmlColor="red" className="comment-like" />
                         <span data-testid = "likeCommentCount" className="comment-like-counterr">{like}</span>
                     </div> }
         </div>
