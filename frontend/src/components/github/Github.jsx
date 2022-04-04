@@ -96,6 +96,22 @@ function Github({githubURL}) {
                 <span className='githubPushevent'>{github[4].type}</span>
                 <span>{github[4].created_at}</span>
                 <span>{github[4].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[5].type}</span>
+                <span>{github[5].created_at}</span>
+                <span>{github[5].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[6].type}</span>
+                <span>{github[6].created_at}</span>
+                <span>{github[6].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[7].type}</span>
+                <span>{github[7].created_at}</span>
+                <span>{github[7].repo.name}</span> </div>}
+                
 
                 </div>
                     

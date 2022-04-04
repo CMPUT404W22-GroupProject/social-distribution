@@ -641,68 +641,79 @@ function Feed({id, feedType}){
            
             </div>
 
+           
+
+            <div className="displayFeed">
+
             { (feedType !== "publicPosts") &&
-                <div>
+                <div className="githubSection">
 
                 <Github githubURL={urlAuthor.github}/>
     
                 </div>
 
-
             }
-            
+                <div className="postSection">
 
+                {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
+                <div className="feedNoPostMessage">
+                    <SentimentVeryDissatisfiedIcon 
+                        htmlColor = "Red"
+                        className="feedNoPostImage"/>
+                    <span
+                        className="feedNoPostText">
+                        No new posts!
+                    </span>
+                    <RefreshIcon
+                        className="feedNoPostRefresh"
+                        onClick = {refreshPage}/>
+                </div>}
+
+                {(feedType === "posts") && (posts.length === 0) && //display message if post array is empty
+                <div className="feedNoPostMessage">
+                    <SentimentVeryDissatisfiedIcon 
+                        htmlColor = "Red"
+                        className="feedNoPostImage"/>
+                    <span
+                        className="feedNoPostText">
+                        No new posts!
+                    </span>
+                    <RefreshIcon
+                        className="feedNoPostRefresh"
+                        onClick = {refreshPage}/>
+                </div>}
+
+
+                {/* {(posts.length !== 0) && // Fetched data is being displayed here, if post array isnt empty
+                posts.map((post) => (
+                    <Post 
+                        key = {post.id} 
+                        post = {post}
+                    />
+                ))} */}
+                {
+                    (inbox.length !== 0) && 
+                        inbox.map((object) => (
+                            inboxBuilder(object, "team10")
+                        )
+                        ) 
+                }
+                {//TEMPORARY 
+                    (posts.length !== 0) && 
+                        posts.map((object) => (
+                            inboxBuilder(object, teamServer)
+                        )
+                        )
+                }
+
+
+                </div>
+
+            </div>
+            
+           
         
-            {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
-            <div className="feedNoPostMessage">
-                <SentimentVeryDissatisfiedIcon 
-                    htmlColor = "Red"
-                    className="feedNoPostImage"/>
-                <span
-                    className="feedNoPostText">
-                    No new posts!
-                </span>
-                <RefreshIcon
-                    className="feedNoPostRefresh"
-                    onClick = {refreshPage}/>
-            </div>}
-            
-            {(feedType === "posts") && (posts.length === 0) && //display message if post array is empty
-            <div className="feedNoPostMessage">
-                <SentimentVeryDissatisfiedIcon 
-                    htmlColor = "Red"
-                    className="feedNoPostImage"/>
-                <span
-                    className="feedNoPostText">
-                    No new posts!
-                </span>
-                <RefreshIcon
-                    className="feedNoPostRefresh"
-                    onClick = {refreshPage}/>
-            </div>}
-
- 
-           {/* {(posts.length !== 0) && // Fetched data is being displayed here, if post array isnt empty
-            posts.map((post) => (
-                <Post 
-                    key = {post.id} 
-                    post = {post}
-                />
-            ))} */}
-            {
-                (inbox.length !== 0) && 
-                    inbox.map((object) => (
-                        inboxBuilder(object, "team10")
-                    )
-                    ) 
-            }
-            {//TEMPORARY 
-                (posts.length !== 0) && 
-                    posts.map((object) => (
-                        inboxBuilder(object, teamServer)
-                    )
-                    )
-            }
+           
             
             {/*popup with createPost component in it, called when button is clicked*/}
             <Popup 
