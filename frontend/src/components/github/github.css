@@ -6,7 +6,9 @@
   overflow: scroll;
   display: flex;
   flex-direction: column;
+  position: absolute;
 }
+
 .githubAvatar {
   border-radius: 40px;
   width: 30px;
