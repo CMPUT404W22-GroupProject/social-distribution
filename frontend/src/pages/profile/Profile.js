@@ -330,8 +330,7 @@ function Profile(){
 
 
     //current user will make follow request to current users profile
-    const handleFollow = () => {
-       /* console.log("button pressed")
+    function handleFollow(e){
         console.log("AUTHOR DATA ID", authorData.id)
         console.log("currentUser ID", currentUser.user.uuid)
         //this isnt working right now 
@@ -366,7 +365,6 @@ function Profile(){
               console.log(res)
           });
 
-          */
     }
     
     function showFollowersButton(e){
@@ -378,11 +376,13 @@ function Profile(){
         setShowFollowers(true)
     }
 
+
+
     return (
         <div>
             <AvatarPhoto user={urlAuthor}/>
             <h2>{urlAuthor.displayName}</h2>
-            
+
             {!showFollowers &&
                 <button onClick={showPostsButton}>Followers</button>
             }
