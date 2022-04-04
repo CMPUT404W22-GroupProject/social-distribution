@@ -30,6 +30,33 @@ function FollowerList({user}) {
         return 0     
     }
 
+    const fetchTeam9Followers = async () => {
+      const result = await axios.get(URL9 + "/authors/" + profileId + "/followers", {
+        headers: {
+          'Authorization': 'token ' + team9Authorization
+        }});
+      setForeignFollowers(...result.data.items)
+      return 0
+    }
+
+    const fetchTeam4Followers = async () => {
+      const result = await axios.get(URL4 + "/authors/" + profileId + "/followers", {
+        headers: {
+          'Authorization': 'token ' + team4Authorization
+        }});
+      setForeignFollowers(...result.data.items)
+      return 0
+    }
+
+    const fetchTeam0Followers = async () => {
+      const result = await axios.get(URL0 + "/authors/" + profileId + "/followers", {
+        headers: {
+          'Authorization': 'token ' + team0Authorization
+        }});
+      setForeignFollowers(...result.data.items)
+      return 0
+    }
+
     fetchLocalFollowers()
 
   },[])

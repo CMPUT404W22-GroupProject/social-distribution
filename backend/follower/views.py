@@ -97,7 +97,11 @@ class FollowerDetails(APIView, LoginRequiredMixin):
             try:
                 author = Author.objects.get(id=follower_id)
             except:
-                return Response("Follower not found", status=404)
+                response = self.basic_auth.get_request(follower_id)
+                if response == None:
+                    return Response("Follower not found", status=404)
+                elif response.status_code == 404:
+                    return Response("Follower not found", status=404)
 
             request_data['object'] = follower_id
             request_data.pop('actor', None)

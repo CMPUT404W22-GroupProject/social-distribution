@@ -17,7 +17,7 @@ import { useContext } from "react";
 import PaginationControlled from "../paginationFeed";
 import ClearIcon from '@mui/icons-material/Clear';
 import Github from "../github/Github"
-import { CatchingPokemonSharp, CollectionsOutlined } from "@mui/icons-material"
+import { CatchingPokemonSharp } from "@mui/icons-material"
 
 
 function Feed({id, feedType}){
@@ -54,7 +54,6 @@ function Feed({id, feedType}){
 
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
     console.log("HUH WHAT: ", posts)
-    console.log(urlAuthor)
     //console.log("HUH WHAT: ", localStorage.getItem('user'))
     
     useEffect(() => {
@@ -637,6 +636,13 @@ function Feed({id, feedType}){
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
             <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
 
+
+
+            </div>
+
+            
+
+            <Github githubURL={urlAuthor.github}/>
 
             </div>
 

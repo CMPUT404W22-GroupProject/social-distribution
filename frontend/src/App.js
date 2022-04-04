@@ -9,6 +9,7 @@ import Home from './pages/home'
 import NavBar from './components/Navbar';
 import AuthorsList from './components/authorList/authorList';
 import ForeignProfile from './pages/profile/foreignProfile';
+import PublicPosts from './pages/publicPosts';
 import { UserContextProvider } from './context/userContext'
 import Register from './pages/register/Register';
 import PrivateRoute from './routes/PrivateRoute';
@@ -23,6 +24,7 @@ function App() {
               <Route exact path='/register' element={<Register/>}/>
               <Route exact path='/profile/:id' element={<PrivateRoute><Profile/></PrivateRoute>}/>
               <Route exact path='/home' element={<PrivateRoute><Home/></PrivateRoute>}/>
+              <Route exact path='/publicPosts' element={<PrivateRoute><PublicPosts feedType = "publicPosts"/></PrivateRoute>}/>
               <Route exact path='/' element={<PrivateRoute><Home/></PrivateRoute>}/>
               <Route exact path='/authors/:id/inbox' element={<PrivateRoute><Home feedType = "inbox"/></PrivateRoute>}/>
               <Route exact path='/authors/:id/posts' element={<PrivateRoute><Profile/></PrivateRoute>}/>

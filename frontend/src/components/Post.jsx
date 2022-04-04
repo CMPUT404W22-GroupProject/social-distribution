@@ -50,6 +50,8 @@ function Post({post, team, loggedInAuthor}){
     const [postTags, setPostTags] = useState(post.categories);
     const [isPublic, setIsPublic] = useState(false);
 
+    //console.log("contentype: ", post)
+
 
 
      useEffect(() => {
@@ -123,10 +125,11 @@ function Post({post, team, loggedInAuthor}){
                     //console.log(error)
                 }
             }
-            
+            // NOTE: THIS ENDPOINT IS NOT RESPONSIVE!!!!
+            // CANNOT FIND A /LIKES ENDPOINT THAT WORKS
             if ( postHostName === "tik-tak-toe-cmput404.herokuapp.com"){
                 try {
-                        await axios.get(post.id + "/likes/", {
+                        await axios.get(post.id + "/likes", {
                             headers: {
                             'authorization': 'Basic ' + team0Authorization
                             }
@@ -292,26 +295,18 @@ function Post({post, team, loggedInAuthor}){
             if (postHostName === "backend-404.herokuapp.com"){
                 if (!isLiked){
                     try {
-                        await axios.post(post.author.id + "/inbox/", remoteNewLike, {
+                        var inboxInfo = {
+                            "summary": loggedInAuthor.displayName + " likes your post",
+                            "type" : "Like",
+                            "author": loggedInAuthor,
+                            "object": post.id
+                          }  
+                        await axios.post(post.author.id + "/inbox/", inboxInfo, {
                             headers: {
                               'authorization': 'Basic ' + team4Authorization
                             }
-                          })
-                        .then((response) => {
-                            //console.log("THIS IS THE DATA",response.data);
-                            //setLikeId(response.data.id);
-                        });
+                          });
                     } catch (error) {
-                        ////console.log(error)
-                    }
-                } else {
-                    //console.log("DELETED LIKE");
-                    try {
-                        //await axios.delete( postPath + "/likes/" + likeId)
-                        //likeId is already full path
-                        //await axios.delete(likeId)
-                    } catch (error) {
-                        ////console.log(error)
                     }
                 }
             }
@@ -322,22 +317,8 @@ function Post({post, team, loggedInAuthor}){
                             headers: {
                               'authorization': 'Basic ' + team0Authorization
                             }
-                          })
-                        .then((response) => {
-                            //console.log("THIS IS THE DATA",response.data);
-                            //setLikeId(response.data.id);
                         });
-                    } catch (error) {
-                        ////console.log(error)
-                    }
-                } else {
-                    //console.log("DELETED LIKE");
-                    try {
-                        //await axios.delete( postPath + "/likes/" + likeId)
-                        //likeId is already full path
-                        //await axios.delete(likeId)
-                    } catch (error) {
-                        ////console.log(error)
+                    }catch (error){
                     }
                 }
             }
@@ -502,11 +483,12 @@ function Post({post, team, loggedInAuthor}){
         .then((response) => {
             if (response.status === 204) {
                 alert("Deleted successfully!");
-                //window.location.href = window.location.href;
+                window.location.href = window.location.href;
                 } else {
                   alert("Oops! Something went wrong! Please try again!");
                 }
           })
+        
 
     }
 
@@ -537,14 +519,18 @@ function Post({post, team, loggedInAuthor}){
                     {post.title}
                 </Card.Title>
                 <Card.Subtitle className='postDesc'>
-                    {post.description}
+                {(team !== "team0") && 
+                            post.description}
                 </Card.Subtitle>
                 
 
                 <Card.Body className="text-center">
                     {(post.contentType == "text/plain") &&
                         <Card.Text>
-                            {post.content}
+                        {(team !== "team0") && 
+                            post.content}
+                        {(team === "team0") && 
+                            post.description}
 
                         </Card.Text>}
                     {
@@ -552,8 +538,15 @@ function Post({post, team, loggedInAuthor}){
                         <Card.Img src = {post.content} ></Card.Img>
                     }
                     {
-                        (post.contentType === "text/markdown") &&
-                        <ReactMarkdown children= {post.content} escapeHtml={false}></ReactMarkdown>
+                        (post.contentType === "text/markdown") && (team !== "team0") &&
+                        
+                        <ReactMarkdown children= {post.content}></ReactMarkdown>
+                    }
+
+                    {
+                        (post.contentType === "text/markdown") && (team === "team0") &&
+                        
+                        <ReactMarkdown children= {post.description}></ReactMarkdown>
                     }
 
                 </Card.Body>
@@ -630,7 +623,7 @@ function Post({post, team, loggedInAuthor}){
                             team = {team}
                             //myAuthorId = {myAuthorId}
                             loggedInAuthor = {loggedInAuthor}
-                            commentsId = {post.comments}
+                            commentsId = {post.id + "/comments/"}
                             commentCount = {commentCount}
                             postAuthorId = {postAuthor.id}/>
                     }
