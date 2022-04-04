@@ -619,7 +619,7 @@ function Feed({id, feedType}){
         //returning feed that will have createPost + other appropriate components shown to user form their inbox
         <div>
             {/*createPost button here, when clicked popup will popup*/}
-            { (feedType !== "publicPosts") &&
+            { (feedType !== "publicPosts") && (loggedInAuthorId === urlAuthorId) &&
             <div className="feedCreatePost" >
                 <AddCircleOutlineIcon 
                     htmlColor="blue" 
@@ -632,20 +632,27 @@ function Feed({id, feedType}){
                 </span>
             </div>}
 
+            
             <div className="paginationAndDelete">
             <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-            <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
-
-
-            
-
-            <Github githubURL={urlAuthor.github}/>
-
+            {
+                (feedType === "inbox") &&  <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
+            }
+           
             </div>
 
+            { (feedType !== "publicPosts") &&
+                <div>
+
+                <Github githubURL={urlAuthor.github}/>
+    
+                </div>
+
+
+            }
             
 
-            <Github githubURL={urlAuthor.github}/>
+        
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
                 <SentimentVeryDissatisfiedIcon 
@@ -700,7 +707,7 @@ function Feed({id, feedType}){
             {/*popup with createPost component in it, called when button is clicked*/}
             <Popup 
                 trigger = {buttonPopup} 
-                setTrigger = {setButtonPopup}
+                setTrigger = {[setButtonPopup, refreshPage]}
                 >
                     <CreatePost loggedInAuthor = {loggedInAuthor} loggedInAuthorId = {loggedInAuthorId} loggedInAuthorFollowers = {loggedInAuthorFollowers}/>
             </Popup>
