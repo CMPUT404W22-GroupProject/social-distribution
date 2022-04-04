@@ -20,25 +20,27 @@ describe('testEditPost', () => {
         cy.wait(2000);
         cy.findByRole('heading', {  name: /testuser/i}).should('be.visible'); //logged in as testUser
 
-        //create post
-        expect(cy.findByTestId('AddCircleOutlineIcon')).to.exist;
-        cy.findByTestId('AddCircleOutlineIcon').click();
-            
-            const postTitle = 'post 1 title';
-            const postDescription = 'post 1 description'
-            const postContent = 'post 1 content'
-            const postTags = 'post1, post1, post1'
-            cy.findByPlaceholderText(/title!/i).type(postTitle);
-            cy.findByPlaceholderText(/describe it a little/i).type(postDescription);
-            cy.findByPlaceholderText(/what's in your mind?/i).type(postContent);
-            cy.findByPlaceholderText(/add tags!/i).type(postTags);
-            cy.findByText(/public\?/i).click();
-
-            cy.findByRole('button', {  name: /share/i}).click();
-            cy.findByRole('button', { name: /close/i}).click();
-
-            //find post on the page
-            cy.findByText(postTitle).scrollIntoView().should('be.visible')
+         //create post
+         cy.findByRole('button', {  name: /create a new post/i}).should('be.visible');
+         cy.findByRole('button', {  name: /create a new post/i}).click();
+             
+             const postTitle = 'postTestComment title';
+             const postDescription = 'postTestComment description'
+             const postContent = 'postTestComment content'
+             const postTags = 'postcomment, postcomment, postcomment'
+             cy.findByPlaceholderText(/give it a title!/i).type(postTitle);
+             cy.findByPlaceholderText(/what is this post about?/i).type(postDescription);
+             cy.findByPlaceholderText(/what's in your mind?/i).type(postContent);
+             cy.findByPlaceholderText(/add tags!/i).type(postTags);
+             cy.findByText(/private/i).click();
+ 
+             cy.findByRole('button', { name: "Post"}).click();
+             //cy.findByRole('button', { name: /close/i}).click();
+             cy.wait(1000);
+             cy.reload();
+ 
+             //find post on the page
+             cy.findByText(postTitle).scrollIntoView().should('be.visible')
 
             
             cy.findByTestId('EditIcon').click();
@@ -51,14 +53,14 @@ describe('testEditPost', () => {
             cy.get('input[name="postTags"]').clear();   
             cy.get('input[name="postTags"]').type("editedTags");
             cy.findByRole('button', {  name: /update/i}).click()
-            cy.findByRole('button', {  name: /close/i}).click()
+            cy.findByTestId('CloseIcon').click();
             cy.reload();
             cy.wait(2000);
 
             cy.findByText("editedTitle").scrollIntoView().should('be.visible')
             cy.findByText("editedDescription").scrollIntoView().should('be.visible')
             cy.findByText("editedContent").scrollIntoView().should('be.visible')
-            cy.findByText("Tags: editedTags").scrollIntoView().should('be.visible')
+            cy.findByText("#editedTags").scrollIntoView().should('be.visible')
 
 
 

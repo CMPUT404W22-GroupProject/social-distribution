@@ -513,7 +513,7 @@ function Post({post, team, loggedInAuthor}){
                        { (post.author.id === loggedInAuthor.id) && (isPublic) && <span className ="postEditDelete">
                            {console.log(post.postAuthorId, "=====", loggedInAuthor.id)}
                             <EditIcon htmlColor='black' className="editDeleteIcon editIcon" onClick = {()=>{setButtonSmallPopupForEdit(true)}}/>
-                            <DeleteOutlineIcon htmlColor='black'className="editDeleteIcon deleteIcon" onClick = {() => {deleteHandler()}}/>
+                            <DeleteOutlineIcon data-testid="DeleteIcon" htmlColor='black'className="editDeleteIcon deleteIcon" onClick = {() => {deleteHandler()}}/>
                         </span>}
                      </div> 
                 </Card.Header>

@@ -21,37 +21,42 @@ describe('testCommenting', () => {
         cy.wait(2000);
         cy.findByRole('heading', {  name: /testuser/i}).should('be.visible'); //logged in as testUser
 
+        //see if no post message is shown 
+        cy.findByText(/no new posts!/i).scrollIntoView().should('be.visible');
+
         //create post
-        expect(cy.findByTestId('AddCircleOutlineIcon')).to.exist;
-        cy.findByTestId('AddCircleOutlineIcon').click();
+        cy.findByRole('button', {  name: /create a new post/i}).should('be.visible');
+        cy.findByRole('button', {  name: /create a new post/i}).click();
 
             //if text fields are available
-            cy.findByPlaceholderText(/title!/i).should('be.visible');
-            cy.findByPlaceholderText(/describe it a little/i).should('be.visible');
-            cy.findByPlaceholderText(/what's in your mind?/i).should('be.visible');
-            cy.findByPlaceholderText(/add tags!/i).should('be.visible');
+            cy.findByPlaceholderText(/give it a title!/i).should('be.visible');
+             cy.findByPlaceholderText(/what is this post about?/i).should('be.visible');
+             cy.findByPlaceholderText(/what's in your mind?/i).should('be.visible');
+             cy.findByPlaceholderText(/add tags!/i).should('be.visible');
             
             const postTitle = 'post 1 title';
-            const postDescription = 'post 1 description'
-            const postContent = 'post 1 content'
-            const postTags = 'post1, post1, post1'
-            cy.findByPlaceholderText(/title!/i).type(postTitle);
-            cy.findByPlaceholderText(/describe it a little/i).type(postDescription);
-            cy.findByPlaceholderText(/what's in your mind?/i).type(postContent);
-            cy.findByPlaceholderText(/add tags!/i).type(postTags);
-            cy.findByText(/public\?/i).click();
-
-            cy.findByRole('button', {  name: /share/i}).click();
-            cy.findByRole('button', { name: /close/i}).click();
+             const postDescription = 'post 1 description'
+             const postContent = 'post 1 content'
+             const postTags = 'post1, post1, post1'
+             cy.findByPlaceholderText(/give it a title!/i).type(postTitle);
+             cy.findByPlaceholderText(/what is this post about?/i).type(postDescription);
+             cy.findByPlaceholderText(/what's in your mind?/i).type(postContent);
+             cy.findByPlaceholderText(/add tags!/i).type(postTags);
+             cy.findByText(/private/i).click();
+ 
+             cy.findByRole('button', { name: "Post"}).click();
+             //cy.findByRole('button', { name: /close/i}).click();
+             cy.wait(1000);
+             cy.reload();
 
             //find post on the page
             cy.findByText(postTitle).scrollIntoView().should('be.visible')
 
             //create and like comment and check if it is successful and if the numbers are alright
             cy.findByTestId('likeCount').contains("0");
-            cy.findByTestId('ThumbUpIcon').click();
-            cy.findByTestId('likeCount').contains("1");
-            cy.findByTestId('ThumbUpIcon').click();
+            cy.findByTestId('FavoriteBorderIcon').click();
+            cy.findByText(/1 like/i).should('be.visible')
+            cy.findByTestId('FavoriteIcon').click();
             cy.findByTestId('likeCount').contains("0");
             cy.reload();
             cy.wait(2000)
