@@ -633,14 +633,15 @@ function Feed({id, feedType}){
             }
 
             <div className="paginationAndDelete">
-                <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-                <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
-            </div>
+            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
+            <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
 
-{/* 
-            <Github githubURL={urlAuthor.github}/> */}
-{/* 
-            </div> */}
+
+            
+
+            <Github githubURL={urlAuthor.github}/>
+
+            </div>
 
             
 

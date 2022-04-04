@@ -330,7 +330,7 @@ function Profile(){
 
 
     //current user will make follow request to current users profile
-    function handleFollow(e){
+    /*function handleFollow(e){
         console.log("AUTHOR DATA ID", authorData.id)
         console.log("currentUser ID", currentUser.user.uuid)
         //this isnt working right now 
@@ -365,7 +365,7 @@ function Profile(){
               console.log(res)
           });
 
-    }
+    }*/
     
     function showFollowersButton(e){
         setShowFollowers(false)
