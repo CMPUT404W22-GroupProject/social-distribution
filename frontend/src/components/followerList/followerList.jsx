@@ -30,6 +30,7 @@ function FollowerList({user}) {
         return 0     
     }
 
+    /*
     const fetchTeam9Followers = async () => {
       const result = await axios.get(URL9 + "/authors/" + profileId + "/followers", {
         headers: {
@@ -55,7 +56,7 @@ function FollowerList({user}) {
         }});
       setForeignFollowers(...result.data.items)
       return 0
-    }
+    }*/
 
     fetchLocalFollowers()
 

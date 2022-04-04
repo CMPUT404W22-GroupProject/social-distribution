@@ -637,9 +637,6 @@ function Feed({id, feedType}){
             <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
 
 
-
-            </div>
-
             
 
             <Github githubURL={urlAuthor.github}/>
