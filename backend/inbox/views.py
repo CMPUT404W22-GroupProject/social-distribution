@@ -1,20 +1,15 @@
-from re import search
-#from typing import final
-from django.shortcuts import render
-from django.http import HttpResponse
+from follower.serializers import FollowRequestSerializerGet
 from follower.models import FollowRequest
-from like.models import Like
 from inbox.models import Inbox
 from comment.models import Comment
 from post.models import Post
 from author.models import Author
 from rest_framework.generics import ListCreateAPIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
 from .pagination import InboxPageNumberPagination
 from author.serializers import AuthorsSerializer
 from inbox.serializers import InboxSerializer
-from post.serializers import PostSerializerGet
 from follower.serializers import FollowRequestSerializer
 from node.authentication import BasicAuthentication
 from like.serializers import LikeSerializer
@@ -59,7 +54,9 @@ class InboxList(ListCreateAPIView):
         response = self.basic_auth.local_request(request)
         if response:
             return response
-            
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
+
         try:
             try:
                 Author.objects.get(pk=author_id)
@@ -74,7 +71,7 @@ class InboxList(ListCreateAPIView):
             items = []
             if page is not None:
 
-                serializer = InboxSerializer(queryset, many=True, context={'request': request})
+                serializer = InboxSerializer(queryset, many=True, context={'request': request, 'author': author5})
                 for each_object in serializer.data:
                     each_object['author'] = author.data['id']
                     items.append(each_object["items"])
@@ -149,6 +146,8 @@ class InboxList(ListCreateAPIView):
         response = self.basic_auth.local_request(request)
         if response:
             return response
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
         # INCLUDE PERMISSION CHECKS BEFORE DOING THIS
         author11 = Author.objects.get(pk=author_id)
         try:
@@ -156,6 +155,37 @@ class InboxList(ListCreateAPIView):
             return Response("Successfully cleared inbox.", status=201)
         except Inbox.DoesNotExist:
             return Response("No inbox found.", status=401)
+
+class FollowRequestDetails(APIView):
+
+    basic_auth = BasicAuthentication()
+
+    def get(self, request, author_id, follow_request_id):
+        response = self.basic_auth.remote_request(request)
+        if response:
+            return response
+        
+        try:
+            follow_request = FollowRequest.objects.get(pk=follow_request_id)
+            serializer = FollowRequestSerializerGet(follow_request, context={'request':request})
+            return Response(serializer.data, status=200)
+        except:
+            return Response("Follow request not found", status=404)
+
+
+    def delete(self, request, author_id, follow_request_id):
+        response = self.basic_auth.local_request(request)
+        if response:
+            return response
+        if not request.user.is_authenticated or author_id != request.user.uuid:
+            return Response("Forbidden", status=403)
+        
+        try:
+            follow_request = FollowRequest.objects.get(pk=follow_request_id)
+            follow_request.delete()
+            return Response("Follow request deleted successfully", status=204)
+        except:
+            return Response("Follow request not found", status=404)
 
 
 '''

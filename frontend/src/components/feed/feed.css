@@ -2,18 +2,11 @@ div {
   text-align: center;
 }
 
-.feedCreatePost {
+/* .feedCreatePost {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-}
-.feedCreatePostIcon {
-  width: 3em !important;
-  align-items: center;
-  height: 3em !important;
-  cursor: pointer;
-  align-self: center;
-}
+} */
 
 .feedNoPostMessage {
   display: flex;
@@ -24,13 +17,13 @@ div {
 
 .feedNoPostImage {
   align-self: center;
-  width: 7em !important;
-  height: 7em !important;
+  width: 4em !important;
+  height: 4em !important;
 }
 .feedNoPostText {
   text-align: center;
   font-weight: bold;
-  font-size: 50px;
+  font-size: 1.5em;
 }
 .feedNoPostRefresh {
   margin-top: 1%;
@@ -38,4 +31,64 @@ div {
   width: 2em !important;
   height: 2em !important;
   cursor: pointer;
+}
+.paginationAndDelete{
+  display: flex;
+}
+
+.sideView {
+  /* position: fixed; */
+  /* display: flex;
+  flex-direction: column; */
+  width: 100%;
+  /* align-items: flex-end; */
+}
+
+.feedClearBtn{
+  box-shadow: 0px 0px 20px -8px rgba(0, 0, 0, 0.68);
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  /* margin-top: 20px; */
+  margin-top: 20px;
+  width: 250px;
+  /* margin-right: 7%; */
+  color: white;
+  border: 2px solid #FE3B00;
+  background-color: #FE3B00;
+}
+.feedClearBtn:hover {
+  background-color: white;
+  color: black;
+  border: 2px solid #FE3B00;
+}
+.createPostBtn {
+  box-shadow: 0px 0px 20px -8px rgba(0, 0, 0, 0.68);
+  padding: 10px 15px;
+  border-radius: 20px;
+  background-color: #9695F0;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  border: 2px solid #9695F0;
+  /* margin-top: 20px; */
+  margin-top: 20px;
+  width: 250px;
+  /* margin-right: 7%; */
+}
+.createPostBtn:hover{
+  background-color: white;
+  color: black;
+  border: 2px solid #9695F0;
+}
+.createPostBtn:focus{
+  background-color: white;
+  color: black;
+  border: 2px solid #9695F0;
+}
+.createPostBtn:active{
+  background-color: white;
+  color: black;
+  border: 2px solid #9695F0;
 }

@@ -58,6 +58,17 @@ class AuthorsSerializer(ModelSerializer):
         new_author.save()
         return new_author
 
+    def ignoreMethod(self, validated_data):
+        # Used in follower_api test
+        new_author = Author.objects.create(**validated_data)
+        host = "http://testserver"
+        new_author.host = host
+        new_author.id = host + '/authors/' + str(new_author.uuid)
+        new_author.url = host + '/authors/' + str(new_author.uuid)
+
+        new_author.save()
+        return new_author
+
     def update(self, instance, validated_data):
         # Only update the following fields
         instance.displayName = validated_data.get('displayName', instance.displayName)
@@ -83,11 +94,22 @@ class RegisterSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        request = self.context.get('request')
+
         author = Author.objects.create_user(
-            validated_data['email'],
-            validated_data['password'],
+            email=validated_data['email'],
+            displayName=validated_data['displayName'],
+            password=validated_data['password']
         )
-        author.displayName = validated_data['displayName']
+
+        full_url = request.build_absolute_uri()
+        parsed_uri = urlparse(full_url)
+
+        host = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
+
+        author.host = host
+        author.id = host + '/authors/' + str(author.uuid)
+        author.url = host + '/authors/' + str(author.uuid)
         author.save()
         return author
 
