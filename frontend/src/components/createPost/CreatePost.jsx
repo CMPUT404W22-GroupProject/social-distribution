@@ -325,6 +325,13 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
       if (contentTypeTemp == "text/plain" || contentTypeTemp == "text/markdown") {
         document.getElementById("contentField").style.display = "inline";
         document.getElementById("imageField").hidden = true;
+        if (contentTypeTemp == "text/plain" ) {
+          setisPlain(true);
+          setIsMarkdown(false);
+        } else {
+          setIsMarkdown(true);
+          setisPlain(false);
+        }
       } else {
         document.getElementById("contentField").style.display = "none";
         document.getElementById("imageField").hidden = false;
@@ -378,8 +385,8 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
               <div class="form-group">
                 <label htmlFor="contentType">Choose a content type</label>
                 <select class="form-control" name = "contentType" id="contentTypeField" onChange={contentTypeChange}>
-                  <option value = "text/plain" onClick = {() => setisPlain(true)}>text/plain</option>
-                  <option value = "text/markdown" onClick = { () => setIsMarkdown(true)}>text/markdown</option>
+                  <option value = "text/plain">text/plain</option>
+                  <option value = "text/markdown">text/markdown</option>
                   <option value = "image">image</option>
                 </select>
               </div>
