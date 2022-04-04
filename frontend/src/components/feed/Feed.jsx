@@ -12,6 +12,7 @@ import Popup from '../popup/Popup'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported';
 import UserContext from '../../context/userContext';
 import { useContext } from "react";
 import PaginationControlled from "../paginationFeed";
@@ -637,27 +638,27 @@ function Feed({id, feedType}){
             </div>
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
-                {/* <SentimentVeryDissatisfiedIcon 
-                    htmlColor = "Red"
-                    className="feedNoPostImage"/> */}
-                <span
+                <BrowserNotSupportedIcon
+                    htmlColor = "black"
+                    className="feedNoPostImage"/>
+                <div
                     className="feedNoPostText">
                     No items in your inbox!
-                </span>
+                </div>
                 <RefreshIcon
                     className="feedNoPostRefresh"
-                    onClick = {refreshPage}/>
+                    onClick = {refreshPage}></RefreshIcon>
             </div>}
             
             {(feedType === "posts") && (posts.length === 0) && //display message if post array is empty
             <div className="feedNoPostMessage">
-                {/* <SentimentVeryDissatisfiedIcon 
-                    htmlColor = "Red"
-                    className="feedNoPostImage"/> */}
-                <span
+                <BrowserNotSupportedIcon
+                    htmlColor = "black"
+                    className="feedNoPostImage"/>
+                <div
                     className="feedNoPostText">
                     No new posts!
-                </span>
+                </div>
                 <RefreshIcon
                     className="feedNoPostRefresh"
                     onClick = {refreshPage}/>

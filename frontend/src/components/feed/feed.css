@@ -17,8 +17,8 @@ div {
 
 .feedNoPostImage {
   align-self: center;
-  width: 7em !important;
-  height: 7em !important;
+  width: 4em !important;
+  height: 4em !important;
 }
 .feedNoPostText {
   text-align: center;
@@ -37,11 +37,11 @@ div {
 }
 
 .sideView {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
+  /* position: fixed; */
+  /* display: flex;
+  flex-direction: column; */
   width: 100%;
-  align-items: flex-end;
+  /* align-items: flex-end; */
 }
 
 .feedClearBtn{
@@ -53,7 +53,7 @@ div {
   /* margin-top: 20px; */
   margin-top: 20px;
   width: 250px;
-  margin-right: 7%;
+  /* margin-right: 7%; */
   color: white;
   border: 2px solid #FE3B00;
   background-color: #FE3B00;
@@ -75,7 +75,7 @@ div {
   /* margin-top: 20px; */
   margin-top: 20px;
   width: 250px;
-  margin-right: 7%;
+  /* margin-right: 7%; */
 }
 .createPostBtn:hover{
   background-color: white;
