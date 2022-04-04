@@ -620,7 +620,7 @@ function Feed({id, feedType}){
         //returning feed that will have createPost + other appropriate components shown to user form their inbox
         <div>
             <div class="sideView">
-                { (feedType !== "publicPosts") &&
+                { (feedType !== "publicPosts") && (loggedInAuthorId === urlAuthorId) &&
                         <Button
                             htmlColor="blue" 
                             className="createPostBtn" 
@@ -640,12 +640,12 @@ function Feed({id, feedType}){
             </div>
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
-                <SentimentVeryDissatisfiedIcon 
+                {/* <SentimentVeryDissatisfiedIcon 
                     htmlColor = "Red"
-                    className="feedNoPostImage"/>
+                    className="feedNoPostImage"/> */}
                 <span
                     className="feedNoPostText">
-                    No new posts!
+                    No items in your inbox!
                 </span>
                 <RefreshIcon
                     className="feedNoPostRefresh"
@@ -654,9 +654,9 @@ function Feed({id, feedType}){
             
             {(feedType === "posts") && (posts.length === 0) && //display message if post array is empty
             <div className="feedNoPostMessage">
-                <SentimentVeryDissatisfiedIcon 
+                {/* <SentimentVeryDissatisfiedIcon 
                     htmlColor = "Red"
-                    className="feedNoPostImage"/>
+                    className="feedNoPostImage"/> */}
                 <span
                     className="feedNoPostText">
                     No new posts!
@@ -692,7 +692,7 @@ function Feed({id, feedType}){
             {/*popup with createPost component in it, called when button is clicked*/}
             <Popup 
                 trigger = {buttonPopup} 
-                setTrigger = {setButtonPopup}
+                setTrigger = {[setButtonPopup, refreshPage]}
                 >
                     <CreatePost loggedInAuthor = {loggedInAuthor} loggedInAuthorId = {loggedInAuthorId} loggedInAuthorFollowers = {loggedInAuthorFollowers}/>
             </Popup>

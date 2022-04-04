@@ -5,48 +5,50 @@ import AvatarEditor from 'react-avatar-editor'
 import IconButton from '@mui/material/IconButton'
 import Avatar from '@mui/material/Avatar'
 import axios from 'axios'
+import {useParams} from 'react-router-dom';
+import './avatar.css'
 
 function AvatarPhoto({user}) {
 
 
     const [file, setFile] = useState(null);
-    const [encodedFile, setEncodedFile] = useState(null);
-
+    const params = useParams();
+    const profileId = params.id.replace(":","")
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
     const team10token = JSON.parse(localStorage.getItem('user')).token
 
     const URL = "https://cmput-404-w22-group-10-backend.herokuapp.com"
     const currentUser = JSON.parse(localStorage.getItem('user'))
 
+    const [upload, setUpload] = useState(false)
+
 
     useEffect(() => {
 
-        const path = URL + "/authors/" + currentUser.user.uuid +  "/" 
-        axios.get(path, {
-            headers: {
-              'Authorization': 'token ' + team10token
-              //'Authorization': 'Basic ' + team10Authorization
-            }
-          }).then(res => {
-            const base64 = res.data.profileImage
-            setFile(base64)
-    }) },[user])
+
+      const allowUpload = async () => {
+        if(currentUser.user.uuid == profileId){
+          setUpload(true)
+        }
+      }
+
+
+      
+      allowUpload()
+    },[upload])
 
 
     const handleChange = async (event)  => {
-        if (event.target.files.length > 0) {
-            const image = event.target.files[0]
-            const encodedImage = await convertToBase64(image)
+        if (event.target.value) {
+            const image = event.target.value
             console.log("uploading image");
-            setFile(encodedImage)
-            setEncodedFile(encodedImage)
-            console.log(encodedImage)
+            setFile(image)
             var imagePost = {
-                "profileImage": "https://th-thumbnailer.cdn-si-edu.com/xg8ymcfArLplIH3H3l457Xu7ThI=/fit-in/1072x0/filters:focal(1014x799:1015x800)/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/93/ea/93ea364e-6fc3-4a67-970a-c71db4118181/bluesun.jpg"
+                "profileImage": image
             }
 
             const uuid = JSON.parse(localStorage.getItem('user')).user.uuid
-            axios.post(URL + '/authors/' + uuid, imagePost, {
+            axios.post(URL + '/authors/' + uuid + "/", imagePost, {
                 headers: {
                   'Authorization': 'token ' + team10token
                   
@@ -55,51 +57,25 @@ function AvatarPhoto({user}) {
 
             ).then( res => {
                 console.log("RESPONSE", res.data)
+                window.location.reload()
             })
         }
         return 0
     };
 
-
-    const convertToBase64 = (uploadedFile) => {
-        //converts image to Base64
-        //ADD CITATION
-        return new Promise((resolve, reject) => {
-  
-          const fileReader = new FileReader();
-          console.log("file", uploadedFile)
-          fileReader.readAsDataURL(uploadedFile);
-          fileReader.onload = (() => {
-            resolve(fileReader.result);
-          });
-          fileReader.onerror = ((error)=>{
-            reject(error);
-          });
-        });
-  
-      };
-
-
     return (
       <React.Fragment>
-          
-          <div className="App">
-            <input type="file" onChange={handleChange} id="upload" accept="image/*" style={{display: "none"}}/>
-            <label htmlFor="upload">
-                <IconButton color="primary" aria-label="upload picture" component="span">
-                    <Avatar id="avatar" src={user.profileImage}
-                            style={{
-
-                                width: "200px",
-                                height: "200px",
-                            }}
-                    />
-                </IconButton>
-            </label>
-            <label htmlFor="avatar"/>
+          <div className='avatarContainer'>
+              {console.log("AVATAR ID", user)}
+              <Avatar id="avatar" src={user.profileImage}
+                              style={{
+                                  width: "200px",
+                                  height: "200px",
+                              }}/>
+            
         </div>
-
-
+        {upload && (
+          <input type="url" onChange={handleChange} id="upload" accept="https://.*" placeholder={user.profileImage}/>)}
       </React.Fragment>
     )
 }

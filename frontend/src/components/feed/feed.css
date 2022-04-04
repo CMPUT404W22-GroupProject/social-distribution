@@ -23,7 +23,7 @@ div {
 .feedNoPostText {
   text-align: center;
   font-weight: bold;
-  font-size: 50px;
+  font-size: 1.5em;
 }
 .feedNoPostRefresh {
   margin-top: 1%;
@@ -77,7 +77,17 @@ div {
   width: 250px;
   margin-right: 7%;
 }
-.createPostBtn:hover .createPostBtn:focus {
+.createPostBtn:hover{
+  background-color: white;
+  color: black;
+  border: 2px solid #9695F0;
+}
+.createPostBtn:focus{
+  background-color: white;
+  color: black;
+  border: 2px solid #9695F0;
+}
+.createPostBtn:active{
   background-color: white;
   color: black;
   border: 2px solid #9695F0;

@@ -39,10 +39,9 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
     const team10token = JSON.parse(localStorage.getItem('user')).token
     
-    
+
     const uploadImage = async (e) => {
       //handles uploading image
-      //ADD CITATION
       const uploadedFile = e.target.files[0];
       const encodedImage = await convertToBase64(uploadedFile)
       console.log("uploading image");
@@ -53,7 +52,6 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
 
     const convertToBase64 = (uploadedFile) => {
       //converts image to Base64
-      //ADD CITATION
       return new Promise((resolve, reject) => {
 
         const fileReader = new FileReader();
@@ -143,7 +141,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
            //console.log(error)
          }
          if (status === 201) {
-         alert("Shared! Check profile to see post!");
+        // alert("Shared! Check profile to see post!");
          //window.location.href = window.location.href;
          } else {
            alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
@@ -212,7 +210,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                 //console.log(error)
               }
                   if (status === 201) {
-                  alert("Shared! Check profile to see post!");
+                  //alert("Shared! Check profile to see post!");
                   //window.location.href = window.location.href;
                   } else {
                     alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
@@ -279,7 +277,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                   //console.log(error)
                 }
                 if (status === 201) {
-                alert("Shared! Check profile to see post!");
+                //alert("Shared! Check profile to see post!");
                 //window.location.href = window.location.href;
                 } else {
                   alert("Oops! Something went wrong! Please make sure all fields are filled, and try again!");
