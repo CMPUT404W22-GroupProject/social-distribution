@@ -291,6 +291,8 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                         'Authorization': 'Basic ' + team4Authorization
                       }
                     })
+                    // The response from Team 0 has no valuable information
+                    // Only returns "author" and "type"
                   .then((response) => {
                   });
 
