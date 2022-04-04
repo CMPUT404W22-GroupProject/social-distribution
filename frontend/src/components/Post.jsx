@@ -123,7 +123,8 @@ function Post({post, team, loggedInAuthor}){
                     //console.log(error)
                 }
             }
-            
+            // NOTE: THIS ENDPOINT IS NOT RESPONSIVE!!!!
+            // CANNOT FIND A /LIKES ENDPOINT THAT WORKS
             if ( postHostName === "tik-tak-toe-cmput404.herokuapp.com"){
                 try {
                         await axios.get(post.id + "/likes/", {
@@ -292,26 +293,18 @@ function Post({post, team, loggedInAuthor}){
             if (postHostName === "backend-404.herokuapp.com"){
                 if (!isLiked){
                     try {
-                        await axios.post(post.author.id + "/inbox/", remoteNewLike, {
+                        var inboxInfo = {
+                            "summary": loggedInAuthor.displayName + " likes your post",
+                            "type" : "Like",
+                            "author": loggedInAuthor,
+                            "object": post.id
+                          }  
+                        await axios.post(post.author.id + "/inbox/", inboxInfo, {
                             headers: {
                               'authorization': 'Basic ' + team4Authorization
                             }
-                          })
-                        .then((response) => {
-                            //console.log("THIS IS THE DATA",response.data);
-                            //setLikeId(response.data.id);
-                        });
+                          });
                     } catch (error) {
-                        ////console.log(error)
-                    }
-                } else {
-                    //console.log("DELETED LIKE");
-                    try {
-                        //await axios.delete( postPath + "/likes/" + likeId)
-                        //likeId is already full path
-                        //await axios.delete(likeId)
-                    } catch (error) {
-                        ////console.log(error)
                     }
                 }
             }
@@ -322,22 +315,8 @@ function Post({post, team, loggedInAuthor}){
                             headers: {
                               'authorization': 'Basic ' + team0Authorization
                             }
-                          })
-                        .then((response) => {
-                            //console.log("THIS IS THE DATA",response.data);
-                            //setLikeId(response.data.id);
                         });
-                    } catch (error) {
-                        ////console.log(error)
-                    }
-                } else {
-                    //console.log("DELETED LIKE");
-                    try {
-                        //await axios.delete( postPath + "/likes/" + likeId)
-                        //likeId is already full path
-                        //await axios.delete(likeId)
-                    } catch (error) {
-                        ////console.log(error)
+                    }catch (error){
                     }
                 }
             }

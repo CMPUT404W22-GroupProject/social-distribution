@@ -15,6 +15,7 @@ import { useContext } from "react";
 import PaginationControlled from "../paginationFeed";
 import ClearIcon from '@mui/icons-material/Clear';
 import Github from "../github/Github"
+import { CatchingPokemonSharp } from "@mui/icons-material"
 
 
 function Feed({id, feedType}){
@@ -54,36 +55,6 @@ function Feed({id, feedType}){
     //console.log("HUH WHAT: ", localStorage.getItem('user'))
     
     useEffect(() => {
-
-        const followTestSend = async () => {
-
-        var followTest = {
-            "type": "follow",
-            "summary": "I wanna follow you",
-            "actor": "http://backend-404.herokuapp.com/authors/044a48a4-36e4-4fa3-a9ee-c63b216fb8b2",
-            "object": "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/4039f6a5-ab83-4a16-a0eb-377653be1937"
-            }
-        try {
-            await axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/4039f6a5-ab83-4a16-a0eb-377653be1937" + "/inbox/", followTest, {
-                headers: {
-                  //'Authorization': 'token ' + team10token
-                  'Authorization': 'Basic ' + team10Authorization
-                }
-              })
-            .then((response) => {
-                //console.log("THIS IS THE DATA",response.data);
-                console.log("POSTED TO INBOX", response)
-            });
-        } catch (error) {
-            //console.log(error)
-        }
-    }
-        //followTestSend()
-    
-
-
-
-
 
         const getAuthorServer = async () => {
             
@@ -164,7 +135,7 @@ function Feed({id, feedType}){
                     const foreignAuthorURL = new URL(foreignAuthor.id);
                     const foreignAuthorPath = foreignAuthorURL.pathname;
                     if ("/authors/"+ urlAuthorId === foreignAuthorPath) {
-                        //console.log("TEAM 4 AUTHOR FOUND")
+                        // console.log("TEAM 4 AUTHOR FOUND")
                        setTeamServer("team4");
                        feedLoader("team4");
                        fetchUrlAuthorFollowers("team4");
