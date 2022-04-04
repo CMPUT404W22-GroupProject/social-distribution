@@ -44,6 +44,8 @@ https://cmput-404-w22-group-10-backend.herokuapp.com
 Video Demo
 ==========
 
+https://youtu.be/jj_-ehar8AE
+
 Licensing
 =========
 
