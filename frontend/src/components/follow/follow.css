@@ -46,6 +46,18 @@
   border: 2px solid #79E584;
 }
 
+.acceptedFollowButton {
+  align-items: center;
+  background-color: grey;
+  pointer-events: none;
+  align-items: center;
+  margin-right: 10px;
+  cursor: pointer;
+  color: black;
+  border: 2px solid grey;
+  border-radius: 5px;
+  padding: 4px 12px;
+}
 .declineFollowButton {
   align-items: center;
   margin-right: 10px;

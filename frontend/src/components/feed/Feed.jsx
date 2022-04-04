@@ -1,3 +1,5 @@
+
+   
 import "./feed.css"
 import CreatePost from '../createPost/CreatePost'
 import Post from '../Post'
@@ -15,6 +17,7 @@ import { useContext } from "react";
 import PaginationControlled from "../paginationFeed";
 import ClearIcon from '@mui/icons-material/Clear';
 import Github from "../github/Github"
+import { CatchingPokemonSharp } from "@mui/icons-material"
 
 
 function Feed({id, feedType}){
@@ -48,42 +51,12 @@ function Feed({id, feedType}){
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
     const team10token = JSON.parse(localStorage.getItem('user')).token
 
-    
+
     //const {id, setId} = useContext(UserContext); use this to get user object once authentication is sorted
-    console.log("HUH WHAT: ", JSON.parse(localStorage.getItem('user')).user.uuid)
+    console.log("HUH WHAT: ", posts)
     //console.log("HUH WHAT: ", localStorage.getItem('user'))
     
     useEffect(() => {
-
-        const followTestSend = async () => {
-
-        var followTest = {
-            "type": "follow",
-            "summary": "I wanna follow you",
-            "actor": "http://backend-404.herokuapp.com/authors/044a48a4-36e4-4fa3-a9ee-c63b216fb8b2",
-            "object": "https://cmput-404-w22-group-10-backend.herokuapp.com/authors/4039f6a5-ab83-4a16-a0eb-377653be1937"
-            }
-        try {
-            await axios.post("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/4039f6a5-ab83-4a16-a0eb-377653be1937" + "/inbox/", followTest, {
-                headers: {
-                  //'Authorization': 'token ' + team10token
-                  'Authorization': 'Basic ' + team10Authorization
-                }
-              })
-            .then((response) => {
-                //console.log("THIS IS THE DATA",response.data);
-                console.log("POSTED TO INBOX", response)
-            });
-        } catch (error) {
-            //console.log(error)
-        }
-    }
-        //followTestSend()
-    
-
-
-
-
 
         const getAuthorServer = async () => {
             
@@ -108,6 +81,7 @@ function Feed({id, feedType}){
                         feedLoader("team10");
                         fetchUrlAuthorFollowers("team10");
                         setUrlAuthor(foreignAuthor);
+                        
                     }
                 })
                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
@@ -164,7 +138,7 @@ function Feed({id, feedType}){
                     const foreignAuthorURL = new URL(foreignAuthor.id);
                     const foreignAuthorPath = foreignAuthorURL.pathname;
                     if ("/authors/"+ urlAuthorId === foreignAuthorPath) {
-                        //console.log("TEAM 4 AUTHOR FOUND")
+                        // console.log("TEAM 4 AUTHOR FOUND")
                        setTeamServer("team4");
                        feedLoader("team4");
                        fetchUrlAuthorFollowers("team4");
@@ -182,7 +156,7 @@ function Feed({id, feedType}){
             });
             
             // Team 0
-            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/9d090d84-0501-4a5b-9ce3-259a46a0ea0e/posts/", {
+            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/", {
                 headers: {
                   'authorization': 'Basic ' + team0Authorization
                 }
@@ -306,7 +280,6 @@ function Feed({id, feedType}){
                            feedLoader("team0");
                            fetchUrlAuthorFollowers("team0");
                            setUrlAuthor(foreignAuthor);
-                            
                         }
                     })
                 });
@@ -330,7 +303,6 @@ function Feed({id, feedType}){
                           //'Authorization': 'Basic ' + team10Authorization
                         }
                       });
-                      console.log("IMAGEPOST: ", result)
                     setCount(result.data.count);
                 } else if (team === "team9"){
                     result = await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/" + urlAuthorId + "/posts", {
@@ -338,7 +310,7 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team9Authorization
                         }
                       });
-                    setCount(result.data.items.length);
+                    setCount(result.data.count);
                 } else if (team === "team4"){
                     console.log("COMESHERE")
                     result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts/", {
@@ -380,7 +352,7 @@ function Feed({id, feedType}){
                           'authorization': 'Basic ' + team9Authorization
                         }
                       });
-                    setCount(result.data.items.length);
+                    setCount(result.data.count);
                 } else if (team === "team4"){
                     result = await axios.get("https://backend-404.herokuapp.com/authors/" + urlAuthorId + "/posts?page=" + page, {
                         headers: {
@@ -439,7 +411,43 @@ function Feed({id, feedType}){
                     return new Date(p2.published) - new Date(p1.published)
                 }));
                 }
-            }   
+            }
+            
+            const fetchPublicPosts = async () => {
+                if (page === 1){
+                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/public-posts/", {
+                        headers: {
+                          
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
+                        }
+                      });
+                    setRecievedData(result);
+                    //console.log("RESULT: ", result)
+                    setCount(result.data.count);
+                     //puts objects in array + sorts from newest to oldest
+                    setPosts(result.data.items.sort((p1, p2) => {
+                    return new Date(p2.published) - new Date(p1.published)
+                }));
+
+
+                } else {
+                    const result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/public-posts/?page=" + page, {
+                        headers: {
+                          
+                          'Authorization': 'token ' + team10token
+                          //'Authorization': 'Basic ' + team10Authorization
+                        }
+                      });
+                    setCount(result.data.count);
+                    setRecievedData(result);
+                    //puts objects in array + sorts from newest to oldest
+                    setPosts(result.data.items.sort((p1, p2) => {
+                    return new Date(p2.published) - new Date(p1.published)
+                }));
+                }
+
+            }
 
             const fetchUrlAuthorFollowers = async (team) => {
                 var result;
@@ -511,6 +519,9 @@ function Feed({id, feedType}){
                         //fetchUrlAuthorFollowers("team10");
                     }
                 }
+                if (feedType === "publicPosts"){
+                    fetchPublicPosts();
+                }
             }
 
             const fetchLoggedInAuthor = async () => {
@@ -539,9 +550,28 @@ function Feed({id, feedType}){
         fetchLoggedInAuthor();
         fetchLoggedInAuthorFollowers();    
         getAuthorServer();
+        if (feedType === "publicPosts"){
+            fetchPublicPosts();
+        }
           
     },[page])
 
+    const clearInbox = async () => {
+
+        await axios.delete("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + urlAuthorId + "/inbox/", {
+            headers: {      
+                'Authorization': 'token ' + team10token
+                }
+            }).then((response) => {
+                if (response.status === 201){
+                    alert("Successfully cleared inbox!")
+                    window.location.href = window.location.href;
+                } else {
+                    alert("Oops! Something went wrong!")
+                }
+            })
+
+    }
     function refreshPage(){
         //https://stackoverflow.com/questions/3715047/how-to-reload-a-page-using-javascript
         window.location.href = window.location.href;
@@ -588,22 +618,33 @@ function Feed({id, feedType}){
     return (
         //returning feed that will have createPost + other appropriate components shown to user form their inbox
         <div>
-            {/*createPost button here, when clicked popup will popup*/}
-            <div className="feedCreatePost" >
-                <AddCircleOutlineIcon 
-                    htmlColor="blue" 
-                    className="feedCreatePostIcon" 
-                    onClick={() => setButtonPopup(true)}
-                    />
-                <span 
-                    className="feedCreatePostText">
-                        Create Post!
-                </span>
+            { (feedType !== "publicPosts") &&
+                <div className="feedCreatePost" >
+                    <AddCircleOutlineIcon 
+                        htmlColor="blue" 
+                        className="feedCreatePostIcon" 
+                        onClick={() => setButtonPopup(true)}
+                        />
+                    <span 
+                        className="feedCreatePostText">
+                            Create Post!
+                    </span>
+                </div>
+            }
+
+            <div className="paginationAndDelete">
+                <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
+                <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
             </div>
 
-            <Github githubURL={"https://api.github.com/gurjogsingh"}/>
-            {/* <Github githubURL={"https://github.com/moenuma"}/>  */}
+{/* 
+            <Github githubURL={urlAuthor.github}/> */}
+{/* 
+            </div> */}
 
+            
+
+            <Github githubURL={urlAuthor.github}/>
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
                 <SentimentVeryDissatisfiedIcon 

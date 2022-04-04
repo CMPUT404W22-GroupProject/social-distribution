@@ -14,20 +14,31 @@ function Follow({follow}){
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
     const team10token = JSON.parse(localStorage.getItem('user')).token
+    const foreignAuthorIdUrl = new URL(follow.actor.id);
+    const foreignAuthorIdHostname = foreignAuthorIdUrl.hostname;
+    const foreignAuthorIdPathname = foreignAuthorIdUrl.pathname;
+    const [accepted, setAccepted] = useState(false);
 
     console.log("WHO HAS FOLLOWED: ", follow)
+    console.log("PAthname: ", foreignAuthorIdPathname)
 
-    const acceptFollow = async () => {
-        //if user chooses accept
-        //sends POST request to ***/followers of logged in user (so my AuthorId), with follower object
-        console.log("Follow Accepted!");
-        alert("You have accepted the request!");
-        console.log("FOLLLOW REQUEST: ", follow)
-        const foreignAuthorIdUrl = new URL(follow.actor.id);
-        const foreignAuthorIdPathname = foreignAuthorIdUrl.pathname;
-        //const foreignAuthorId = foreignAuthorIdPathname.replace("/service/authors/", "")//for team9
-        const foreignAuthorId = foreignAuthorIdPathname.replace("/authors/", "").replace("/", "")
+    console.log("HOSTNAME: ", foreignAuthorIdPathname.replace("/authors/", "").replace("/", ""))
 
+    const deleteFollow = async () => {
+
+        await axios.delete(follow.object.id + "/inbox/follow-request/" + follow.id, {
+            headers: {
+              'Authorization': 'token ' + team10token
+              //'Authorization': 'Basic ' + team10Authorization
+            }
+          }).then((response) => {
+              if (response.status === 204){
+                window.location.href = window.location.href;
+              }
+          });   
+    }
+    
+    const sendingFollower = async (foreignAuthorId) => {
 
         await axios.put(follow.object.id + "/followers/" + foreignAuthorId, follow, {
             headers: {
@@ -38,38 +49,60 @@ function Follow({follow}){
             .then((response) => {
                 if (response.status === 201){
                     alert("Succesfully accepted follow request!");
+                    setAccepted(true);
+                    deleteFollow();
                 } else {
                     alert("Oops, something went wrong!");
                 }
             })
 
-           /* var followRe  =     {
-                "type": "Follow",      
-                "summary":"Greg wants to follow Lara",
-                "actor":{
-                    "type":"author",
-                    "id":"https://cmput-404-w22-group-10-backend.herokuapp.com/authors…b6d8-c8b9440a75c4/posts/02080038-62af-4db2-921f-cd283648fca6",
-                    "url":"https://cmput-404-w22-group-10-backend.herokuapp.com/authors…b6d8-c8b9440a75c4/posts/02080038-62af-4db2-921f-cd283648fca6",
-                    "host":"https://cmput-404-w22-group-10-backend.herokuapp.com",
-                    "displayName":"Greg Johnson",
-                    "github": "http://github.com/gjohnson",
-                    "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
-                },
-                "object": follow.actor
-            }
-
-        await axios.post(foreignAuthorIdUrl + '/inbox', followRe)
-            .then((response) => {
-                if (response.status === 201){
-                    alert("Succesfully accepted follow request!");
-                } else {
-                    alert("Oops, something went wrong!");
-                }
-            })
- */
-  
-    
     }
+
+
+    const acceptFollow = async () => {
+        //if user chooses accept
+        //sends POST request to ***/followers of logged in user (so my AuthorId), with follower object
+        console.log("Follow Accepted!");
+        alert("You have accepted the request!");
+        var foreignAuthorId
+        if (foreignAuthorIdHostname === "cmput-404-w22-group-10-backend.herokuapp.com" ){
+
+            foreignAuthorId = foreignAuthorIdPathname.replace("/authors/", "").replace("/", "")//for team10
+            sendingFollower(foreignAuthorId)
+
+        } else if ( foreignAuthorIdHostname === "cmput-404-w22-project-group09.herokuapp.com"){
+
+            foreignAuthorId = foreignAuthorIdPathname.replace("/service/authors/", "")//for team9
+            sendingFollower(foreignAuthorId)
+
+        } else if (foreignAuthorIdHostname === "backend-404.herokuapp.com"){//for team4
+            foreignAuthorId = foreignAuthorIdPathname.replace("/authors/", "").replace("/", "")//for team10
+            sendingFollower(foreignAuthorId)
+
+        } else if (foreignAuthorIdHostname ===  "tik-tak-toe-cmput404.herokuapp.com"){//for team0
+            foreignAuthorId = foreignAuthorIdPathname.replace("/authors/", "").replace("/", "")//for team10
+            sendingFollower(foreignAuthorId)
+
+        }
+    }
+
+    /* const checkFollowerExist = async () => {
+        try {
+            await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com" + postPath + "/likes", {
+                headers: {
+                  'Authorization': 'token ' + team10token
+                  //'Authorization': 'Basic ' + team10Authorization
+                }
+              })
+            .then((response) => {
+
+           
+        });
+    } catch (error) {
+        //console.log(error)
+    }
+
+    } */
 
     return(
         <div className='followCard'>
@@ -86,9 +119,11 @@ function Follow({follow}){
                     <Card.Text>
                         {follow.summary}
                     </Card.Text>
+                     
                     <div className="followButtons">
-                        <Button  className="acceptFollowButton" onClick={acceptFollow}>Accept</Button>
-                        <Button  className="declineFollowButton" onClick={declineFollow} >Decline</Button>
+                    { (accepted === false) && <Button  className="acceptFollowButton" onClick={acceptFollow}>Accept</Button>}
+                    { (accepted === true) && <Button  className="acceptedFollowButton" onClick={acceptFollow}>Accepted</Button>}
+                    <Button  className="declineFollowButton" onClick={deleteFollow} >Decline</Button> 
                     </div>
                 </div>
 

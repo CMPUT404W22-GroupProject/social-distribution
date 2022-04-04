@@ -110,6 +110,7 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
           newPost["contentType"] = "text/markdown";
         }
 
+        console.log("LOGGED AUTHOR", loggedInAuthorId)
         console.log(newPost)
 
         //if image is selected and there is no content, so image only post
@@ -178,7 +179,12 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                       status = response.status;
                       })
                   } else if (friendPathname === "backend-404.herokuapp.com"){
-                    await axios.post(friend.id + "/inbox/", newPost, {
+                    var inboxInfo = {
+                      "type":"post",
+                      "id": newPost["id"],
+                      "author": author.id 
+                    }  
+                    await axios.post(friend.id + "/inbox/", inboxInfo, {
                       headers: {
                         'authorization': 'Basic ' + team4Authorization
                       }
@@ -187,7 +193,12 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                       status = response.status;
                       })
                   } else if (friendPathname === "tik-tak-toe-cmput404.herokuapp.com"){
-                    await axios.post(friend.id + "/inbox/", newPost, {
+                    var inboxInfo = {
+                      "type":"post",
+                      "id": newPost["id"],
+                      "author": author.id 
+                    }  
+                    await axios.post(friend.id + "/inbox/", inboxInfo, {
                       headers: {
                         'authorization': 'Basic ' + team0Authorization
                       }
@@ -235,10 +246,29 @@ function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers})
                         status = response.status;
                         })
                   } else if (followerPathname === "backend-404.herokuapp.com"){
-                    // TODO: VERIFY URL FORMATTING  
-                    await axios.post(follower.id + "/inbox/", newPost, {
+                    var inboxInfo = {
+                      "type":"post",
+                      "id": newPost["id"],
+                      "author": author.id 
+                    }  
+                    await axios.post(follower.id + "/inbox/", inboxInfo, {
                         headers: {
                           'authorization': 'Basic ' + team4Authorization
+                        }
+                      })
+                        .then((response) => {
+                        status = response.status;
+                        })
+                  }
+                  else if (followerPathname === "tik-tak-toe-cmput404.herokuapp.com"){
+                    var inboxInfo = {
+                      "type":"post",
+                      "id": newPost["id"],
+                      "author": author.id 
+                    }  
+                    await axios.post(follower.id + "/inbox/", inboxInfo, {
+                        headers: {
+                          'authorization': 'Basic ' + team0Authorization
                         }
                       })
                         .then((response) => {

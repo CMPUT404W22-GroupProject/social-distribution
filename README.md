@@ -30,6 +30,20 @@ To run the automated backend tests:
 1. Navigate to the `/backend` folder
 2. `python manage.py test tests`
 
+Deployment
+==========
+
+**Frontend**:
+
+https://bingbing10.herokuapp.com/
+
+**Backend**:
+
+https://cmput-404-w22-group-10-backend.herokuapp.com
+
+Video Demo
+==========
+
 Licensing
 =========
 
