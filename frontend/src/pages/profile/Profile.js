@@ -11,124 +11,326 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 //Components
 import AvatarPhoto from '../../components/avatar/avatar'
 import FollowerList from '../../components/followerList/followerList';
-
-
+import FollowerCard from '../../components/followerCard/followerCard';
+import Feed from '../../components/feed/Feed';
 
 function Profile(){
     
-
     const [authorData, setAuthorData] = useState('')
-    const [followers, setFollowers] = useState('')
-    const [posts, setPosts] = useState([]);
-    const [page, setPage] = useState(1);
-    const [buttonPopup, setButtonPopup] = useState(false);
+    const [followers, setFollowers] = useState([])
     const params = useParams();
     const profileId = params.id.replace(":","")
-    const [count, setCount] = useState(1);
-    const [recievedData, setRecievedData] = useState([]);
-    const location = useLocation()
-    const user = JSON.parse(location.state.state)
-    const currentUser = JSON.parse(localStorage.getItem('user'))
+    const idObject = JSON.stringify({"id": profileId})
 
+    const location = useLocation()
+    //const user = JSON.parse(location.state.state)
+    const currentUser = JSON.parse(localStorage.getItem('user'))
     const [showFollowers, setShowFollowers] = useState(false)
+
+
     const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
+
+    const team0Authorization = btoa("admin:tX7^iS8a5Ky$^S");
+    const team4Authorization = btoa("Team10:abcdefg");
+    const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
+
+
+    const [teamServer, setTeamServer] = useState("");
+    const [urlAuthor, setUrlAuthor] = useState([]);
+
+
     const [showFollowBtn, setShowFollowBtn] = useState(true)
-    const [showCreatePost, setShowCreatePost] = useState(false)
+    const team10token = JSON.parse(localStorage.getItem('user')).token
+
+
 
     useEffect(() => {
 
 
         
-        fetchAuthor(user)
+    })
 
-        if(currentUser.user.uuid == user.user.uuid){
-            setShowCreatePost(true)
+    useEffect(() => {
+
+        const fetchUrlAuthorFollowers = async (team) => {
+            var result;
+            if (team === "team10"){
+                result = await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/" + profileId + "/followers/", {
+              headers: {
+                
+                'Authorization': 'token ' + team10token
+                //'Authorization': 'Basic ' + team10Authorization
+                }
+                })
+            } else if (team === "team9"){
+                result = await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/" + profileId + "/followers", {
+              headers: {
+                'Authorization': 'Basic ' + team9Authorization
+                }
+                })
+            } else if (team === "team4"){
+                result = await axios.get("https://backend-404.herokuapp.com/authors/" + profileId + "/followers/", {
+              headers: {
+                'authorization': 'Basic ' + team4Authorization
+                }
+                })
+            } else if (team === "team0"){
+                result = await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/" + profileId + "/followers/", {
+              headers: {
+                'authorization': 'Basic ' + team0Authorization
+                }
+                })
+            }
+            setFollowers(result.data.items)
+
         }
 
-        const checkFollowing = async () => {
-            if (currentUser.user.uuid != user.user.uuid){
-                try{
-                    const res = await axios.get(URL10 + "/authors/" + user.user.uuid + '/followers/', {
-                        headers: {
-                            'Authorization': 'Basic ' + team10Authorization
+        const getAuthorsPagination = async (page, team) => {
+            if (team === "team10"){
+                await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/?page=" + page, {
+                    headers: {
+                      
+                      'Authorization': 'token ' + team10token
+                      //'Authorization': 'Basic ' + team10Authorization
+                    }
+                  })
+                .then((response) => {
+                    //console.log("TEAM 10 RESPONSE: ", response.data);
+                    //setTeam10Authors(response.data);
+                    const team10data = response.data.items; 
+                    team10data.forEach((foreignAuthor) => {
+                        const foreignAuthorURL = new URL(foreignAuthor.id);
+                        const foreignAuthorPath = foreignAuthorURL.pathname;
+                        if ("/authors/"+ profileId === foreignAuthorPath) {
+                            
+                            setTeamServer("team10");
+                            fetchUrlAuthorFollowers("team10");
+                            setUrlAuthor(foreignAuthor);
                         }
                     })
-                    const data = res.data.items
-                    for (var i=0; i < data.length; i++){
-                        console.log(data[i].displayName)
-                        if (currentUser.user.displayName == data[i].displayName){
-                            setShowFollowBtn(false)
+                });
+            } else if (team === "team9"){
+                await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors/?page=" + page, {
+                    headers: {
+                      'Authorization': 'Basic ' + team9Authorization
+                    }
+                  })
+                .then((response) => {
+                    //console.log("TEAM 9 RESPONSE: ", response);
+                    //setTeam9Authors(response.data); //authors in response.data.result
+                    const team9data = response.data.items;
+                    team9data.forEach((foreignAuthor) => {
+                        const foreignAuthorURL = new URL(foreignAuthor.id);
+                        const foreignAuthorPath = foreignAuthorURL.pathname;
+                        if ("/service/authors/"+ profileId === foreignAuthorPath) {
+                           setTeamServer("team9");
+                           fetchUrlAuthorFollowers("team9");
+                           setUrlAuthor(foreignAuthor);
+                            
                         }
-               }
-                }catch (err){
-                    console.error(err.response)
-                    console.log('error')
+                    })
+                });
+    
+    
+            } else if (team === "team4"){
+                await axios.get("https://backend-404.herokuapp.com/authors/?page=" + page, {
+                    headers: {
+                      'authorization': 'Basic ' + team4Authorization
+                    }
+                  })
+                .then((response) => {
+                    //console.log("TEAM 4 RESPONSE: ", response);
+                    //setTeam9Authors(response.data); //authors in response.data.result
+                    const team4data = response.data.items;
+                    team4data.forEach((foreignAuthor) => {
+                        const foreignAuthorURL = new URL(foreignAuthor.id);
+                        const foreignAuthorPath = foreignAuthorURL.pathname;
+                        if ("/authors/"+ profileId === foreignAuthorPath) {
+                            //console.log("TEAM 4 AUTHOR FOUND")
+                           setTeamServer("team4")
+                           fetchUrlAuthorFollowers("team4");
+                           setUrlAuthor(foreignAuthor);
+                            
+                        }
+                    })
+                });
+    
+            } else if (team === "team0"){
+                await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/?page=" + page, {
+                    headers: {
+                      'authorization': 'Basic ' + team0Authorization
+                    }
+                  })
+                .then((response) => {
+                    //console.log("TEAM 0 RESPONSE: ", response);
+                    const team0data = response.data.items;
+                    team0data.forEach((foreignAuthor) => {
+                        const foreignAuthorURL = new URL(foreignAuthor.id);
+                        const foreignAuthorPath = foreignAuthorURL.pathname;
+                        if ("/authors/"+ profileId === foreignAuthorPath) {
+                            //console.log("TEAM 4 AUTHOR FOUND")
+                           setTeamServer("team0");
+                           fetchUrlAuthorFollowers("team0");
+                           setUrlAuthor(foreignAuthor);
+                            
+                        }
+                    })
+                });
+    
+            }
+    
+        }
 
+        const getAuthorServer = async () => {
+            
+            //getting authors from team 10, and storing
+            //await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/service/authors/")
+            await axios.get("https://cmput-404-w22-group-10-backend.herokuapp.com/authors/", {
+                headers: {
+                  'Authorization': 'token ' + team10token
+                  //'Authorization': 'Basic ' + team10Authorization
                 }
+              })
+            .then((response) => {
+                console.log("TEAM 10 RESPONSE: ", response.data);
+                //setTeam10Authors(response.data); 
+                const team10data = response.data.items; 
+                team10data.forEach((foreignAuthor) => {
+                    const foreignAuthorURL = new URL(foreignAuthor.id);
+                    const foreignAuthorPath = foreignAuthorURL.pathname;
+                    if ("/authors/"+ profileId === foreignAuthorPath) {
+                        console.log("TEM10 AUTHOR")
+                        setTeamServer("team10");
+                        fetchUrlAuthorFollowers("team10");
+                        setUrlAuthor(foreignAuthor);
+                    }
+                })
+                //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                const authorPages = Math.ceil(response.data.count/5)
+                if (authorPages > 1){
+                    for (let i = 2; i<= authorPages; i++){
+                        getAuthorsPagination(i, "team10")
+                    }
+                }
+            });
+            
+            //getting authors from team 9, and storing
+            await axios.get("https://cmput-404-w22-project-group09.herokuapp.com/service/authors", {
+                headers: {
+                  'Authorization': 'Basic ' + team9Authorization
+                }
+              })
+            .then((response) => {
+                //console.log("TEAM 9 RESPONSE: ", response);
+                //setTeam9Authors(response.data); //authors in response.data.result
+                const team9data = response.data.items;
+                team9data.forEach((foreignAuthor) => {
+                    const foreignAuthorURL = new URL(foreignAuthor.id);
+                    const foreignAuthorPath = foreignAuthorURL.pathname;
+                    if ("/service/authors/"+ profileId === foreignAuthorPath) {
+                       setTeamServer("team9");
+                       fetchUrlAuthorFollowers("team9");
+                       setUrlAuthor(foreignAuthor);
+                        
+                    }
+                })
+                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                 const authorPages = Math.ceil(response.data.count/5)
+                 if (authorPages > 1){
+                     for (let i = 2; i<= authorPages; i++){
+                         getAuthorsPagination(i, "team9")
+                     }
+                 }
+            });
 
-            }else{
+
+            //getting authors from team 4, and storing 
+            await axios.get("https://backend-404.herokuapp.com/authors/", {
+                headers: {
+                  'authorization': 'Basic ' + team4Authorization
+                }
+              })
+            .then((response) => {
+                console.log("TEAM 4 RESPONSE: ", response);
+                //setTeam9Authors(response.data); //authors in response.data.result
+                const team4data = response.data.items;
+                team4data.forEach((foreignAuthor) => {
+                    const foreignAuthorURL = new URL(foreignAuthor.id);
+                    const foreignAuthorPath = foreignAuthorURL.pathname;
+                    if ("/authors/"+ profileId === foreignAuthorPath) {
+                        //console.log("TEAM 4 AUTHOR FOUND")
+                       setTeamServer("team4");
+                       fetchUrlAuthorFollowers("team4");
+                       setUrlAuthor(foreignAuthor);
+                        
+                    }
+                })
+                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                 const authorPages = Math.ceil(response.data.count/5)
+                 if (authorPages > 1){
+                     for (let i = 2; i<= authorPages; i++){
+                         getAuthorsPagination(i, "team4")
+                     }
+                 }
+            });
+            
+            // Team 0
+            await axios.get("http://tik-tak-toe-cmput404.herokuapp.com/authors/9d090d84-0501-4a5b-9ce3-259a46a0ea0e/posts/", {
+                headers: {
+                  'authorization': 'Basic ' + team0Authorization
+                }
+              })
+            .then((response) => {
+                console.log("TEAM 0 RESPONSE: ", response);
+                const team0data = response.data.items;
+                team0data.forEach((foreignAuthor) => {
+
+                    const foreignAuthorURL = new URL(foreignAuthor.id);
+                    const foreignAuthorPath = foreignAuthorURL.pathname;
+                    if ("/authors/"+ profileId === foreignAuthorPath) {
+                        //console.log("TEAM 4 AUTHOR FOUND")
+                       setTeamServer("team0");
+                       fetchUrlAuthorFollowers("team0");
+                       setUrlAuthor(foreignAuthor);
+                        
+                    }
+                })
+                 //if author page has more pages then do same process as above on other pages too, to find appropriate author
+                 const authorPages = Math.ceil(response.data.count/5)
+                 if (authorPages > 1){
+                     for (let i = 2; i<= authorPages; i++){
+                         getAuthorsPagination(i, "team0")
+                     }
+                 }
+            });
+            //checking if author ID from url is in team10 or team9
+            //declaring what server to use then 
+        }
+        const checkFollowing = async () => {
+            if(profileId == currentUser.user.uuid){
                 setShowFollowBtn(false)
+            }else{
+                for(var i=0; i<followers.length; i++ ){
+                
+                    if (followers[i].displayName == currentUser.user.displayName){
+                        setShowFollowBtn(true)
+                        break
+                    }
+                }
             }
         }
 
-        const fetchPosts = async () => {
-            //fetch posts from user/author id, these are posts created by the user/author
-            if (page === 1){
-                const result = await axios.get(URL10 + "/authors/" + profileId + "/posts", {
-                    headers: {
-                      'Authorization': 'Basic ' + team10Authorization
-                    }});
-                setRecievedData(result);
-                setCount(result.data.count);
-                 //puts posts in array + sorts from newest to oldest
-                setPosts(result.data.items.sort((p1, p2) => {
-                return new Date(p2.published) - new Date(p1.published)
-            }));
-
-            } else {
-
-
-                const result = await axios.get(URL10 + "/authors/" + profileId + "/posts?page=" + page, {
-                    headers: {
-                      'Authorization': 'Basic ' + team10Authorization
-                    }});
-                setCount(result.data.count);
-                setRecievedData(result);
-                //puts posts in array + sorts from newest to oldest
-                setPosts(result.data.results.sort((p1, p2) => {
-                return new Date(p2.published) - new Date(p1.published)
-            }));
-            }}
-
-        
-        
-        fetchPosts()
+        getAuthorServer();
         checkFollowing()
+        
 
-    }, [page, profileId, showFollowers, showFollowBtn])
-
-
-
-    async function fetchAuthor(user) {
-        const res = await axios.get(URL10 + `/authors/${user.user.uuid}`, {
-            headers: {
-              'Authorization': 'Basic ' + team10Authorization
-            }});
-        setAuthorData(res.data)
-    }
-
-    const handleCallBack = (childData) => {
-        //https://www.geeksforgeeks.org/how-to-pass-data-from-child-component-to-its-parent-in-reactjs/
-        setPage(childData);
-    }
+    },[profileId])
 
 
 
     //current user will make follow request to current users profile
-
-    const handleFollow = () => {
-        console.log("button pressed")
+    function handleFollow(e){
         console.log("AUTHOR DATA ID", authorData.id)
         console.log("currentUser ID", currentUser.user.uuid)
         //this isnt working right now 
@@ -162,64 +364,49 @@ function Profile(){
           }).then( res => {
               console.log(res)
           });
+
     }
     
+    function showFollowersButton(e){
+        setShowFollowers(false)
+
+    }
+
+    function showPostsButton(e){
+        setShowFollowers(true)
+    }
+
+
+
     return (
         <div>
-            <AvatarPhoto id={profileId}/>
-            <h2>{user.user.displayName}</h2>
+            <AvatarPhoto user={urlAuthor}/>
+            <h2>{urlAuthor.displayName}</h2>
 
-            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-
-            {showFollowBtn && (
-                <button onClick={handleFollow}>Follow</button>
-            )}
-
-            
             {!showFollowers &&
-                <button onClick={(e) => setShowFollowers(true)}>Followers</button>
+                <button onClick={showPostsButton}>Followers</button>
             }
 
             {showFollowers &&
-                <button onClick={(e) => setShowFollowers(false)}>Posts</button>
+                <button onClick={showFollowersButton}>Posts</button>
             }
 
-            {showCreatePost &&  
-                <div>
-                    <div className="feedCreatePost" >
-                    <AddCircleOutlineIcon 
-                        htmlColor="blue" 
-                        className="feedCreatePostIcon" 
-                        onClick={() => setButtonPopup(true)}
-                        />
-                        <span 
-                        className="feedCreatePostText">
-                            Create Post!
-                        </span>
-                    </div>
-                    <Popup 
-                    trigger = {buttonPopup} 
-                    setTrigger = {setButtonPopup}
-                    >
-                        <CreatePost loggedInAuthor = {authorData} loggedInAuthorId = {authorData.id} loggedInAuthorFollowers={followers}/>
-                    </Popup>
-                </div>
-            }
+            {showFollowBtn && (
+                <button>Follow</button>
+            )}
 
             {!showFollowers && 
-                <div>
-                    <ul>
-                        {posts.map(post => (<li><Post post={post} team="cmput-404-w22-group-10" loggedInAuthor={profileId}/></li>))}
-                    </ul>
+                <div key={profileId}>
+                    <Feed id={idObject} feedType={'posts'}/>
 
                 </div>
                 }
-
-
             {showFollowers && 
-            <div>
-                <FollowerList profileId={profileId}/>
-            </div>
+                <div>
+                    <ul>
+                        {followers.map(follower => (<li key={follower.id}><FollowerCard follower={follower}/></li>))}
+                    </ul>
+                </div>
             }
 
 

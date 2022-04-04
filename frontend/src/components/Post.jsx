@@ -509,6 +509,7 @@ function Post({post, team, loggedInAuthor}){
                             {format(post.published)}
                         </span>
                        { (post.author.id === loggedInAuthor.id) && (isPublic) && <span className ="postEditDelete">
+                           {console.log(post.postAuthorId, "=====", loggedInAuthor.id)}
                             <EditIcon htmlColor='purple' onClick = {()=>{setButtonSmallPopupForEdit(true)}}/>
                             <DeleteIcon htmlColor='red' onClick = {() => {deleteHandler()}}/>
                         </span>}
