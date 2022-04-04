@@ -1,3 +1,5 @@
+
+   
 import "./feed.css"
 import CreatePost from '../createPost/CreatePost'
 import Post from '../Post'
@@ -635,12 +637,18 @@ function Feed({id, feedType}){
             <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
 
 
+
             </div>
 
             
 
             <Github githubURL={urlAuthor.github}/>
 
+            </div>
+
+            
+
+            <Github githubURL={urlAuthor.github}/>
             {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
             <div className="feedNoPostMessage">
                 <SentimentVeryDissatisfiedIcon 
