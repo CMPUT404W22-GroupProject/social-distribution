@@ -19,8 +19,8 @@ const CreateComment = ({handleSubmit, submitLabel, myAuthorId}) => {
     
     return (
         <form onSubmit={onSubmit}>
-            <textarea className="comment-form-textarea" value={text} onChange={(e) => setText(e.target.value)}></textarea>
-            <Button variant="primary" className="comment-form-button" type = "submit" disabled={isTextareaDisabled && canReply}>{submitLabel}</Button>
+            <textarea className="form-control" value={text} onChange={(e) => setText(e.target.value)}></textarea>
+            <Button className="comment-form-button" type = "submit" disabled={isTextareaDisabled && canReply}>{submitLabel}</Button>
         </form>
 
     )

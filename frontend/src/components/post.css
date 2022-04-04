@@ -96,6 +96,17 @@
   width: 30px !important;
   margin-right: 3px;
 }
+.editDeleteIcon {
+  width: 30px !important;
+  height: 30px !important;
+  margin-right: 10px;
+}
+.deleteIcon:hover {
+  color: #FE3B00;
+}
+.editIcon:hover {
+  color: #79E584;
+}
 
 .postTags {
   width:fit-content;
@@ -110,7 +121,8 @@
 
 .postEditDelete {
   cursor: pointer;
-  right: 0;
+  margin-left: auto;
+  margin-right: 10px;
 }
 /* .text-center {
   padding-top: 7px;
@@ -121,4 +133,45 @@
   top: 0;
   left: 0; */
   /* margin-left: -70%; */
+}
+.smallPopupHead {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.smallPopupTop {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.smallPopupBtn {
+  border: 1px solid #9695F0;
+  padding: 8px 10px;
+  border-radius: 5px;
+  background-color: #9695F0;
+  font-weight: 500;
+  cursor: pointer;
+  color: white;
+  /* margin-top: 20px; */
+  width: 50%;
+  margin-top: 20px;
+}
+.smallPopupBtn:hover{
+  border: 1px solid #9695F0;
+  background-color: white;
+  color: #9695F0;
+}
+.smallPopupBtn:active{
+  border: 1px solid #9695F0;
+  background-color: white;
+  color: #9695F0;
+}
+.smallPopupBtn:focus{
+  border: 1px solid #9695F0;
+  background-color: white;
+  color: #9695F0;
+}
+.likedBy {
+  margin-right: auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }

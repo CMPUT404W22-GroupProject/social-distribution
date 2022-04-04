@@ -12,6 +12,7 @@ import axios from 'axios'
 import UserContext from '../../context/userContext';
 import PopupSmall from '../popupSmall/PopupSmall'
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
+import { Navigate } from 'react-router-dom'
 
 function CreatePost({loggedInAuthor, loggedInAuthorId, loggedInAuthorFollowers}){
     const postContent = useRef();

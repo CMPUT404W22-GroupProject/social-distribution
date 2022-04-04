@@ -162,10 +162,20 @@
   cursor: pointer;
   color: white;
   /* margin-top: 20px; */
-  width: 90%;
+  width: 60%;
   margin-top: 20px;
 }
 .createPostButton:hover{
+  border: 1px solid #9695F0;
+  background-color: white;
+  color: #9695F0;
+}
+.createPostButton:active{
+  border: 1px solid #9695F0;
+  background-color: white;
+  color: #9695F0;
+}
+.createPostButton:focus{
   border: 1px solid #9695F0;
   background-color: white;
   color: #9695F0;
