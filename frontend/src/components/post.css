@@ -1,19 +1,58 @@
 .postCard {
-  width: 45%;
+  width: 40%;
   height: auto;
-  border-radius: 10px;
-  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
-  margin-top: 5%;
-  margin-left: 27.5%;
-  margin-right: 27.5%;
-  margin-bottom: 5%;
+  border-radius: 20px;
+  border: 2px solid;
+  /* box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68); */
+  margin-top: 20px;
+  margin-left: 30%;
+  margin-right: 30%;
+  margin-bottom: 20px;
 }
 .card {
   position: static;
+  border: 0px;
+  border-radius: 20px;
+  padding: 10px 0px;
 }
+.card-header {
+  background-color: transparent;
+  border: 0px;
+}
+.card-footer {
+  background-color: transparent;
+  border: 0px;
+  padding: 0px 15px 15px 20px;
+}
+.card-title {
+  text-align: left;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+.card-subtitle {
+  text-align: left;
+  /* margin-left: 10px; */
+  font-size: 0.9em;
+}
+.card-body {
+  border-radius: 15px;
+  border: 1px solid;
+  text-align: left;
+  padding: 10px 10px;
+  margin: 10px 0px;
+  font-size: 1em;
+}
+.card-text {
+  text-align: left;
+}
+
 .postTopLeft {
   display: flex;
   align-items: center;
+}
+
+.postDetails {
+  padding: 10px 20px;
 }
 
 .postProfileImg {
@@ -24,8 +63,8 @@
 }
 
 .postUsername {
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 1.2em;
+  font-weight: 400;
   margin: 0 10px;
 }
 
@@ -42,7 +81,6 @@
 
 .postOptions {
   display: flex;
-  margin-left: 20px;
 }
 
 .postOption {
@@ -50,38 +88,37 @@
   align-items: center;
   margin-right: 15px;
   cursor: pointer;
+  font-size: 0.8em;
+  color: black;
 }
 
 .postIcon {
-  width: 40px !important;
+  width: 30px !important;
   margin-right: 3px;
 }
 
-.postTitle {
-  text-align: left;
-  margin-left: 10px;
-  margin-top: 10px;
-  font-weight: bold;
-}
-.postDesc {
-  text-align: left;
-  margin-left: 10px;
-  font-size: 12px;
-  color: gray !important;
-  font-weight: bold;
-}
 .postTags {
-  text-align: right;
+  width:fit-content;
+  text-align: left;
   bottom: 0;
-  font-size: 10px;
-  margin-right: 10px;
-  margin-bottom: 7px;
+  border-radius: 15px;
+  border: 1px solid;
+  padding: 5px 10px;
+  margin: 10px 0px;
+  font-size: 0.8em;
 }
 
 .postEditDelete {
   cursor: pointer;
   right: 0;
 }
-.text-center {
+/* .text-center {
   padding-top: 7px;
+} */
+.visibilityBtn {
+  width: 90%;
+  /* position: relative;
+  top: 0;
+  left: 0; */
+  /* margin-left: -70%; */
 }

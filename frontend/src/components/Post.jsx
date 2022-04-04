@@ -3,6 +3,9 @@ import './post.css'
 import PersonIcon from '@mui/icons-material/Person'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import CommentIcon from '@mui/icons-material/Comment'
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import IosShareIcon from '@mui/icons-material/IosShare';
 import ShareIcon from '@mui/icons-material/Share'
 import {useState, useEffect} from 'react'
 import Popup from '../components/popup/Popup'
@@ -532,71 +535,72 @@ function Post({post, team, loggedInAuthor}){
                         </span>}
                      </div> 
                 </Card.Header>
-                <Card.Title className='postTitle'>
-                    {post.title}
-                </Card.Title>
-                <Card.Subtitle className='postDesc'>
-                    {post.description}
-                </Card.Subtitle>
-                
+                <div className="postDetails">
+                    <Card.Title className='postTitle'>
+                        {post.title}
+                    </Card.Title>
+                    <Card.Subtitle className='postDesc'>
+                        {post.description}
+                    </Card.Subtitle>
+                    
 
-                <Card.Body className="text-center">
-                    {(post.contentType == "text/plain") &&
-                        <Card.Text>
-                            {post.content}
+                    <Card.Body>
+                        {(post.contentType == "text/plain") &&
+                            <Card.Text>
+                                {post.content}
 
-                        </Card.Text>}
-                    {
-                        (post.contentType === "image/png;base64" || post.contentType === "image/jpeg;base64") &&
-                        <Card.Img src = {post.content} ></Card.Img>
-                    }
-                    {
-                        (post.contentType === "text/markdown") &&
-                        <ReactMarkdown children= {post.content} escapeHtml={false}></ReactMarkdown>
-                    }
+                            </Card.Text>}
+                        {
+                            (post.contentType === "image/png;base64" || post.contentType === "image/jpeg;base64") &&
+                            <Card.Img src = {post.content} ></Card.Img>
+                        }
+                        {
+                            (post.contentType === "text/markdown") &&
+                            <ReactMarkdown children= {post.content} escapeHtml={false}></ReactMarkdown>
+                        }
 
-                </Card.Body>
-                <Card.Subtitle className='postTags'>
-                    Tags: {post.categories}
-                </Card.Subtitle>
+                    </Card.Body>
+                    <Card.Subtitle className='postTags'>
+                        #{post.categories}
+                    </Card.Subtitle>
 
-                {hasImage && 
-                    <Card.Img 
-                        className = "postImage" 
-                        variant="bottom" 
-                        src="holder.js/100px180" 
-                    /> }
-    
+                    {hasImage && 
+                        <Card.Img 
+                            className = "postImage" 
+                            variant="bottom" 
+                            src="holder.js/100px180" 
+                        /> }
+                </div>
                 <Card.Footer className="text-muted">
                     <div className="postOptions">
 
 
                         { !isLiked && 
                             <div className="postOption" onClick={likeHandler}>
-                                <ThumbUpIcon htmlColor="blue" className="postIcon" />
+                                <FavoriteBorderIcon htmlColor="black" className="postIcon" />
                                 <span data-testid = "likeCount" className="postLikeCounter">
-                                    {like}
+                                    {like} Like
                                 </span>
                             </div>}
 
                         { isLiked && 
                             <div className="postOption" >
-                                <ThumbUpIcon htmlColor="red" className="postIcon" onClick={likeHandler}/>
+                                <FavoriteIcon htmlColor="red" className="postIcon" onClick={likeHandler}/>
                                 <span data-testid = "likeCount" className="postLikeCounter" onClick={() => setButtonSmallPopupForLike(true)}>
-                                    {like}
+                                    {like} Like
                                 </span>
                             </div>}
 
 
                         <div className="postOption" onClick={() => setButtonPopup(true)}>
-                            <CommentIcon htmlColor="green" className="postIcon" />
+                            <CommentIcon htmlColor="black" className="postIcon" />
                             <span data-testid = "commentCount" className="postCommentCounter">
-                                {commentCount}
+                                {commentCount} Comment
                             </span>
                         </div>
                     
                         <div className="postOption" onClick={() => setButtonSmallPopupForShare(true)}>
-                            <ShareIcon htmlColor="red" className="postIcon" />
+                            <IosShareIcon htmlColor="black" className="postIcon" /> Share
                         </div>
                     </div>
                     
