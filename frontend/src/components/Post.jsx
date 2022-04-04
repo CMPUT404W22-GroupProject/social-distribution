@@ -52,8 +52,6 @@ function Post({post, team, loggedInAuthor}){
 
     //console.log("contentype: ", post)
 
-
-
      useEffect(() => {
          //fetches data from the server
         const fetchLikeCount = async () => {
@@ -180,7 +178,7 @@ function Post({post, team, loggedInAuthor}){
         if (post.visibility == "PUBLIC"){
             setIsPublic(true);
         }
-    },[])
+    },[like, commentCount])
 
  
     const likeHandler = async () => {

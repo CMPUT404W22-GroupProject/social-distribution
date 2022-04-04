@@ -695,7 +695,7 @@ function Feed({id, feedType}){
             {/*popup with createPost component in it, called when button is clicked*/}
             <Popup 
                 trigger = {buttonPopup} 
-                setTrigger = {setButtonPopup}
+                setTrigger = {[setButtonPopup, refreshPage]}
                 >
                     <CreatePost loggedInAuthor = {loggedInAuthor} loggedInAuthorId = {loggedInAuthorId} loggedInAuthorFollowers = {loggedInAuthorFollowers}/>
             </Popup>
