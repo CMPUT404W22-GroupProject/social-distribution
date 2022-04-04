@@ -34,7 +34,7 @@ class CommentList(ListCreateAPIView):
 
             # there is no comment to a post
             if not queryset:
-                return Response("No comments", status=404)
+                return Response("", status=404)
 
             page = self.paginate_queryset(queryset)
             if page is not None:

@@ -16,6 +16,8 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.26.0",
     "babel-loader": "^8.2.3",
+    "bootstrap-switch-button": "^1.1.0",
+    "bootstrap-switch-button-react": "^1.2.0",
     "react": "^17.0.2",
     "react-avatar-editor": "^12.0.0",
     "react-bootstrap": "^2.1.2",
