@@ -71,8 +71,8 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                     'Authorization': 'Basic ' + team4Authorization
                   }
                 });
-              //TODO: VERIFY RESPONSE FORMATTING
-              setBackendComments(result.data.comments.sort((p1, p2) => {
+              //Uses .items instead of .comments
+              setBackendComments(result.data.items.sort((p1, p2) => {
               return new Date(p2.published) - new Date(p1.published)
               }))
           } catch(error){
@@ -139,7 +139,7 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                   }
                 });
               //TODO: VERIFY RESPONSE FORMATTING
-              setBackendComments(result.data.comments.sort((p1, p2) => {
+              setBackendComments(result.data.items.sort((p1, p2) => {
               return new Date(p2.published) - new Date(p1.published)
               }))
           } catch(error){
@@ -256,10 +256,18 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
             }
 
             if (postHostName === "backend-404.herokuapp.com"){
-                try {
-                    
-                    await axios.post(commentsId, newComment, {
-                        headers: {
+              // TEAM 4 says posting comments to their backend is not possible
+              // Thus this post to commentsId is useless
+              try {
+                var urlArray = commentsId.split("/");
+                var postId = urlArray[6]; // Get the post UUID
+                var postInfo =  {
+                  "contentType":"text/plain",
+                  "post_id": postId,
+                  "comment": text,
+                  }
+                    await axios.post(commentsId, postInfo, {  
+                      headers: {
                           'Authorization': 'Basic ' + team4Authorization
                         }
                       })
@@ -273,21 +281,35 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                 }
                 try {
                     console.log("POST AUTHOR ID: ", postAuthorId);
-                    await axios.post(postAuthorId + "/inbox/", newComment, {
-                        headers: {
-                          'Authorization': 'Basic ' + team4Authorization
-                        }
-                      })
-                    .then((response) => {
-                    });
+                    // We cannot get the created comment ID because we cannot get a response BECAUSE the above POST is not allowed from remote nodes
+                    var inboxInfo = {
+                      "type": "comment",
+                      "id": commentsId,
+                      "author": loggedInAuthor,
+                  }
+                  await axios.post(postAuthorId + "/inbox/", inboxInfo, {
+                      headers: {
+                        'Authorization': 'Basic ' + team4Authorization
+                      }
+                    })
+                    // The response from Team 0 has no valuable information
+                    // Only returns "author" and "type"
+                  .then((response) => {
+                  });
 
                 } catch (error) {
                     //console.log(error)
                 }
             }
             if (postHostName === "tik-tak-toe-cmput404.herokuapp.com"){
-                try {
-                    
+              // This also seems to be locked away from remote users
+              // Still give it the correct format as per their spec
+              var inboxInfo = {
+                "title": "New Comment",
+                "content": text,
+                "contentType": "text/plain"
+              }
+              try {
                     await axios.post(commentsId, newComment, {
                         headers: {
                           'Authorization': 'Basic ' + team0Authorization
@@ -302,14 +324,19 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
                     //console.log(error)
                 }
                 try {
-                    console.log("POST AUTHOR ID: ", postAuthorId);
-                    await axios.post(postAuthorId + "/inbox/", newComment, {
-                        headers: {
-                          'Authorization': 'Basic ' + team0Authorization
-                        }
-                      })
-                    .then((response) => {
-                    });
+                  console.log("POST AUTHOR ID: ", postAuthorId);
+                  var inboxInfo = {
+                    "type": "comment",
+                    "id": commentsId,
+                    "author": loggedInAuthor,
+                  }
+                  await axios.post(postAuthorId + "/inbox/", inboxInfo, {
+                      headers: {
+                        'Authorization': 'Basic ' + team0Authorization
+                      }
+                    })
+                  .then((response) => {
+                  });
 
                 } catch (error) {
                     //console.log(error)
