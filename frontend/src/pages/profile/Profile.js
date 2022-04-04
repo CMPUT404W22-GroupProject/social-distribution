@@ -14,7 +14,7 @@ import AvatarPhoto from '../../components/avatar/avatar'
 import FollowerList from '../../components/followerList/followerList';
 import FollowerCard from '../../components/followerCard/followerCard';
 import Feed from '../../components/feed/Feed';
-
+import { Alert } from '@mui/material';
 
 function Profile(){
     
@@ -37,11 +37,10 @@ function Profile(){
     const team9Authorization = btoa("group10:pwd1010");
     const team10Authorization = btoa("admin:gwbRqv8ZLtM3TFRW");
 
-
     const [teamServer, setTeamServer] = useState("");
     const [urlAuthor, setUrlAuthor] = useState([]);
 
-
+    const [followSuccess, setFollowSuccess] = useState(false)
     const [showFollowBtn, setShowFollowBtn] = useState(true)
     const team10token = JSON.parse(localStorage.getItem('user')).token
 
@@ -419,7 +418,6 @@ function Profile(){
     return (
         <div>
             <AvatarPhoto user={urlAuthor}/>
-            {console.log("LETS SEE",urlAuthor)}
             <h2>{urlAuthor.displayName}</h2>
 
             <div className="buttonContainer">
@@ -444,8 +442,8 @@ function Profile(){
                 </div>
                 }
             {showFollowers && 
-                <div>
-                    <ul>
+                <div className="wrapper">
+                    <ul className="followerList">
                         {followers.map(follower => (<li key={follower.id}><FollowerCard follower={follower}/></li>))}
                     </ul>
                 </div>

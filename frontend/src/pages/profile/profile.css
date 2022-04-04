@@ -5,3 +5,16 @@
     align-items: center;
     justify-content: center;
 }
+
+.followerList{
+    list-style-type: none;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.wrapper{
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
