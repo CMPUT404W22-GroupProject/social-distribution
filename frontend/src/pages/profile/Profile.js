@@ -320,7 +320,7 @@ function Profile(){
         checkFollowing()
         
 
-    },[showFollowers])
+    },[showFollowers,profileId])
     
     function showFollowersButton(e){
         setShowFollowers(false)

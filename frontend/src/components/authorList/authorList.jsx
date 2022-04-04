@@ -5,7 +5,7 @@ import { Card } from '@mui/material';
 import { Avatar } from '@mui/material';
 import { CardHeader } from '@mui/material';
 import { Link } from 'react-router-dom';
-
+import './authorList.css'
 function AuthorsList({host}) {
 
   const URL0 = "http://tik-tak-toe-cmput404.herokuapp.com/authors/"
@@ -66,14 +66,10 @@ function AuthorsList({host}) {
 
   return (
     <div>
-        <ul>
-            <button>Local Authors</button>
-            <button>Remote Authors</button>           
-        </ul>
-
+        <h1>Local Authors</h1>
         <div>
           <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-          <ul>
+          <ul className='authorList'>
             {console.log(localAuthors)}
               {localAuthors.map(author => (
                 <li>
