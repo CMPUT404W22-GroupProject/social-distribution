@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react' 
 import UserContext from '../../context/userContext';
 import axios from "axios"
+import './profile.css'
 import Post from '../../components/Post'
 import { useLocation } from 'react-router-dom';
 import {useParams} from 'react-router-dom';
@@ -14,6 +15,7 @@ import FollowerList from '../../components/followerList/followerList';
 import FollowerCard from '../../components/followerCard/followerCard';
 import Feed from '../../components/feed/Feed';
 
+
 function Profile(){
     
     const [authorData, setAuthorData] = useState('')
@@ -21,14 +23,14 @@ function Profile(){
     const params = useParams();
     const profileId = params.id.replace(":","")
     const idObject = JSON.stringify({"id": profileId})
-
     const location = useLocation()
     //const user = JSON.parse(location.state.state)
     const currentUser = JSON.parse(localStorage.getItem('user'))
     const [showFollowers, setShowFollowers] = useState(false)
-
-
     const URL10 = "https://cmput-404-w22-group-10-backend.herokuapp.com"
+    const URL9 = "https://cmput-404-w22-project-group09.herokuapp.com/service"
+    const URL4 = "https://backend-404.herokuapp.com"
+    const URL0 = "http://tik-tak-toe-cmput404.herokuapp.com"
 
     const team0Authorization = btoa("admin:tX7^iS8a5Ky$^S");
     const team4Authorization = btoa("Team10:abcdefg");
@@ -328,7 +330,6 @@ function Profile(){
     },[profileId])
 
 
-
     //current user will make follow request to current users profile
     /*function handleFollow(e){
         console.log("AUTHOR DATA ID", authorData.id)
@@ -376,24 +377,111 @@ function Profile(){
         setShowFollowers(true)
     }
 
+    function handleFollowRequest(e){
+        
+        if(teamServer == "team10"){
+            console.log("we out here")
+            var followRequest = { //the json file that will be sent
+                "type": "follow",
+                "summary": currentUser.user.displayName + "wants to follow you",
+                "actor":{
+                    "type": "author",
+                    "id": URL10 + "/authors/" + currentUser.user.uuid,
+                    "url": URL10 + "/authors/" + currentUser.user.uuid,
+                    "host": URL10 + "/",
+                    "displayName": currentUser.user.displayName,
+                    "github": '',
+                    "profileImage": authorData.profileImage
+                },
+                "object":{
+                    "type":"author",
+                    "id": URL10 + "/authors/" + profileId,
+                    "host": URL10 + "/",
+                    "displayName": urlAuthor.displayName,
+                    "url":URL10 + "/authors/" + profileId,
+                    "github": urlAuthor.github,
+                    "profileImage": urlAuthor.profileImage
+                }      
+            }
 
+            axios.post(URL10 + '/authors/' + profileId + '/inbox/', followRequest, {
+                headers: {
+                  'Authorization': 'token ' + currentUser.token
+                }
+              }).then( res => {
+                  console.log(res)
+              });
+        }
+        else if(teamServer == "team9"){
+            var followRequest = { //the json file that will be sent
+                "type": "follow",
+                "summary": currentUser.user.displayName + "wants to follow you",
+                "actor":{
+                    "type": "author",
+                    "id": URL10 + "/authors/" + currentUser.user.uuid,
+                    "url": URL10 + "/authors/" + currentUser.user.uuid,
+                    "host": URL10 + "/",
+                    "displayName": currentUser.user.displayName,
+                    "github": '',
+                    "profileImage": authorData.profileImage
+                },
+                "object":{
+                    "type":"author",
+                    "id": URL9 + "/authors/" + profileId,
+                    "host": urlAuthor.host,
+                    "displayName": urlAuthor.displayName,
+                    "url":URL9+ "/authors/" + profileId,
+                    "github": urlAuthor.github,
+                    "profileImage": urlAuthor.profileImage
+                }      
+            }
+            axios.post(URL9 + '/authors/' + profileId + '/inbox', followRequest, {
+                headers: {
+                  'Authorization': 'Basic ' + team9Authorization
+                }
+              }).then( res => {
+                  console.log(res)
+              });
+        }
+        else if(teamServer == "team4"){
+            console.log("TEAM SERVER",teamServer)
+            var followObject = {
+                "type": "follow",
+                "summary": currentUser.user.displayName + " wants to follow you.",
+                "actor": URL10 + "/authors/" + currentUser.user.uuid,
+                "object": URL4 + "/authors/" + profileId 
+            }
+            console.log(followObject)
+            axios.get(URL4 + '/authors/' + profileId + '/inbox/', followObject, {
+                headers: {
+                  'Authorization': 'token ' + team4Authorization
+                }
+              }).then( res => {
+                  console.log(res)
+              });
 
+        }
+    }
+    
     return (
         <div>
             <AvatarPhoto user={urlAuthor}/>
             <h2>{urlAuthor.displayName}</h2>
 
-            {!showFollowers &&
-                <button onClick={showPostsButton}>Followers</button>
-            }
+            <div className="buttonContainer">
+                    {!showFollowers &&
+                     <button onClick={showPostsButton}>Followers</button>
+                    }
 
-            {showFollowers &&
-                <button onClick={showFollowersButton}>Posts</button>
-            }
+                    {showFollowers &&
+                        <button onClick={showFollowersButton}>Posts</button>
+                    }
 
-            {showFollowBtn && (
-                <button>Follow</button>
-            )}
+                    {showFollowBtn && (
+                        <button onClick={handleFollowRequest}>Follow</button>
+                    )}
+            
+            </div>
 
             {!showFollowers && 
                 <div key={profileId}>
