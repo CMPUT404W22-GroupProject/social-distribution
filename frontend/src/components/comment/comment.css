@@ -8,34 +8,48 @@
 
 .comment {
   display: flex;
-  padding-bottom: 20px;
+  margin: 10px 0px;
+  justify-content: flex-start;
 }
 
-
+.comment-center {
+  width: fit-content;
+}
 
 .comment-left-part {
   right: 0;
   max-width: 25px;
   min-width: 25px;
+  margin-left: auto;
+  margin-right: 10px;
 }
 
 .comment-right-part {
-  max-width: 100px;
-  min-width: 100px;
   margin-right: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .comment-author {
   margin-right: 8px;
-  font-size: 20px;
-  color: rgb(59, 130, 246);
+  font-size: 1em;
+  color: black;
+  font-weight: bold;
+}
+
+.comment-date {
+  font-size: 12px;
 }
 
 .comment-text {
-  font-size: 18px;
+  font-size: 1em;
   max-width: 415px;
 
   text-align: left;
   overflow: scroll;
   margin-right: 30px;
+}
+
+.comment-like {
+  cursor: pointer;
 }

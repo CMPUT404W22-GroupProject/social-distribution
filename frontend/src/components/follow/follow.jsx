@@ -115,17 +115,17 @@ function Follow({follow}){
                     <span className="followDate">{format(follow.published)}</span>
                      </div> 
                 </Card.Header>
-                <Card.Body className="text-center">
-                        <Card.Text>
-                            {follow.summary}
-                        </Card.Text>
+                <div className="followDetails">
+                    <Card.Text>
+                        {follow.summary}
+                    </Card.Text>
                      
-                </Card.Body>
-                <Card.Footer>
-                { (accepted === false) && <Button  className="acceptFollowButton" onClick={acceptFollow}>Accept</Button>}
-                { (accepted === true) && <Button  className="acceptedFollowButton" onClick={acceptFollow}>Accepted</Button>}
-                <Button  className="declineFollowButton" onClick={deleteFollow} >Decline</Button> 
-                </Card.Footer>
+                    <div className="followButtons">
+                    { (accepted === false) && <Button  className="acceptFollowButton" onClick={acceptFollow}>Accept</Button>}
+                    { (accepted === true) && <Button  className="acceptedFollowButton" onClick={acceptFollow}>Accepted</Button>}
+                    <Button  className="declineFollowButton" onClick={deleteFollow} >Decline</Button> 
+                    </div>
+                </div>
 
             </Card>
 

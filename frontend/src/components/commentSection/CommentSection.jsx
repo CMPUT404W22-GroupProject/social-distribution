@@ -353,18 +353,20 @@ const CommentSection = ({loggedInAuthor, commentsId, commentCount, postAuthorId,
 };
     return (
         <div className="comments">
-            <h3 className="comments-title"> Comments</h3>
-            <div className="comment-form-title">Post a comment!</div>
-            <CreateComment submitLabel = "Post" handleSubmit={addComment} loggedInAuthor ={loggedInAuthor} />
-            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
-            <div className="comments-container">
-                {/* //remember to send in key = {backendComment.id} when you have it */}
-                {backendComments.map((backendComment) => (
-                    
-                    <Comment key = {backendComment.id} loggedInAuthor = {loggedInAuthor} comment = {backendComment} team = {team}/>
-                    //commentBody = {b.comment} commentAuthor = {b.author.displayName} commentDate = {b.published}
+            <div className="comments-title"> Comments</div>
+            <div class="form-group">
+              <label>Post a comment</label>
+              <CreateComment  submitLabel = "Post" handleSubmit={addComment} loggedInAuthor ={loggedInAuthor} />
+              <div className="comments-container">
+                  {/* //remember to send in key = {backendComment.id} when you have it */}
+                  {backendComments.map((backendComment) => (
+                      
+                      <Comment key = {backendComment.id} loggedInAuthor = {loggedInAuthor} comment = {backendComment} team = {team}/>
+                      //commentBody = {b.comment} commentAuthor = {b.author.displayName} commentDate = {b.published}
 
-                ))}
+                  ))}
+              </div>
+              <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
             </div>
         </div>
     )
