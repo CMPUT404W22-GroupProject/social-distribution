@@ -1,13 +1,12 @@
 .postCard {
-  width: 40%;
+  width: 47.5%;
   height: auto;
-  border-radius: 20px;
-  border: 2px solid;
-  /* box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68); */
-  margin-top: 20px;
-  margin-left: 30%;
-  margin-right: 30%;
-  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  margin-top: 5%;
+  margin-left: 17%;
+  margin-right: 27.5%;
+  margin-bottom: 5%;
 }
 .card {
   position: static;

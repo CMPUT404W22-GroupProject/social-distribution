@@ -76,27 +76,59 @@ function Github({githubURL}) {
                     <div className='githubEvent'>
                     <span className='githubPushevent'>{github[0].type}</span>
                     <span>{github[0].created_at}</span>
-                    <span>{github[0].repo.name}</span> </div>}
-                    {(github.length !== 0) &&
-                    <div className='githubEvent'>
-                    <span className='githubPushevent'>{github[1].type}</span>
-                    <span>{github[1].created_at}</span>
-                    <span>{github[1].repo.name}</span> </div>}
-                    {(github.length !== 0) &&
-                    <div className='githubEvent'>
-                    <span className='githubPushevent'>{github[2].type}</span>
-                    <span>{github[2].created_at}</span>
-                    <span>{github[2].repo.name}</span> </div>}
-                    {(github.length !== 0) &&
-                    <div className='githubEvent'>
-                    <span className='githubPushevent'>{github[3].type}</span>
-                    <span>{github[3].created_at}</span>
-                    <span>{github[3].repo.name}</span> </div>}
-                    {(github.length !== 0) &&
-                    <div className='githubEvent'>
-                    <span className='githubPushevent'>{github[4].type}</span>
-                    <span>{github[4].created_at}</span>
-                    <span>{github[4].repo.name}</span> </div>}
+                    <span>{github[0].repo.name}</span>
+            </div> */}
+            {/* <div className='githubEvent'>
+                    <span className='githubPushevent'>{item.type}</span>
+                    <span>{item.created_at}</span>
+                    <span>{item.repo.name}</span>
+            </div> */}
+            {/* {(github.length !== 0) &&
+                github.forEach((item) =>  
+                displayEvent(item)
+                )} */}
+            {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[0].type}</span>
+                <span>{github[0].created_at}</span>
+                <span>{github[0].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[1].type}</span>
+                <span>{github[1].created_at}</span>
+                <span>{github[1].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[2].type}</span>
+                <span>{github[2].created_at}</span>
+                <span>{github[2].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[3].type}</span>
+                <span>{github[3].created_at}</span>
+                <span>{github[3].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[4].type}</span>
+                <span>{github[4].created_at}</span>
+                <span>{github[4].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[5].type}</span>
+                <span>{github[5].created_at}</span>
+                <span>{github[5].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[6].type}</span>
+                <span>{github[6].created_at}</span>
+                <span>{github[6].repo.name}</span> </div>}
+                {(github.length !== 0) &&
+                <div className='githubEvent'>
+                <span className='githubPushevent'>{github[7].type}</span>
+                <span>{github[7].created_at}</span>
+                <span>{github[7].repo.name}</span> </div>}
+                
+
 
                     </div>
         </div>

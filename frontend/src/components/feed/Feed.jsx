@@ -619,75 +619,105 @@ function Feed({id, feedType}){
     return (
         //returning feed that will have createPost + other appropriate components shown to user form their inbox
         <div>
-            <div class="sideView">
-                { (feedType !== "publicPosts") && (loggedInAuthorId === urlAuthorId) &&
-                        <Button
-                            htmlColor="blue" 
-                            className="createPostBtn" 
-                            onClick={() => setButtonPopup(true)}
-                            >
-                        Create a new post
-                        </Button>
-                }
-                
-                {(feedType === "inbox") && 
-                    <Button className="feedClearBtn" onClick ={() =>{clearInbox()}}>Clear Inbox</Button>
-                }
+            {/*createPost button here, when clicked popup will popup*/}
+            { (feedType !== "publicPosts") && (loggedInAuthorId === urlAuthorId) &&
+            <div className="feedCreatePost" >
+                <AddCircleOutlineIcon 
+                    htmlColor="blue" 
+                    className="feedCreatePostIcon" 
+                    onClick={() => setButtonPopup(true)}
+                    />
+                <span 
+                    className="feedCreatePostText">
+                        Create Post!
+                </span>
+            </div>}
+
+            
+            <div className="paginationAndDelete">
+            <PaginationControlled count = {count} parentCallBack = {handleCallBack}/>
+            {
+                (feedType === "inbox") &&  <ClearIcon className="FeedClearIcon" onClick ={() =>{clearInbox()}}/>
+            }
+           
+            </div>
+
+           
+
+            <div className="displayFeed">
+
+            { (feedType !== "publicPosts") &&
+                <div className="githubSection">
+
 
             {(feedType != "publicPosts") && 
                 <Github githubURL={urlAuthor.github}/>
-            }
-            </div>
-            {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
-            <div className="feedNoPostMessage">
-                {/* <SentimentVeryDissatisfiedIcon 
-                    htmlColor = "Red"
-                    className="feedNoPostImage"/> */}
-                <span
-                    className="feedNoPostText">
-                    No items in your inbox!
-                </span>
-                <RefreshIcon
-                    className="feedNoPostRefresh"
-                    onClick = {refreshPage}/>
-            </div>}
-            
-            {(feedType === "posts") && (posts.length === 0) && //display message if post array is empty
-            <div className="feedNoPostMessage">
-                {/* <SentimentVeryDissatisfiedIcon 
-                    htmlColor = "Red"
-                    className="feedNoPostImage"/> */}
-                <span
-                    className="feedNoPostText">
-                    No new posts!
-                </span>
-                <RefreshIcon
-                    className="feedNoPostRefresh"
-                    onClick = {refreshPage}/>
-            </div>}
+    
+                </div>
 
- 
-           {/* {(posts.length !== 0) && // Fetched data is being displayed here, if post array isnt empty
-            posts.map((post) => (
-                <Post 
-                    key = {post.id} 
-                    post = {post}
-                />
-            ))} */}
-            {
-                (inbox.length !== 0) && 
-                    inbox.map((object) => (
-                        inboxBuilder(object, "team10")
-                    )
-                    ) 
             }
-            {//TEMPORARY 
-                (posts.length !== 0) && 
-                    posts.map((object) => (
-                        inboxBuilder(object, teamServer)
-                    )
-                    )
-            }
+                <div className="postSection">
+
+                {(feedType === "inbox") && (inbox.length === 0) && //display message if inbox array is empty
+                <div className="feedNoPostMessage">
+                    <SentimentVeryDissatisfiedIcon 
+                        htmlColor = "Red"
+                        className="feedNoPostImage"/>
+                    <span
+                        className="feedNoPostText">
+                        No new posts!
+                    </span>
+                    <RefreshIcon
+                        className="feedNoPostRefresh"
+                        onClick = {refreshPage}/>
+                </div>}
+
+                {(feedType === "posts") && (posts.length === 0) && //display message if post array is empty
+                <div className="feedNoPostMessage">
+                    <SentimentVeryDissatisfiedIcon 
+                        htmlColor = "Red"
+                        className="feedNoPostImage"/>
+                    <span
+                        className="feedNoPostText">
+                        No new posts!
+                    </span>
+                    <RefreshIcon
+                        className="feedNoPostRefresh"
+                        onClick = {refreshPage}/>
+                </div>}
+
+
+                {/* {(posts.length !== 0) && // Fetched data is being displayed here, if post array isnt empty
+                posts.map((post) => (
+                    <Post 
+                        key = {post.id} 
+                        post = {post}
+                    />
+                ))} */}
+                {
+                    (inbox.length !== 0) && 
+                        inbox.map((object) => (
+                            inboxBuilder(object, "team10")
+                        )
+                        ) 
+                }
+                {//TEMPORARY 
+                    (posts.length !== 0) && 
+                        posts.map((object) => (
+                            inboxBuilder(object, teamServer)
+                        )
+                        )
+                }
+
+
+
+                </div>
+
+            </div>
+            
+           
+        
+           
             
             {/*popup with createPost component in it, called when button is clicked*/}
             <Popup 

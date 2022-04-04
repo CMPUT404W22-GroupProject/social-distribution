@@ -87,8 +87,17 @@ div {
   color: black;
   border: 2px solid #9695F0;
 }
-.createPostBtn:active{
-  background-color: white;
-  color: black;
-  border: 2px solid #9695F0;
+
+.displayFeed{
+  display: flex;
 }
+.postSection{
+  width: 100%;
+
+}
+.githubSection{
+  margin-top: 5%;
+  margin-left: 2%;
+
+}
+
