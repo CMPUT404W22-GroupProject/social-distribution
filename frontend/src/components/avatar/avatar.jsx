@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton'
 import Avatar from '@mui/material/Avatar'
 import axios from 'axios'
 
-function AvatarPhoto({id}) {
+function AvatarPhoto({user}) {
 
 
     const [file, setFile] = useState(null);
@@ -16,11 +16,12 @@ function AvatarPhoto({id}) {
     const team10token = JSON.parse(localStorage.getItem('user')).token
 
     const URL = "https://cmput-404-w22-group-10-backend.herokuapp.com"
+    const currentUser = JSON.parse(localStorage.getItem('user'))
 
 
     useEffect(() => {
 
-        const path = URL + "/authors/" + id +  "/" 
+        const path = URL + "/authors/" + currentUser.user.uuid +  "/" 
         axios.get(path, {
             headers: {
               'Authorization': 'token ' + team10token
@@ -29,7 +30,7 @@ function AvatarPhoto({id}) {
           }).then(res => {
             const base64 = res.data.profileImage
             setFile(base64)
-    }) },[id])
+    }) },[user])
 
 
     const handleChange = async (event)  => {
@@ -86,7 +87,7 @@ function AvatarPhoto({id}) {
             <input type="file" onChange={handleChange} id="upload" accept="image/*" style={{display: "none"}}/>
             <label htmlFor="upload">
                 <IconButton color="primary" aria-label="upload picture" component="span">
-                    <Avatar id="avatar" src={file}
+                    <Avatar id="avatar" src={user.profileImage}
                             style={{
 
                                 width: "200px",
