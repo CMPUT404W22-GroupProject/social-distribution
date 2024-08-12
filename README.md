@@ -8,7 +8,6 @@ Team Members
 
 - Tyler Bach
 - Gurjog Singh
-- Aqil Yearoo
 - Moe Numasawa
 - Nicholas Anderson
 
